@@ -316,3 +316,37 @@ table.liste tr.sum td { font-weight: 700; border-top: 2px solid var(--ink); }
 @media (min-height: 760px) {
   .hand { --cw: 70px; }
 }
+
+/* Einstieg, Erklärungen, Begriffe */
+.startcard { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; background: var(--felt); color: var(--felt-ink); border-radius: var(--r); padding: 18px; text-decoration: none; box-shadow: var(--shadow); }
+.startcard .eyebrow { color: inherit; opacity: .75; }
+.startcard .t { font-family: var(--font-display); font-size: 24px; line-height: 1.15; }
+.startcard p { font-size: 15px; opacity: .92; max-width: 46ch; }
+.startcard .btn { margin-top: 4px; }
+.row .score svg { width: 22px; height: 22px; vertical-align: middle; color: var(--accent); }
+.how { font-size: 14px; line-height: 1.45; color: var(--muted); background: var(--paper); border-radius: 10px; padding: 8px 12px; }
+.how b { color: var(--ink); }
+ol.think { margin: 6px 0 0; padding-left: 22px; display: grid; gap: 6px; }
+ol.think li { padding-left: 2px; }
+ol.think li::marker { font-weight: 700; color: var(--accent); }
+.term { border-bottom: 1.5px dotted currentColor; cursor: pointer; border-radius: 2px; }
+.term:hover, .term:focus-visible { background: var(--brass-soft); }
+#gloss { position: fixed; inset: 0; z-index: 60; background: rgba(8, 16, 12, .4); display: flex; align-items: flex-end; justify-content: center; }
+#gloss .gl-in { width: 100%; max-width: 560px; background: var(--paper-2); color: var(--ink); border-radius: 18px 18px 0 0; padding: 16px max(16px, env(safe-area-inset-right, 0px)) calc(16px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); display: flex; flex-direction: column; gap: 8px; box-shadow: 0 -6px 24px rgba(0,0,0,.25); animation: up .2s ease both; }
+#gloss h3 { font-size: 22px; }
+#gloss p { font-size: 16px; line-height: 1.5; }
+#gloss .btn { align-self: flex-start; }
+.panel.guide { gap: 8px; font-size: 15px; line-height: 1.45; max-height: 50vh; }
+.panel.guide .gtext { font-size: 15px; line-height: 1.45; }
+.panel.guide .btn { min-height: 44px; }
+.panel.guide .pts { font-size: 14px; }
+.panel.guide .chip { font-size: .92em; }
+.table.guided .center { min-height: 118px; }
+@media (max-height: 760px) {
+  .table.guided .trick { --cw: min(15vw, 58px); width: 190px; height: 128px; }
+  .table.guided .opps { padding-block: 0; }
+  .table.guided .backs { display: none; }
+  .panel.guide { max-height: 44vh; }
+  .table.guided .infobar, .table.guided .meline { display: none; }
+}
+.panel.guide > .btn, .panel.guide .btns { position: sticky; bottom: -12px; box-shadow: 0 -10px 12px var(--paper-2); }

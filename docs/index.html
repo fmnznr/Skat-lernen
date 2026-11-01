@@ -336,6 +336,40 @@ table.liste tr.sum td { font-weight: 700; border-top: 2px solid var(--ink); }
   .hand { --cw: 70px; }
 }
 
+/* Einstieg, Erklärungen, Begriffe */
+.startcard { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; background: var(--felt); color: var(--felt-ink); border-radius: var(--r); padding: 18px; text-decoration: none; box-shadow: var(--shadow); }
+.startcard .eyebrow { color: inherit; opacity: .75; }
+.startcard .t { font-family: var(--font-display); font-size: 24px; line-height: 1.15; }
+.startcard p { font-size: 15px; opacity: .92; max-width: 46ch; }
+.startcard .btn { margin-top: 4px; }
+.row .score svg { width: 22px; height: 22px; vertical-align: middle; color: var(--accent); }
+.how { font-size: 14px; line-height: 1.45; color: var(--muted); background: var(--paper); border-radius: 10px; padding: 8px 12px; }
+.how b { color: var(--ink); }
+ol.think { margin: 6px 0 0; padding-left: 22px; display: grid; gap: 6px; }
+ol.think li { padding-left: 2px; }
+ol.think li::marker { font-weight: 700; color: var(--accent); }
+.term { border-bottom: 1.5px dotted currentColor; cursor: pointer; border-radius: 2px; }
+.term:hover, .term:focus-visible { background: var(--brass-soft); }
+#gloss { position: fixed; inset: 0; z-index: 60; background: rgba(8, 16, 12, .4); display: flex; align-items: flex-end; justify-content: center; }
+#gloss .gl-in { width: 100%; max-width: 560px; background: var(--paper-2); color: var(--ink); border-radius: 18px 18px 0 0; padding: 16px max(16px, env(safe-area-inset-right, 0px)) calc(16px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); display: flex; flex-direction: column; gap: 8px; box-shadow: 0 -6px 24px rgba(0,0,0,.25); animation: up .2s ease both; }
+#gloss h3 { font-size: 22px; }
+#gloss p { font-size: 16px; line-height: 1.5; }
+#gloss .btn { align-self: flex-start; }
+.panel.guide { gap: 8px; font-size: 15px; line-height: 1.45; max-height: 50vh; }
+.panel.guide .gtext { font-size: 15px; line-height: 1.45; }
+.panel.guide .btn { min-height: 44px; }
+.panel.guide .pts { font-size: 14px; }
+.panel.guide .chip { font-size: .92em; }
+.table.guided .center { min-height: 118px; }
+@media (max-height: 760px) {
+  .table.guided .trick { --cw: min(15vw, 58px); width: 190px; height: 128px; }
+  .table.guided .opps { padding-block: 0; }
+  .table.guided .backs { display: none; }
+  .panel.guide { max-height: 44vh; }
+  .table.guided .infobar, .table.guided .meline { display: none; }
+}
+.panel.guide > .btn, .panel.guide .btns { position: sticky; bottom: -12px; box-shadow: 0 -10px 12px var(--paper-2); }
+
 </style>
 </head>
 <body>
@@ -1570,91 +1604,99 @@ table.liste tr.sum td { font-weight: 700; border-top: 2px solid var(--ink); }
     {
       id: 'ueberblick', stage: 1, title: 'Worum geht es?', min: 3,
       pages: [
-        'Skat spielen <b>drei Personen</b> mit <b>32 Karten</b>. Jeder bekommt 10 Karten. Zwei Karten liegen verdeckt in der Mitte – das ist der <b>Skat</b>.',
-        'In jedem Spiel spielt einer allein, der <b>Alleinspieler</b>, gegen die beiden anderen. Die zwei <b>Gegenspieler</b> sind für dieses eine Spiel Partner.',
-        'Wer Alleinspieler wird, entscheidet das <b>Reizen</b>: Wer sich das wertvollste Spiel zutraut, gewinnt es. Er darf den Skat aufnehmen, zwei Karten wieder ablegen („drücken“) und bestimmt, was Trumpf ist.',
-        'Dann wird gespielt: Reihum legt jeder eine Karte, zusammen ist das ein <b>Stich</b>. Die höchste Karte gewinnt den Stich, ihr Besitzer spielt die nächste Karte aus. Nach 10 Stichen wird gezählt.',
-        'Der Alleinspieler gewinnt, wenn seine Stiche mindestens <b>61 von 120 Augen</b> enthalten. Die gedrückten Karten zählen für ihn. Bei 60:60 haben die Gegenspieler gewonnen.',
+        'Skat spielen <b>drei Personen</b> mit 32 Karten. Jeder bekommt 10 Karten. Zwei Karten bleiben verdeckt in der Mitte liegen – sie heißen <b>Skat</b>.',
+        'In jedem Spiel spielt <b>einer allein gegen die beiden anderen</b>. Wer allein spielt, heißt Alleinspieler. Die beiden anderen halten für dieses eine Spiel zusammen, sie heißen Gegenspieler.',
+        'Gespielt wird in Runden: Jeder legt reihum eine Karte in die Mitte. Diese drei Karten heißen <b>Stich</b>. Die stärkste Karte gewinnt – wer sie gelegt hat, nimmt den Stich zu sich. [[pK pA p7]] Hier gewinnt das Ass.',
+        'Jede Karte zählt Punkte. Beim Skat heißen sie <b>Augen</b>. Nach 10 Stichen zählt jede Seite die Augen in ihren Stichen zusammen.',
+        'Der Alleinspieler <b>gewinnt mit 61 Augen</b> oder mehr – also mit mehr als der Hälfte der 120 Augen. Den Gegenspielern reichen zusammen 60.',
+        'Wer Alleinspieler wird, entscheidet das Reizen vor dem Spiel. Das kommt später. Für den Anfang reicht: <b>einer gegen zwei, Stiche sammeln, 61 Augen</b>.',
       ],
       quiz: [
-        { q: 'Wie viele Karten bekommt jeder Spieler?', o: ['8', '10', '12'], a: 1, why: '3 × 10 Karten + 2 im Skat = 32 Karten.' },
-        { q: 'Wie viele Augen braucht der Alleinspieler zum Gewinnen?', o: ['60', '61', '90'], a: 1, why: 'Mit 61 hat er mehr als die Hälfte. 60:60 gewinnen die Gegenspieler.' },
-        { q: 'Wer spielt zusammen?', o: ['Jeder gegen jeden', 'Die beiden Gegenspieler gegen den Alleinspieler', 'Immer dieselben zwei als Team'], a: 1, why: 'Die Partnerschaft gilt nur für das eine Spiel. Im nächsten Spiel kann jemand anderes Alleinspieler sein.' },
+        { q: 'Wie viele Karten bekommt jeder Spieler?', o: ['8', '10', '12'], a: 1, why: '3 Spieler × 10 Karten + 2 Karten im Skat = 32 Karten.' },
+        { q: 'Wie viele Augen braucht der Alleinspieler zum Gewinnen?', o: ['60', '61', '90'], a: 1, why: 'Mit 61 hat er mehr als die Hälfte. Bei 60 zu 60 haben die Gegenspieler gewonnen.' },
+        { q: 'Wer spielt zusammen?', o: ['Jeder gegen jeden', 'Die beiden Gegenspieler gegen den Alleinspieler', 'Immer dieselben zwei als Team'], a: 1, why: 'Die Partnerschaft gilt nur für ein Spiel. Im nächsten Spiel kann ein anderer Alleinspieler sein.' },
       ],
     },
     {
       id: 'karten', stage: 1, title: 'Karten und Augen', min: 4, drill: 'augen',
       pages: [
-        '{{fr:Es gibt vier Farben. Ihre Rangfolge (wichtig für Buben und Spielwert): <b>Kreuz</b> ♣ vor <b>Pik</b> ♠ vor <b>Herz</b> ♥ vor <b>Karo</b> ♦.<br>Du spielst mit dem französischen Turnierbild: Kreuz schwarz, Pik grün, Herz rot, Karo orange. Unter „Fortschritt“ kannst du auf das deutsche Blatt umstellen.|de:Es gibt vier Farben. Ihre Rangfolge (wichtig für Unter und Spielwert): <b>Eichel</b> ♣ vor <b>Grün</b> ♠ vor <b>Rot</b> ♥ vor <b>Schellen</b> ♦.<br>Du spielst mit dem <b>deutschen Blatt</b>. Im französischen Blatt heißen die Farben Kreuz, Pik, Herz und Karo – umstellen kannst du unter „Fortschritt“.}}',
+        '{{fr:Es gibt vier Farben: <b>Kreuz</b> ♣, <b>Pik</b> ♠, <b>Herz</b> ♥ und <b>Karo</b> ♦. In dieser Reihenfolge sind sie auch „wertvoll“ – das brauchst du erst später.<br>Du spielst mit dem französischen Turnierbild. Unter „Fortschritt“ kannst du auf das deutsche Blatt umstellen.|de:Es gibt vier Farben: <b>Eichel</b> ♣, <b>Grün</b> ♠, <b>Rot</b> ♥ und <b>Schellen</b> ♦. In dieser Reihenfolge sind sie auch „wertvoll“ – das brauchst du erst später.<br>Du spielst mit dem <b>deutschen Blatt</b>. Im französischen Blatt heißen die Farben Kreuz, Pik, Herz und Karo – umstellen kannst du unter „Fortschritt“.}}',
         'Jede Farbe hat 8 Karten: Ass, Zehn, König, Dame, Bube, 9, 8 und 7. [[pA p10 pK pD pB p9 p8 p7]]{{fr:|de:Im deutschen Blatt entspricht der <b>Ober</b> der Dame und der <b>Unter</b> dem Buben. Das Ass heißt auch <b>Daus</b>.}}',
-        'Die Karten zählen <b>Augen</b>:<table class="pts"><tr><td>Ass</td><td>11</td></tr><tr><td>Zehn</td><td>10</td></tr><tr><td>König</td><td>4</td></tr><tr><td>Dame</td><td>3</td></tr><tr><td>Bube</td><td>2</td></tr><tr><td>9, 8, 7</td><td>0</td></tr></table>Pro Farbe sind das 30 Augen, im ganzen Spiel <b>120 Augen</b>.',
-        'Ass und Zehn heißen <b>volle Karten</b> – um sie dreht sich fast alles. Die Karten ohne Augen (9, 8, 7) nennt man <b>Luschen</b>.',
+        'So viele Augen zählt jede Karte:<table class="pts"><tr><td>Ass</td><td>11</td></tr><tr><td>Zehn</td><td>10</td></tr><tr><td>König</td><td>4</td></tr><tr><td>Dame</td><td>3</td></tr><tr><td>Bube</td><td>2</td></tr><tr><td>9, 8, 7</td><td>0</td></tr></table>Merkhilfe: Ass und Zehn sind fast so viel wert wie alle anderen zusammen.',
+        'Beispiel: [[hA hK h7]] Das sind 11 + 4 + 0 = <b>15 Augen</b>.<br>Pro Farbe gibt es 30 Augen, im ganzen Spiel <b>120</b>.',
+        'Zwei Wörter, die du oft hören wirst: Ass und Zehn heißen <b>volle Karten</b>. Die 7, 8 und 9 zählen nichts und heißen <b>Luschen</b>.',
       ],
       quiz: [
-        { q: 'Wie viele Augen sind das? [[hA h10 hK]]', o: ['21', '25', '24'], a: 1, why: '11 + 10 + 4 = 25.' },
+        { q: 'Wie viele Augen sind das? [[hA h10 hK]]', o: ['21', '25', '24'], a: 1, why: 'Ass 11 + Zehn 10 + König 4 = 25.' },
         { q: 'Was ist mehr wert: die Zehn oder der König?', o: ['Die Zehn', 'Der König', 'Beide gleich'], a: 0, why: 'Zehn = 10 Augen, König = 4 Augen.' },
-        { q: 'Wie viele Augen hat das ganze Spiel?', o: ['100', '120', '160'], a: 1, why: '4 Farben × 30 Augen = 120.' },
+        { q: 'Wie viele Augen sind das? [[pD p9 p7]]', o: ['3', '0', '19'], a: 0, why: 'Dame 3 + 9 und 7 zählen 0 = 3 Augen.' },
       ],
     },
     {
-      id: 'trumpf', stage: 1, title: 'Trumpf im Farbspiel', min: 5, drill: 'trumpf',
+      id: 'trumpf', stage: 1, title: 'Trumpf', min: 5, drill: 'trumpf',
       pages: [
-        'Im <b>Farbspiel</b> bestimmt der Alleinspieler eine Farbe als <b>Trumpf</b>, zum Beispiel Herz. Ein Trumpf schlägt jede Karte einer anderen Farbe.',
-        'Die vier <b>Buben</b> sind immer die höchsten Trümpfe, egal welche Farbe Trumpf ist. Ihre Reihenfolge: [[kB pB hB dB]] Kreuz-Bube, Pik-Bube, Herz-Bube, Karo-Bube.',
-        'Danach folgen die Karten der Trumpffarbe: Ass, Zehn, König, Dame, 9, 8, 7. Im Herzspiel gibt es also 4 Buben + 7 Herzkarten = <b>11 Trümpfe</b>: [[kB pB hB dB hA h10 hK hD h9 h8 h7]]',
-        'Häufiger Anfängerfehler: Ein Bube gehört <b>nicht zu seiner Farbe</b>, sondern zum Trumpf. {pB} ist im Herzspiel ein Trumpf, keine Pik-Karte.',
-        'Die anderen Farben heißen <b>Fehlfarben</b>. Dort gilt: Ass, Zehn, König, Dame, 9, 8, 7. Die Zehn steht also über dem König! Jede Fehlfarbe hat 7 Karten (ohne Bube).',
+        'Im Stich gewinnt normalerweise die höchste Karte der Farbe, die zuerst gelegt wurde. Es gibt aber Karten, die <b>stärker sind als alle anderen</b>: die Trümpfe.',
+        'Vor dem Spiel legt der Alleinspieler fest, welche Farbe <b>Trumpf</b> ist, zum Beispiel Herz. Dann schlägt sogar die kleine Herz-7 ein Kreuz-Ass: [[kA h7]]',
+        'Besonderheit beim Skat: Die vier <b>Buben</b> sind <b>immer</b> die höchsten Trümpfe – egal, welche Farbe Trumpf ist. Ihre Reihenfolge: [[kB pB hB dB]]',
+        'Alle Trümpfe im Herzspiel, vom stärksten zum schwächsten: [[kB pB hB dB hA h10 hK hD h9 h8 h7]] Das sind <b>11 Trümpfe</b>: 4 Buben und 7 Herzkarten.',
+        'Wichtig: Ein Bube gehört <b>nicht mehr zu seiner Farbe</b>. {pB} ist im Herzspiel ein Trumpf – keine Pik-Karte.',
+        'Die anderen drei Farben heißen <b>Fehlfarben</b>. Dort gilt die Reihenfolge Ass, Zehn, König, Dame, 9, 8, 7. Achtung: Die <b>Zehn ist stärker als der König</b>!',
       ],
       quiz: [
-        { q: 'Karospiel: Welche Karte ist höher?', o: ['{hB}', '{dA}'], a: 0, why: 'Jeder Bube steht über allen anderen Trümpfen, auch über dem Trumpf-Ass.' },
+        { q: 'Herzspiel: Welche Karte ist stärker?', o: ['{kA}', '{h7}'], a: 1, why: 'Herz ist Trumpf. Jeder Trumpf schlägt jede Karte einer anderen Farbe – auch ein Ass.' },
+        { q: 'Karospiel: Welche Karte ist stärker?', o: ['{hB}', '{dA}'], a: 0, why: 'Die Buben sind die höchsten Trümpfe, noch über dem Trumpf-Ass.' },
         { q: 'Wie viele Trümpfe gibt es in einem Farbspiel?', o: ['7', '10', '11'], a: 2, why: '4 Buben + 7 Karten der Trumpffarbe.' },
-        { q: 'Pikspiel: Was ist {kB}?', o: ['Eine Kreuz-Karte', 'Der höchste Trumpf', 'Ein Trumpf, aber unter dem Pik-Ass'], a: 1, why: 'Der Kreuz-Bube ist in jedem Farbspiel und im Grand der höchste Trumpf.' },
-        { q: 'Kreuzspiel, Herz wird ausgespielt: Was ist höher – {h10} oder {hK}?', o: ['{h10}', '{hK}'], a: 0, why: 'In den Fehlfarben steht die Zehn direkt unter dem Ass.' },
+        { q: 'Kreuzspiel, Herz wird ausgespielt: Was ist stärker – {h10} oder {hK}?', o: ['{h10}', '{hK}'], a: 0, why: 'In den Fehlfarben kommt die Zehn direkt nach dem Ass.' },
       ],
     },
     {
       id: 'bedienen', stage: 1, title: 'Bedienen und Stechen', min: 5, drill: 'bedienen',
       pages: [
-        'Wer ausspielt, darf jede Karte legen. Die anderen müssen <b>bedienen</b>: die ausgespielte Farbe legen, wenn sie eine haben.',
-        'Wird <b>Trumpf</b> ausgespielt, muss man Trumpf bedienen – auch ein Bube zählt als Trumpf. Wird eine Fehlfarbe ausgespielt, gehört der Bube dieser Farbe nicht dazu: Mit {pB} kann man im Herzspiel kein Pik bedienen.',
-        'Wer die Farbe nicht hat, darf <b>stechen</b> (einen Trumpf legen) oder <b>abwerfen</b> (irgendeine andere Karte). Es gibt keinen Stichzwang: Man muss weder stechen noch höher spielen.',
-        'Beispiel im Kreuzspiel: {hA} wird ausgespielt. Du hast [[hK h7 kB pA]] Du musst Herz bedienen, also {hK} oder {h7}. Der Kreuz-Bube ist Trumpf, kein Herz.',
+        'Die erste Karte eines Stichs darf man frei wählen. Man sagt: Sie wird <b>ausgespielt</b>.',
+        'Die anderen müssen dann die <b>gleiche Farbe</b> legen, wenn sie eine haben. Das heißt <b>bedienen</b>. Wird Pik ausgespielt und du hast Pik, musst du Pik legen.',
+        'Wird ein <b>Trumpf</b> ausgespielt, musst du einen Trumpf legen, wenn du einen hast. Denk daran: Auch Buben sind Trumpf.',
+        'Hast du die gefragte Farbe <b>nicht</b>, darfst du jede Karte legen:<br>• einen Trumpf – das heißt <b>stechen</b>, damit gewinnst du meistens den Stich,<br>• oder eine andere Karte – das heißt <b>abwerfen</b>.<br>Du musst nicht stechen.',
+        'Beispiel im Kreuzspiel: {hA} wird ausgespielt. Du hast [[hK h7 kB pA]] Herz ist gefragt, und du hast Herz. Also musst du {hK} oder {h7} legen. {kB} zählt nicht als Herz – er ist Trumpf.',
+        'So gehst du jedes Mal vor:<br><b>1.</b> Welche Farbe ist gefragt?<br><b>2.</b> Habe ich diese Farbe? Dann muss ich eine davon legen.<br><b>3.</b> Habe ich sie nicht? Dann darf ich jede Karte legen.',
       ],
       quiz: [
-        { q: 'Kreuzspiel, ausgespielt wird {p10}. Du hast [[pB hA k7]] Welche Karten darfst du legen?', o: ['Nur {pB}', 'Alle drei', 'Nur {k7}'], a: 1, why: '{pB} ist Trumpf, keine Pik-Karte. Du hast also kein Pik und darfst jede Karte legen.' },
-        { q: 'Grand, ausgespielt wird {kA}. Du hast [[kB k9 hA]] Was darfst du legen?', o: ['{kB} oder {k9}', 'Nur {k9}', 'Jede Karte'], a: 1, why: 'Im Grand sind die Buben Trumpf. Kreuz bedienst du nur mit {k9}.' },
-        { q: 'Du hast die ausgespielte Farbe nicht. Musst du stechen?', o: ['Ja, immer', 'Nein, du darfst auch abwerfen', 'Nur wenn Punkte im Stich liegen'], a: 1, why: 'Im Skat gibt es keinen Stichzwang.' },
+        { q: 'Herzspiel, ausgespielt wird {pA}. Du hast [[pK h7 kA]] Was darfst du legen?', o: ['Nur {pK}', 'Jede Karte', 'Nur {h7}'], a: 0, why: 'Pik ist gefragt und du hast {pK}. Also musst du Pik bedienen.' },
+        { q: 'Kreuzspiel, ausgespielt wird {p10}. Du hast [[pB hA k7]] Welche Karten darfst du legen?', o: ['Nur {pB}', 'Alle drei', 'Nur {k7}'], a: 1, why: '{pB} ist Trumpf und keine Pik-Karte. Du hast also kein Pik und darfst jede Karte legen.' },
+        { q: 'Du hast die ausgespielte Farbe nicht. Musst du stechen?', o: ['Ja, immer', 'Nein, du darfst auch abwerfen', 'Nur wenn Augen im Stich liegen'], a: 1, why: 'Beim Skat gibt es keinen Stichzwang.' },
       ],
     },
     {
       id: 'stich', stage: 1, title: 'Wer bekommt den Stich?', min: 4, drill: 'stich',
       pages: [
-        'Den Stich gewinnt der <b>höchste Trumpf</b>. Liegt kein Trumpf im Stich, gewinnt die <b>höchste Karte der ausgespielten Farbe</b>.',
-        'Eine abgeworfene Karte einer anderen Fehlfarbe kann nie gewinnen – auch kein Ass.',
-        'Herzspiel: [[pK pA h7]] Die Herz-7 gewinnt, denn sie ist Trumpf.<br>Herzspiel: [[pK p10 kA]] Die Pik-Zehn gewinnt. Das Kreuz-Ass wurde nur abgeworfen.',
-        'Wer den Stich gewinnt, spielt als Nächstes aus. Den <b>ersten Stich</b> spielt immer <b>Vorhand</b> aus, der Spieler links vom Geber.',
+        'So findest du heraus, wer den Stich bekommt:<br><b>1.</b> Liegt ein Trumpf im Stich? Dann gewinnt der <b>höchste Trumpf</b>.<br><b>2.</b> Liegt kein Trumpf im Stich? Dann gewinnt die <b>höchste Karte der ausgespielten Farbe</b>.',
+        'Eine abgeworfene Karte einer anderen Farbe gewinnt nie – auch kein Ass.',
+        'Herzspiel, Pik wurde ausgespielt: [[pK pA h7]] Die Herz-7 ist Trumpf und gewinnt.',
+        'Herzspiel, Pik wurde ausgespielt: [[pK p10 kA]] Kein Trumpf dabei. Die Pik-Zehn ist die höchste Pik-Karte und gewinnt. Das Kreuz-Ass wurde nur abgeworfen.',
+        'Wer den Stich gewinnt, spielt als Nächstes aus. Den <b>ersten Stich</b> spielt immer <b>Vorhand</b> aus – der Spieler links vom Geber.',
       ],
       quiz: [
-        { q: 'Pikspiel: [[hA hK dB]] Wer gewinnt?', o: ['{hA}', '{hK}', '{dB}'], a: 2, why: 'Der Karo-Bube ist Trumpf.' },
-        { q: 'Grand: [[d9 kA d10]] Wer gewinnt?', o: ['{d9}', '{kA}', '{d10}'], a: 2, why: 'Karo wurde ausgespielt. Das Kreuz-Ass ist abgeworfen, die Karo-Zehn ist die höchste Karo-Karte.' },
+        { q: 'Pikspiel, Herz wurde ausgespielt: [[hA hK dB]] Wer gewinnt?', o: ['{hA}', '{hK}', '{dB}'], a: 2, why: 'Der Karo-Bube ist ein Trumpf – und Trumpf gewinnt.' },
+        { q: 'Kreuzspiel, Karo wurde ausgespielt: [[d9 hA d10]] Wer gewinnt?', o: ['{d9}', '{hA}', '{d10}'], a: 2, why: 'Kein Trumpf im Stich. Das Herz-Ass ist abgeworfen, die Karo-Zehn ist die höchste Karo-Karte.' },
         { q: 'Wer spielt den ersten Stich aus?', o: ['Der Geber', 'Vorhand', 'Der Alleinspieler'], a: 1, why: 'Immer Vorhand – egal, wer Alleinspieler ist.' },
       ],
     },
+    // ---------------- Stufe 2 ----------------
     {
-      id: 'grandnull', stage: 1, title: 'Grand und Null', min: 4,
+      id: 'grandnull', stage: 2, title: 'Grand und Null', min: 4,
       pages: [
-        '<b>Grand</b>: Nur die vier Buben sind Trumpf. Alle vier Farben sind Fehlfarben mit der Reihenfolge Ass, Zehn, König, Dame, 9, 8, 7. Der Grand ist das wertvollste Spiel.',
-        '<b>Null</b>: Es gibt keine Trümpfe. Der Alleinspieler gewinnt, wenn er <b>keinen einzigen Stich</b> bekommt. Augen spielen keine Rolle.',
-        'Im Null gilt die „natürliche“ Reihenfolge: [[hA hK hD hB h10 h9 h8 h7]] Der Bube gehört wieder zu seiner Farbe und steht zwischen Dame und Zehn.',
+        'Neben dem Farbspiel gibt es zwei weitere Spielarten. Im <b>Grand</b> sind nur die vier Buben Trumpf. Alle vier Farben sind Fehlfarben: Ass, Zehn, König, Dame, 9, 8, 7. Der Grand ist das wertvollste Spiel.',
+        'Im <b>Null</b> gibt es gar keine Trümpfe. Der Alleinspieler gewinnt, wenn er <b>keinen einzigen Stich</b> bekommt. Augen spielen keine Rolle.',
+        'Im Null gilt eine andere Reihenfolge, die „natürliche“: [[hA hK hD hB h10 h9 h8 h7]] Der Bube gehört hier wieder zu seiner Farbe und steht zwischen Dame und Zehn.',
+        'Deshalb: Im Null muss man mit dem Buben seine Farbe bedienen. Wird Herz ausgespielt, ist {hB} eine ganz normale Herz-Karte.',
         'Merke: Im Null ist die <b>7 die kleinste</b> Karte jeder Farbe. Wer viele niedrige Karten hat, kann gut Null spielen.',
       ],
       quiz: [
         { q: 'Wie viele Trümpfe gibt es im Grand?', o: ['4', '11', 'keine'], a: 0, why: 'Nur die vier Buben.' },
+        { q: 'Null, Herz wird ausgespielt. Du hast [[hB k7 p9]] Was darfst du legen?', o: ['Nur {hB}', 'Jede Karte', 'Nur {k7} oder {p9}'], a: 0, why: 'Im Null gehört der Bube zu seiner Farbe. {hB} ist eine Herz-Karte, also musst du sie legen.' },
         { q: 'Null: Was ist höher – {h10} oder {hB}?', o: ['{h10}', '{hB}'], a: 1, why: 'Im Null: Ass, König, Dame, Bube, Zehn, 9, 8, 7.' },
         { q: 'Wann gewinnt der Alleinspieler ein Nullspiel?', o: ['Mit 61 Augen', 'Wenn er keinen Stich bekommt', 'Wenn er alle Stiche bekommt'], a: 1, why: 'Ein einziger Stich – und das Nullspiel ist verloren.' },
       ],
     },
-    // ---------------- Stufe 2 ----------------
     {
       id: 'spitzen', stage: 2, title: 'Spitzen: mit und ohne', min: 5, drill: 'spitzen',
       pages: [
@@ -1890,7 +1932,39 @@ table.liste tr.sum td { font-weight: 700; border-top: 2px solid var(--ink); }
       why: 'Der Alleinspieler muss Herz bedienen und kann das Ass nicht schlagen. Mit dem Ass sicherst du 15 Augen – sonst könnte er den König mit der Zehn holen.' },
   ];
 
-  G.SCONTENT = { LEVELS, LESSONS, TACTICS };
+  /* Begriffe zum Antippen. re: Wortformen, wie sie im (übersetzten) Text stehen */
+  const GLOSSARY = {
+    augen: { t: 'Augen', re: 'Augen', d: 'Die Punkte der Karten: Ass 11, Zehn 10, König 4, Dame 3, Bube 2, 9, 8 und 7 zählen 0. Zusammen gibt es 120 Augen.' },
+    stich: { t: 'Stich', re: 'Stich|Stiche|Stichen|Stichs', d: 'Die drei Karten, die reihum in die Mitte gelegt werden – von jedem Spieler eine. Die stärkste Karte gewinnt den Stich mit allen Augen darin.' },
+    ausspielen: { t: 'Ausspielen', re: 'ausspielen|ausgespielt|spielt aus|spielst aus|Ausspielen', d: 'Die erste Karte eines Stichs legen. Wer ausspielt, darf jede Karte legen. Die anderen müssen dann bedienen.' },
+    bedienen: { t: 'Bedienen', re: 'bedienen|bedient|bedienst|Bedienen', d: 'Die gefragte Farbe legen. Wer die ausgespielte Farbe (oder Trumpf, wenn Trumpf ausgespielt wurde) hat, muss eine solche Karte legen.' },
+    stechen: { t: 'Stechen', re: 'stechen|gestochen|sticht|stichst|Stechen', d: 'Einen Trumpf legen, wenn man die gefragte Farbe nicht hat. Ein Trumpf schlägt jede Karte einer anderen Farbe.' },
+    abwerfen: { t: 'Abwerfen', re: 'abwerfen|abgeworfen|Abwerfen|wirf', d: 'Eine Karte einer anderen Farbe legen, wenn man nicht bedienen kann und nicht stechen will. Diese Karte kann den Stich nicht gewinnen.' },
+    trumpf: { t: 'Trumpf', re: 'Trumpf|Trümpfe|Trümpfen|Trumpffarbe', d: 'Die stärksten Karten im Spiel. Im Farbspiel sind es die vier Buben und alle Karten der Trumpffarbe – zusammen 11. Im Grand sind nur die Buben Trumpf, im Null gibt es keine.' },
+    fehlfarbe: { t: 'Fehlfarbe', re: 'Fehlfarbe|Fehlfarben', d: 'Jede Farbe, die nicht Trumpf ist. Reihenfolge dort: Ass, Zehn, König, Dame, 9, 8, 7.' },
+    bube: { t: 'Bube', re: 'Bube|Buben|Unter(?! (?:der|dem|den|die) )', d: 'Die vier Buben sind im Farbspiel und im Grand immer die höchsten Trümpfe. Reihenfolge: Kreuz-Bube, Pik-Bube, Herz-Bube, Karo-Bube. Nur im Null gehören sie zu ihrer Farbe.' },
+    ober: { t: 'Ober', re: 'Ober', d: 'Im deutschen Blatt heißt die Dame Ober. Sie zählt 3 Augen.' },
+    alleinspieler: { t: 'Alleinspieler', re: 'Alleinspieler|Alleinspielers', d: 'Wer das Reizen gewonnen hat, spielt allein gegen die beiden anderen. Er braucht 61 Augen.' },
+    gegenspieler: { t: 'Gegenspieler', re: 'Gegenspieler|Gegenspielern', d: 'Die zwei Spieler, die gemeinsam gegen den Alleinspieler spielen. Ihnen reichen 60 Augen.' },
+    skat: { t: 'Skat', re: 'den Skat|im Skat|der Skat|Skat aufnehmen|Skatkarten', d: 'Die zwei verdeckten Karten in der Mitte. Der Alleinspieler darf sie aufnehmen und dafür zwei andere Karten weglegen. Ihre Augen zählen am Ende für ihn.' },
+    reizen: { t: 'Reizen', re: 'Reizen|reizen|Reizwert|Reizwerte|gereizt|reizt', d: 'Vor dem Spiel bieten die Spieler Zahlen: 18, 20, 22, 23, 24 … Jede Zahl ist ein möglicher Spielwert. Wer am höchsten bietet, spielt allein.' },
+    plaetze: { t: 'Vorhand, Mittelhand, Hinterhand', re: 'Vorhand|Mittelhand|Hinterhand', d: 'Die Plätze in einem Spiel: Vorhand sitzt links vom Geber und spielt den ersten Stich aus. Dann kommt Mittelhand, dann Hinterhand – das ist der Geber.' },
+    spitzen: { t: 'Spitzen', re: 'Spitzen', d: 'Wie viele der höchsten Trümpfe du ohne Lücke hast („mit 2“) oder wie viele dir von oben fehlen („ohne 2“). Sie bestimmen den Spielwert.' },
+    spielwert: { t: 'Spielwert', re: 'Spielwert|Spielwerte|Grundwert|Grundwerte', d: 'Was ein Spiel wert ist: (Spitzen + 1 + Extras) × Grundwert. Grundwerte: Karo 9, Herz 10, Pik 11, Kreuz 12, Grand 24.' },
+    druecken: { t: 'Drücken', re: 'drücken|drückt|gedrückt|drückst|Drücken', d: 'Nach dem Aufnehmen des Skats legt der Alleinspieler zwei Karten verdeckt weg. Ihre Augen zählen am Ende für ihn.' },
+    hand: { t: 'Hand', re: 'Handspiel|Hand spielen|Hand gespielt', d: 'Spielen, ohne den Skat aufzunehmen. Dafür ist das Spiel eine Stufe mehr wert.' },
+    schneider: { t: 'Schneider', re: 'Schneider', d: 'Eine Seite hat nur 30 Augen oder weniger. Das macht das Spiel eine Stufe wertvoller.' },
+    schwarz: { t: 'Schwarz', re: 'Schwarz', d: 'Eine Seite bekommt keinen einzigen Stich. Das macht das Spiel noch eine Stufe wertvoller.' },
+    schmieren: { t: 'Schmieren', re: 'schmieren|Schmieren|schmierst|Schmier', d: 'Dem Partner eine Karte mit vielen Augen (Ass oder Zehn) in den Stich geben, wenn er ihn sicher gewinnt.' },
+    lusche: { t: 'Lusche', re: 'Lusche|Luschen', d: 'Eine Karte ohne Augen: 7, 8 oder 9.' },
+    voll: { t: 'Volle Karte', re: 'volle Karte|volle Karten|vollen Karten', d: 'Ass oder Zehn – die Karten mit den meisten Augen.' },
+    farbspiel: { t: 'Farbspiel', re: 'Farbspiel|Farbspiele|Farbspielen', d: 'Ein Spiel mit einer Trumpffarbe (Kreuz, Pik, Herz oder Karo). Dazu sind die vier Buben Trumpf.' },
+    grand: { t: 'Grand', re: 'Grand', d: 'Ein Spiel, in dem nur die vier Buben Trumpf sind. Es ist das wertvollste Spiel.' },
+    null: { t: 'Null', re: 'Null|Nullspiel|Nullspiele', d: 'Ein Spiel ohne Trumpf. Der Alleinspieler gewinnt nur, wenn er keinen einzigen Stich bekommt.' },
+    ueberreizt: { t: 'Überreizt', re: 'überreizt|Überreizt|überreizen', d: 'Das Spiel ist am Ende weniger wert als der Reizwert. Dann ist es verloren – auch mit 61 Augen.' },
+  };
+
+  G.SCONTENT = { LEVELS, LESSONS, TACTICS, GLOSSARY };
 })(typeof globalThis !== 'undefined' ? globalThis : window);
 
 /* Übungen: erzeugen beliebig viele Aufgaben mit Lösung und Erklärung */
@@ -1929,102 +2003,147 @@ table.liste tr.sum td { font-weight: 700; border-top: 2px solid var(--ink); }
   // ---------------- einzelne Übungen ----------------
   const DRILLS = {};
 
+  // ctx: { i: Nummer der Aufgabe in der Runde (0–9), adv: Grand/Null schon gelernt }
+  const ctxOf = (ctx) => Object.assign({ i: 9, adv: true }, ctx || {});
+  const need = (e) => (e === 4 ? 'Trumpf' : E.SUIT_NAMES[e]);
+  const steps = (arr) => '<ol class="think">' + arr.filter(Boolean).map((x) => '<li>' + x + '</li>').join('') + '</ol>';
+  const toks = (cs) => cs.map(tok).join(' ');
+  const TRUMP_ORDER = 'Kreuz-Bube, Pik-Bube, Herz-Bube, Karo-Bube, dann Ass, Zehn, König, Dame, 9, 8, 7 der Trumpffarbe';
+  const SUIT_ORDER = 'Ass, Zehn, König, Dame, 9, 8, 7';
+  const NULL_ORDER = 'Ass, König, Dame, Bube, Zehn, 9, 8, 7';
+
   DRILLS.augen = {
     title: 'Augen zählen', stage: 1, desc: 'Wie viele Augen liegen auf dem Tisch?',
-    gen() {
-      const n = 2 + ri(4);
+    how: 'Zähle die Augen jeder Karte zusammen: Ass 11 · Zehn 10 · König 4 · Dame 3 · Bube 2 · 9, 8, 7 zählen 0.',
+    gen(ctx) {
+      const c = ctxOf(ctx);
+      const n = c.i < 4 ? 2 + ri(2) : 2 + ri(4);
       const cs = deck().slice(0, n);
       const s = E.sumPts(cs);
-      const o = numOptions(s, [s - 1 > 0 ? s + 6 : s + 6]);
-      return { kind: 'choice', text: 'Wie viele Augen sind das?' + row(cs), ...o, explain: cs.map((c) => cardName(c) + ' ' + pts(c)).join(' + ') + ' = <b>' + s + '</b>' };
+      const o = numOptions(s, [s + 6]);
+      return { kind: 'choice', text: 'Wie viele Augen sind das?' + row(cs), ...o, explain: cs.map((x) => tok(x) + ' ' + pts(x)).join(' + ') + ' = <b>' + s + ' Augen</b>' };
     },
   };
 
   DRILLS.trumpf = {
-    title: 'Trumpf erkennen', stage: 1, desc: 'Ist die Karte Trumpf? Welche ist höher?',
-    gen() {
-      const gt = R() < 0.75 ? ri(4) : R() < 0.6 ? GT_GRAND : GT_NULL;
-      if (R() < 0.5) {
-        let c;
-        const x = R();
-        if (x < 0.35) c = E.card(ri(4), 7); // Bube
-        else if (x < 0.6 && gt < 4) c = E.card(gt, ri(7));
-        else c = ri(32);
-        const t = isTrump(c, gt);
-        return {
-          kind: 'choice', text: '<span class="game">' + gname(gt) + '</span> Ist ' + tok(c) + ' Trumpf?', options: ['Ja, Trumpf', 'Nein'], answer: t ? 0 : 1,
-          explain: (t ? cardName(c) + ' ist Trumpf. ' : cardName(c) + ' ist kein Trumpf. ') + trumpOrderText(gt),
-        };
+    title: 'Trumpf erkennen', stage: 1, desc: 'Ist die Karte Trumpf? Welche ist stärker?',
+    how: 'Trumpf sind im Farbspiel die vier Buben und alle Karten der Trumpffarbe. Die Buben sind die stärksten Trümpfe.',
+    gen(ctx) {
+      const c = ctxOf(ctx);
+      const gt = c.adv && c.i >= 6 && R() < 0.6 ? (R() < 0.5 ? GT_GRAND : GT_NULL) : ri(4);
+      const trumpDef = gt === GT_NULL ? 'Im Null gibt es keine Trümpfe.' : gt === GT_GRAND ? 'Im Grand sind nur die vier Buben Trumpf.' : 'Trumpf sind die vier Buben und alle ' + E.SUIT_NAMES[gt] + '-Karten.';
+      if (c.i < 5 || R() < 0.5) {
+        let x;
+        const r = R();
+        if (r < 0.4) x = E.card(ri(4), 7);
+        else if (r < 0.7 && gt < 4) x = E.card(gt, ri(7));
+        else x = ri(32);
+        const t = isTrump(x, gt);
+        let why;
+        if (gt === GT_NULL) why = tok(x) + ' ist kein Trumpf.';
+        else if (rankOf(x) === 7) why = tok(x) + ' ist ein Bube – Buben sind ' + (gt === GT_GRAND ? 'im Grand die einzigen Trümpfe.' : 'immer Trumpf, egal welche Farbe Trumpf ist.');
+        else if (gt < 4 && suitOf(x) === gt) why = tok(x) + ' ist eine ' + E.SUIT_NAMES[gt] + '-Karte – also Trumpf.';
+        else why = tok(x) + ' ist ' + (gt < 4 ? 'weder Bube noch ' + E.SUIT_NAMES[gt] : 'kein Bube') + ' – also kein Trumpf. Seine Farbe ist eine Fehlfarbe.';
+        return { kind: 'choice', text: '<span class="game">' + gname(gt) + '</span> Ist ' + tok(x) + ' Trumpf?', options: ['Ja, Trumpf', 'Nein'], answer: t ? 0 : 1, explain: steps([trumpDef, why]) };
       }
-      // welche ist höher – gleiche effektive Farbe
       let a, b;
       for (;;) {
         a = ri(32); b = ri(32);
-        if (a === b) continue;
-        if (effSuit(a, gt) !== effSuit(b, gt)) continue;
-        if (gt !== GT_NULL && R() < 0.5 && !isTrump(a, gt)) continue;
+        if (a === b || effSuit(a, gt) !== effSuit(b, gt)) continue;
+        if (gt < 4 && R() < 0.5 && !isTrump(a, gt)) continue;
         break;
       }
-      const higher = E.strength(a, gt) > E.strength(b, gt) ? 0 : 1;
-      const isT = isTrump(a, gt);
+      const hi = E.strength(a, gt) > E.strength(b, gt) ? 0 : 1;
+      const both = isTrump(a, gt);
+      const order = both ? 'Reihenfolge der Trümpfe: ' + (gt === GT_GRAND ? 'Kreuz-Bube, Pik-Bube, Herz-Bube, Karo-Bube' : TRUMP_ORDER) + '.' : 'Beide sind ' + E.SUIT_NAMES[suitOf(a)] + '-Karten. Reihenfolge: ' + (gt === GT_NULL ? NULL_ORDER : SUIT_ORDER) + '.';
       return {
-        kind: 'choice', text: '<span class="game">' + gname(gt) + '</span> Welche Karte ist höher?', options: [tok(a), tok(b)], answer: higher,
-        explain: (isT ? 'Beide sind Trumpf. ' : 'Beide sind ' + E.SUIT_NAMES[suitOf(a)] + '. ') + trumpOrderText(gt) + (gt < 5 && !isT ? ' In Fehlfarben: Ass, Zehn, König, Dame, 9, 8, 7.' : ''),
+        kind: 'choice', text: '<span class="game">' + gname(gt) + '</span> Welche Karte ist stärker?', options: [tok(a), tok(b)], answer: hi,
+        explain: steps([both ? 'Beide sind Trumpf. ' + order : order, tok(hi ? b : a) + ' ist stärker.']),
       };
     },
   };
 
   DRILLS.bedienen = {
-    title: 'Erlaubte Karten', stage: 1, desc: 'Tippe alle Karten an, die du legen darfst.',
-    gen() {
-      const gt = randGame(0.15);
-      const d = deck();
-      const lead = d[0];
-      let hand = d.slice(1, 7);
-      if (R() < 0.6 && gt !== GT_NULL) {
+    title: 'Erlaubte Karten', stage: 1, desc: 'Welche Karten darfst du legen?',
+    how: 'Tippe <b>alle</b> Karten an, die du legen darfst (oft mehrere), dann auf „Prüfen“.<br>1. Welche Farbe ist gefragt? 2. Hast du sie? Dann musst du eine davon legen. 3. Sonst darfst du jede Karte legen.',
+    gen(ctx) {
+      const c = ctxOf(ctx);
+      let gt, tricky;
+      if (c.i < 3) { gt = ri(4); tricky = false; } else if (c.i < 7 || !c.adv) { gt = ri(4); tricky = true; } else { gt = R() < 0.5 ? GT_GRAND : GT_NULL; tricky = true; }
+      let lead, hand;
+      for (;;) {
+        const d = deck();
+        lead = d[0];
+        if (!tricky && rankOf(lead) === 7) continue;
+        const le = effSuit(lead, gt);
+        hand = [];
+        for (const x of d.slice(1)) {
+          if (hand.length >= 6) break;
+          if (!tricky && rankOf(x) === 7 && gt !== GT_NULL) continue;
+          hand.push(x);
+        }
         const jack = E.card(suitOf(lead), 7);
-        if (jack !== lead && !hand.includes(jack)) hand[0] = jack;
+        if (tricky && jack !== lead && !hand.includes(jack) && R() < 0.6) hand[0] = jack;
+        const follows = hand.some((x) => effSuit(x, gt) === le);
+        if (!follows && R() < 0.5) continue; // meist muss man bedienen
+        break;
       }
       hand = E.sortHand(hand, gt);
       const legal = E.legalCards(hand, [lead], gt);
       const le = effSuit(lead, gt);
-      const suitTxt = le === 4 ? 'Trumpf' : E.SUIT_NAMES[le];
-      const follow = hand.some((c) => effSuit(c, gt) === le);
-      let ex = 'Ausgespielt ist ' + suitTxt + '. ';
-      ex += follow ? 'Du hast ' + suitTxt + ' und musst bedienen: ' + legal.map(tok).join(' ') + '.' : 'Du hast kein ' + suitTxt + ' und darfst jede Karte legen.';
-      if (gt !== GT_NULL && le !== 4 && hand.includes(E.card(le, 7))) ex += ' ' + tok(E.card(le, 7)) + ' ist Trumpf und zählt nicht zu ' + suitTxt + '.';
-      if (gt !== GT_NULL && le === 4 && hand.some((c) => rankOf(c) === 7)) ex += ' Buben sind Trumpf und müssen Trumpf bedienen.';
-      return { kind: 'pick', multi: true, gt, text: '<span class="game">' + gname(gt) + '</span> Ausgespielt wird ' + tok(lead) + '. Welche Karten darfst du legen?', hand, answer: legal, explain: ex };
+      const follow = hand.filter((x) => effSuit(x, gt) === le);
+      const s = [];
+      let s1 = 'Ausgespielt ist ' + tok(lead) + ' – gefragt ist <b>' + need(le) + '</b>.';
+      if (gt === GT_NULL) s1 += ' Im Null gibt es keinen Trumpf.';
+      else if (rankOf(lead) === 7) s1 += ' Buben sind Trumpf.';
+      s.push(s1);
+      s.push(follow.length ? 'Du hast ' + need(le) + ': ' + toks(follow) + '. Also musst du eine davon legen.' : 'Du hast kein ' + need(le) + '. Also darfst du jede Karte legen.');
+      const myJack = E.card(le < 4 ? le : 0, 7);
+      if (le < 4 && hand.includes(myJack)) s.push(gt === GT_NULL ? tok(myJack) + ' gehört im Null zu ' + need(le) + ' – dort ist der Bube kein Trumpf.' : tok(myJack) + ' zählt nicht als ' + need(le) + ' – Buben sind Trumpf.');
+      if (le === 4 && hand.some((x) => rankOf(x) === 7)) s.push('Auch ' + toks(hand.filter((x) => rankOf(x) === 7)) + ' ist Trumpf.');
+      return { kind: 'pick', multi: true, gt, text: '<span class="game">' + gname(gt) + '</span> Ausgespielt wird ' + tok(lead) + '. Welche deiner Karten darfst du legen?', hand, answer: legal, explain: steps(s) };
     },
   };
 
   DRILLS.stich = {
     title: 'Stichsieger', stage: 1, desc: 'Welche Karte gewinnt den Stich?',
-    gen() {
-      const gt = randGame(0.12);
-      const d = deck();
-      const lead = d[0];
-      const cs = [lead];
-      for (const c of d.slice(1)) {
-        if (cs.length === 3) break;
-        if (R() < 0.6 && effSuit(c, gt) !== effSuit(lead, gt) && !(isTrump(c, gt) && R() < 0.5)) continue;
-        cs.push(c);
+    how: '1. Liegt ein Trumpf im Stich? Dann gewinnt der höchste Trumpf. 2. Sonst gewinnt die höchste Karte der Farbe, die zuerst gelegt wurde. Tippe die Gewinner-Karte an.',
+    gen(ctx) {
+      const c = ctxOf(ctx);
+      const gt = c.adv && c.i >= 7 && R() < 0.6 ? (R() < 0.5 ? GT_GRAND : GT_NULL) : ri(4);
+      const allowTrump = c.i >= 3;
+      let cs;
+      for (;;) {
+        const d = deck();
+        const lead = d[0];
+        if (!allowTrump && isTrump(lead, gt)) continue;
+        cs = [lead];
+        for (const x of d.slice(1)) {
+          if (cs.length === 3) break;
+          if (!allowTrump && isTrump(x, gt)) continue;
+          if (R() < 0.6 && effSuit(x, gt) !== effSuit(lead, gt) && !(isTrump(x, gt) && R() < 0.5)) continue;
+          cs.push(x);
+        }
+        break;
       }
       const w = E.trickWinnerIndex(cs, gt);
-      const wc = cs[w];
-      let ex = cardName(wc) + ' gewinnt. ';
-      if (isTrump(wc, gt) && !isTrump(lead, gt)) ex += 'Sie ist Trumpf und sticht.';
-      else if (w === 0) ex += 'Es wurde ' + (isTrump(lead, gt) ? 'Trumpf' : E.SUIT_NAMES[suitOf(lead)]) + ' ausgespielt und keine höhere Karte dieser Farbe ' + (gt !== GT_NULL ? 'oder Trumpf ' : '') + 'gelegt.';
-      else ex += 'Sie ist die höchste Karte der ausgespielten Farbe.';
-      const off = cs.filter((c) => effSuit(c, gt) !== effSuit(lead, gt) && !isTrump(c, gt));
-      if (off.length) ex += ' ' + off.map(tok).join(' ') + ' ist abgeworfen und zählt nicht.';
-      return { kind: 'trick', gt, text: '<span class="game">' + gname(gt) + '</span> Wer gewinnt den Stich? Die erste Karte wurde ausgespielt.', cards: cs, answer: w, explain: ex };
+      const lead = cs[0], le = effSuit(lead, gt), wc = cs[w];
+      const trumps = cs.filter((x) => isTrump(x, gt));
+      const off = cs.filter((x) => effSuit(x, gt) !== le && !isTrump(x, gt));
+      const s = ['Ausgespielt wurde ' + tok(lead) + ' – gefragt ist <b>' + need(le) + '</b>.'];
+      if (gt === GT_NULL) s.push('Im Null gibt es keinen Trumpf.');
+      else if (le === 4) s.push('Es wurde Trumpf gespielt. Reihenfolge: ' + (gt === GT_GRAND ? 'Kreuz-Bube, Pik-Bube, Herz-Bube, Karo-Bube' : TRUMP_ORDER) + '.');
+      else if (trumps.length) s.push('Im Stich liegt Trumpf: ' + toks(trumps) + '. Trumpf schlägt jede andere Farbe.');
+      else s.push('Im Stich liegt kein Trumpf.');
+      if (off.length) s.push(toks(off) + ' wurde abgeworfen und kann nicht gewinnen.');
+      s.push('→ ' + tok(wc) + ' gewinnt: ' + (isTrump(wc, gt) ? 'der höchste Trumpf im Stich.' : 'die höchste ' + need(le) + '-Karte (' + (gt === GT_NULL ? NULL_ORDER : SUIT_ORDER) + ').'));
+      return { kind: 'trick', gt, text: '<span class="game">' + gname(gt) + '</span> Wer gewinnt den Stich? Die erste Karte wurde ausgespielt.', cards: cs, answer: w, explain: steps(s) };
     },
   };
 
   function spitzenLabel(sp) { return (sp.mit ? 'mit ' : 'ohne ') + sp.n; }
   DRILLS.spitzen = {
-    title: 'Spitzen zählen', stage: 2, desc: 'Mit oder ohne wie viele?',
+    title: 'Spitzen zählen', stage: 2, desc: 'Mit oder ohne wie viele?', how: 'Beginne beim Kreuz-Buben. Hast du ihn, zähle die Trümpfe von oben ohne Lücke („mit“). Fehlt er, zähle, wie viele Trümpfe von oben fehlen („ohne“).',
     gen() {
       const gt = R() < 0.75 ? ri(4) : GT_GRAND;
       let hand;
@@ -2049,7 +2168,7 @@ table.liste tr.sum td { font-weight: 700; border-top: 2px solid var(--ink); }
   };
 
   DRILLS.spielwert = {
-    title: 'Spielwert berechnen', stage: 2, desc: 'Stufen × Grundwert',
+    title: 'Spielwert berechnen', stage: 2, desc: 'Stufen × Grundwert', how: 'Stufen = Spitzen + 1 + Extras (Hand, Schneider …). Spielwert = Stufen × Grundwert. Grundwerte: Karo 9, Herz 10, Pik 11, Kreuz 12, Grand 24.',
     gen() {
       const gt = R() < 0.1 ? GT_NULL : R() < 0.75 ? ri(4) : GT_GRAND;
       if (gt === GT_NULL) {
@@ -2080,7 +2199,7 @@ table.liste tr.sum td { font-weight: 700; border-top: 2px solid var(--ink); }
   };
 
   DRILLS.reizwerte = {
-    title: 'Reizwerte', stage: 2, desc: 'Die Reizreihe sicher beherrschen',
+    title: 'Reizwerte', stage: 2, desc: 'Die Reizreihe sicher beherrschen', how: 'Reizwerte sind mögliche Spielwerte: 18, 20, 22, 23, 24, 27, 30, 33, 35, 36, 40, 44 …',
     gen() {
       const t = R();
       if (t < 0.4) {
@@ -2116,7 +2235,7 @@ table.liste tr.sum td { font-weight: 700; border-top: 2px solid var(--ink); }
 
   function posName(p) { return ['Vorhand', 'Mittelhand', 'Hinterhand'][p]; }
   DRILLS.reizen = {
-    title: 'Blatt bewerten', stage: 3, desc: 'Wie weit reizt du mit diesem Blatt?',
+    title: 'Blatt bewerten', stage: 3, desc: 'Wie weit reizt du mit diesem Blatt?', how: 'Überlege, welches Spiel du gewinnen kannst, und reize höchstens bis zu seinem Wert.',
     gen() {
       let hand, pos, bl;
       for (let k = 0; k < 200; k++) {
@@ -2156,21 +2275,23 @@ table.liste tr.sum td { font-weight: 700; border-top: 2px solid var(--ink); }
     const why = [];
     const p = E.sumPts(d);
     if (gt !== GT_NULL) {
-      if (p) why.push(p + ' Augen sicher im Skat');
+      if (p) why.push(p + ' Augen sind dir sicher');
       const suits = new Set(d.map(suitOf));
       for (const s of suits) {
         if (gt < 4 && s === gt) continue;
         if (d.some((c) => rankOf(c) === 7)) continue;
-        if (!rest.some((c) => suitOf(c) === s && !isTrump(c, gt))) why.push(E.SUIT_NAMES[s] + ' ist danach blank – dort kannst du stechen');
+        if (!rest.some((c) => suitOf(c) === s && !isTrump(c, gt))) why.push('danach hast du kein ' + E.SUIT_NAMES[s] + ' mehr – wird ' + E.SUIT_NAMES[s] + ' gespielt, kannst du stechen');
       }
       for (const c of d) if (rankOf(c) === 5 && !cards12.includes(E.card(suitOf(c), 6))) why.push(cardName(c) + ' hatte kein Ass als Schutz');
     } else {
       why.push('Die hohen Karten aus Farben mit Lücken sind weg');
     }
-    return why.length ? why.join('; ') + '.' : 'Diese Kombination ergibt die beste Gewinnchance.';
+    if (!why.length) return 'Diese Kombination ergibt die beste Gewinnchance.';
+    const t = why.join('; ');
+    return t[0].toUpperCase() + t.slice(1) + '.';
   }
   DRILLS.druecken = {
-    title: 'Drücken', stage: 3, desc: 'Welche zwei Karten legst du in den Skat?',
+    title: 'Drücken', stage: 3, desc: 'Welche zwei Karten legst du in den Skat?', how: 'Tippe zwei Karten an. Gut zum Drücken: volle Karten, die sonst verloren gingen, oder die letzten Karten einer Farbe. Keine Trümpfe.',
     gen() {
       let cards12, ch;
       for (let k = 0; k < 100; k++) {
@@ -2220,7 +2341,7 @@ table.liste tr.sum td { font-weight: 700; border-top: 2px solid var(--ink); }
   const whoName = (st, p) => (p === st.declarer ? 'Alleinspieler' : 'Partner');
 
   DRILLS.schmieren = {
-    title: 'Schmieren & Abwerfen', stage: 3, desc: 'Du bist Gegenspieler und spielst als Letzter.',
+    title: 'Schmieren & Abwerfen', stage: 3, desc: 'Du bist Gegenspieler und spielst als Letzter.', how: 'Wer liegt vorn? Dein Partner: gib viele Augen (schmieren). Der Alleinspieler: schlag ihn, wenn du kannst – sonst gib wenig.',
     gen() {
       const r = findSituation((st) => {
         if (st.declarer === 0 || st.trick.length !== 2) return null;
@@ -2259,7 +2380,7 @@ table.liste tr.sum td { font-weight: 700; border-top: 2px solid var(--ink); }
   };
 
   DRILLS.mitzaehlen = {
-    title: 'Mitzählen', stage: 4, desc: 'Merke dir die Augen Stich für Stich.',
+    title: 'Mitzählen', stage: 4, desc: 'Merke dir die Augen Stich für Stich.', how: 'Zähle nach jedem Stich die Augen und addiere nur die Stiche des Alleinspielers.',
     gen() {
       let st;
       for (;;) {
@@ -2286,7 +2407,7 @@ table.liste tr.sum td { font-weight: 700; border-top: 2px solid var(--ink); }
   };
 
   DRILLS.truempfe = {
-    title: 'Trümpfe zählen', stage: 4, desc: 'Wie viele Trümpfe sind noch draußen?',
+    title: 'Trümpfe zählen', stage: 4, desc: 'Wie viele Trümpfe sind noch draußen?', how: '11 Trümpfe im Farbspiel (4 im Grand) – minus deine – minus die gefallenen.',
     gen() {
       let st, k;
       for (;;) {
@@ -2326,13 +2447,14 @@ table.liste tr.sum td { font-weight: 700; border-top: 2px solid var(--ink); }
     const legal = E.legalCards(hand, trick.map((x) => x.c), gt);
     return {
       kind: 'pick', multi: false, gt, hand, legal, trick, title: t.title,
+      how: 'Wer liegt im Stich vorn? Kommt noch jemand nach dir? Was bringt deiner Seite die meisten Augen?',
       text: '<span class="game">' + gname(gt) + '</span> ' + t.role + '. Welche Karte spielst du?',
       answer: t.ok.map(parse), explain: t.why,
     };
   }
 
   const ORDER = ['augen', 'trumpf', 'bedienen', 'stich', 'spitzen', 'spielwert', 'reizwerte', 'reizen', 'druecken', 'schmieren', 'mitzaehlen', 'truempfe'];
-  G.SDRILLS = { DRILLS, ORDER, tacticQuestion, tok, row, parse };
+  G.SDRILLS = { DRILLS, ORDER, tacticQuestion, tok, row, parse, discardReason };
 })(typeof globalThis !== 'undefined' ? globalThis : window);
 
 /* Oberfläche: Lernpfad, Lektionen, Übungen, Übungsspiel, Fortschritt */
@@ -2345,11 +2467,11 @@ table.liste tr.sum td { font-weight: 700; border-top: 2px solid var(--ink); }
   const rand = (n) => Math.floor(Math.random() * n);
 
   // ================= Speicher =================
-  const LS_P = 'skat.progress.v1', LS_G = 'skat.game.v1';
+  const LS_P = 'skat.progress.v1', LS_G = 'skat.game.v1', LS_GG = 'skat.guide.v1';
   const lsGet = (k) => { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : null; } catch (e) { return null; } };
   const lsSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* kein Speicher */ } };
   const lsDel = (k) => { try { localStorage.removeItem(k); } catch (e) { /* */ } };
-  const defaults = () => ({ v: 1, updatedAt: 0, lessons: {}, drills: {}, tactics: {}, games: [], list: [], countChecks: { ok: 0, total: 0 }, settings: { help: 'lern', tempo: 'normal', deck: 'de' }, dealer: null });
+  const defaults = () => ({ v: 1, updatedAt: 0, lessons: {}, drills: {}, tactics: {}, games: [], list: [], guides: {}, countChecks: { ok: 0, total: 0 }, settings: { help: 'lern', tempo: 'normal', deck: 'de' }, dealer: null });
   let P = normalize(lsGet(LS_P));
   function normalize(x) {
     const d = defaults();
@@ -2357,6 +2479,7 @@ table.liste tr.sum td { font-weight: 700; border-top: 2px solid var(--ink); }
     const o = Object.assign(d, x);
     o.settings = Object.assign(defaults().settings, x.settings || {});
     o.countChecks = Object.assign({ ok: 0, total: 0 }, x.countChecks || {});
+    o.guides = Object.assign({}, x.guides || {});
     return o;
   }
   function save() {
@@ -2450,16 +2573,43 @@ table.liste tr.sum td { font-weight: 700; border-top: 2px solid var(--ink); }
   }
   const backHTML = () => '<div class="card back" aria-hidden="true"></div>';
   const chip = (c) => '<span class="chip s' + E.suitOf(c) + '" title="' + E.cardName(c) + '">' + suitMark(E.suitOf(c)) + RS[E.rankOf(c)] + '</span>';
-  function rich(t) {
+  // Fachbegriffe antippbar machen
+  const GL = C.GLOSSARY;
+  const GL_KEYS = Object.keys(GL);
+  const WCH = 'A-Za-zÄÖÜäöüß';
+  const TERM_RE = new RegExp('(^|[^' + WCH + '])(' + GL_KEYS.map((k) => GL[k].re).join('|') + ')(?![' + WCH + '])', 'g');
+  const GL_MATCH = GL_KEYS.map((k) => [new RegExp('^(?:' + GL[k].re + ')$'), k]);
+  function linkTerms(html) {
+    const used = new Set();
+    return html.split(/(<[^>]+>)/).map((seg) => {
+      if (seg[0] === '<') return seg;
+      return seg.replace(TERM_RE, (m, pre, w) => {
+        const hit = GL_MATCH.find(([re]) => re.test(w));
+        if (!hit || used.has(hit[1])) return m;
+        used.add(hit[1]);
+        return pre + '<span class="term" data-term="' + hit[1] + '" role="button" tabindex="0">' + w + '</span>';
+      });
+    }).join('');
+  }
+  function showTerm(k) {
+    const g = GL[k];
+    if (!g) return;
+    let el = $('#gloss');
+    if (!el) { el = document.createElement('div'); el.id = 'gloss'; document.body.appendChild(el); el.onclick = (ev) => { if (ev.target === el || ev.target.closest('[data-close]')) el.hidden = true; }; }
+    el.innerHTML = '<div class="gl-in" role="dialog" aria-modal="true"><div class="eyebrow">Begriff</div><h3>' + esc(T(g.t)) + '</h3><p>' + rich(g.d, { terms: false }) + '</p><button class="btn small" data-close="1">Verstanden</button></div>';
+    el.hidden = false;
+  }
+  function rich(t, o) {
     let h = T(t)
       .replace(/\[\[([^\]]+)\]\]/g, (_, s) => '<span class="crow">' + s.trim().split(/\s+/).map((x) => cardHTML(D.parse(x))).join('') + '</span>')
       .replace(/\{([dhpk])(10|[789DKAB])\}/g, (_, su, rk) => chip(D.parse(su + rk)));
     if (isDe()) h = h.replace(/[♦♥♠♣]/g, (m) => suitMark('♦♥♠♣'.indexOf(m)));
+    if (!o || o.terms !== false) h = linkTerms(h);
     return h;
   }
   function toast(msg, ms) {
     const el = $('#toast');
-    el.innerHTML = rich(msg);
+    el.innerHTML = rich(msg, { terms: false });
     el.hidden = false;
     clearTimeout(toast.t);
     toast.t = setTimeout(() => { el.hidden = true; }, ms || 2600);
@@ -2497,6 +2647,13 @@ table.liste tr.sum td { font-weight: 700; border-top: 2px solid var(--ink); }
     const n = ts.filter((t) => P.tactics[t.id]).length;
     return { t: 'Taktik-Aufgaben gelöst', ok: n >= need, pv: n + '/' + need, href: '#taktik', label: 'Taktik-Aufgaben' };
   }
+  const GUIDES = [
+    { n: 1, stage: 1, t: 'Dein erstes Spiel', d: 'Karten, Stiche, Trumpf – jeder Zug wird erklärt' },
+    { n: 2, stage: 1, t: 'Zu zweit gegen einen', d: 'Als Partnerin von Lena: gemeinsam gegen Tom' },
+    { n: 3, stage: 2, t: 'Reizen und Skat', d: 'Ein ganzes Spiel, vom Reizen bis zur Abrechnung' },
+  ];
+  const guideDone = (n) => !!(P.guides[n] && P.guides[n].done);
+  const reqGuide = (n) => { const g = GUIDES[n - 1]; return { t: 'Geführtes Spiel „' + g.t + '“', ok: guideDone(n), pv: guideDone(n) ? '✓' : '–', href: '#gefuehrt-' + n, label: 'Geführtes Spiel „' + g.t + '“' }; };
   const reqGames = (n) => ({ t: n + ' Übungsspiele gespielt', ok: P.games.length >= n, pv: Math.min(P.games.length, n) + '/' + n, href: '#spielen', label: 'Übungsspiel' });
   function reqProfi(n) {
     const k = P.games.filter((g) => g.mode === 'profi').length;
@@ -2515,8 +2672,8 @@ table.liste tr.sum td { font-weight: 700; border-top: 2px solid var(--ink); }
     return { t: 'Höchstens 0,5 Patzer pro Spiel (letzte 10 Profi-Spiele)', ok: g.length >= 10 && avg <= 0.5, pv: g.length ? avg.toFixed(1).replace('.', ',') + ' (' + g.length + ')' : '–', href: '#spielen', label: 'Spiel im Profi-Modus', profi: true };
   }
   const REQ = {
-    2: () => [reqLessons(1), reqDrill('augen'), reqDrill('trumpf'), reqDrill('bedienen'), reqDrill('stich')],
-    3: () => [reqLessons(2), reqDrill('spitzen'), reqDrill('spielwert'), reqDrill('reizwerte'), reqGames(3)],
+    2: () => [reqGuide(1), reqGuide(2), reqLessons(1), reqDrill('augen'), reqDrill('trumpf'), reqDrill('bedienen'), reqDrill('stich')],
+    3: () => [reqGuide(3), reqLessons(2), reqDrill('spitzen'), reqDrill('spielwert'), reqDrill('reizwerte'), reqGames(3)],
     4: () => [reqLessons(3), reqDrill('reizen'), reqDrill('druecken'), reqDrill('schmieren'), reqTactics(3, 9), reqGames(10)],
     5: () => [reqLessons(4), reqDrill('mitzaehlen'), reqDrill('truempfe'), reqTactics(4, 13), reqProfi(15), reqCount(5), reqDecl(), reqCoach()],
   };
@@ -2551,10 +2708,11 @@ table.liste tr.sum td { font-weight: 700; border-top: 2px solid var(--ink); }
     clearTimeout(gameTimer);
     closeSheet();
     view = name;
-    const tabOf = { lernen: 'lernen', lektion: 'lernen', ueben: 'ueben', uebung: 'ueben', taktik: 'ueben', spielen: 'spielen', liste: 'spielen', fortschritt: 'fortschritt' };
+    const tabOf = { lernen: 'lernen', lektion: 'lernen', gefuehrt: 'lernen', ueben: 'ueben', uebung: 'ueben', taktik: 'ueben', spielen: 'spielen', liste: 'spielen', fortschritt: 'fortschritt' };
     document.querySelectorAll('.tabbar a').forEach((a) => a.classList.toggle('on', a.dataset.tab === tabOf[name]));
-    $('#app').classList.toggle('fullscreen', name === 'spielen');
-    document.body.classList.toggle('felt', name === 'spielen');
+    const table = name === 'spielen' || name === 'gefuehrt';
+    $('#app').classList.toggle('fullscreen', table);
+    document.body.classList.toggle('felt', table);
     const scr = $('#screen');
     scr.scrollTop = 0;
     if (name === 'lektion' && C.LESSONS.some((l) => l.id === arg)) return viewLesson(arg);
@@ -2562,6 +2720,7 @@ table.liste tr.sum td { font-weight: 700; border-top: 2px solid var(--ink); }
     if (name === 'taktik') return viewDrill('taktik');
     if (name === 'ueben') return viewDrills();
     if (name === 'spielen') return viewGame();
+    if (name === 'gefuehrt' && GUIDES[Number(arg) - 1]) return viewGuide(Number(arg));
     if (name === 'liste') return viewList();
     if (name === 'fortschritt') return viewProgress();
     view = 'lernen';
@@ -2572,12 +2731,19 @@ table.liste tr.sum td { font-weight: 700; border-top: 2px solid var(--ink); }
   // ================= Lernpfad =================
   function viewLearn() {
     const nu = nextUp();
-    let h = '<div class="page"><div class="brand"><h1>Skat lernen</h1><span class="eyebrow">Regeln nach ISkO</span></div>' + levelCard();
-    h += '<a class="nextup" href="' + nu.href + '"><div><div class="eyebrow">Als Nächstes</div><div class="t">' + esc(nu.t) + '</div><div class="d">' + esc(nu.d) + '</div></div><span class="btn small">Los</span></a>';
+    let h = '<div class="page"><div class="brand"><h1>Skat lernen</h1><span class="eyebrow">Regeln nach ISkO</span></div>';
+    if (!guideDone(1)) {
+      h += '<a class="startcard" href="#gefuehrt-1"><div class="eyebrow">Neu beim Skat?</div><div class="t">Spiel dein erstes Spiel</div><p>Du brauchst kein Vorwissen. Die App spielt mit dir und erklärt bei jedem Zug, was du darfst und warum.</p><span class="btn brass">Erstes Spiel starten</span></a>';
+    }
+    h += levelCard();
+    if (guideDone(1)) h += '<a class="nextup" href="' + nu.href + '"><div><div class="eyebrow">Als Nächstes</div><div class="t">' + esc(nu.t) + '</div><div class="d">' + esc(nu.d) + '</div></div><span class="btn small">Los</span></a>';
     for (const L of LEVELS.slice(0, 4)) {
       const ls = C.LESSONS.filter((l) => l.stage === L.n);
       const done = ls.filter((l) => lessonDone(l.id)).length;
       h += '<section class="block"><div class="block-h"><h3>Stufe ' + L.n + ' · ' + L.short + '</h3><span class="eyebrow">' + done + '/' + ls.length + '</span></div>';
+      for (const g of GUIDES.filter((x) => x.stage === L.n)) {
+        h += '<a class="row" href="#gefuehrt-' + g.n + '"><span class="mark' + (guideDone(g.n) ? ' done' : '') + '">' + (guideDone(g.n) ? '✓' : '') + '</span><span><span class="t">Geführtes Spiel: ' + g.t + '</span><br><span class="d">' + g.d + '</span></span><span class="score">' + ICON.spielen + '</span></a>';
+      }
       ls.forEach((l, k) => {
         const st = P.lessons[l.id];
         const dr = l.drill ? drillBest(l.drill) : null;
@@ -2615,7 +2781,7 @@ table.liste tr.sum td { font-weight: 700; border-top: 2px solid var(--ink); }
       q.o.forEach((o, i) => {
         let cls = 'opt';
         if (ans != null) { if (i === q.a) cls += ' right'; else if (i === ans) cls += ' wrong'; }
-        h += '<button class="' + cls + '" data-i="' + i + '"' + (ans != null ? ' disabled' : '') + '>' + rich(o) + '</button>';
+        h += '<button class="' + cls + '" data-i="' + i + '"' + (ans != null ? ' disabled' : '') + '>' + rich(o, { terms: false }) + '</button>';
       });
       h += '</div>';
       if (ans != null) h += '<div class="feedback ' + (ans === q.a ? 'ok' : 'no') + '"><b class="h">' + (ans === q.a ? 'Richtig.' : 'Nicht ganz.') + '</b>' + rich(q.why) + '</div><button class="btn" id="qnext">' + (LS.q < l.quiz.length - 1 ? 'Nächste Frage' : 'Auswerten') + '</button>';
@@ -2684,7 +2850,7 @@ table.liste tr.sum td { font-weight: 700; border-top: 2px solid var(--ink); }
   }
   function nextQuestion() {
     if (DS.i >= DS.n) { DS.done = true; return renderDrill(); }
-    DS.q = DS.tactic ? D.tacticQuestion(DS.queue[DS.i]) : D.DRILLS[DS.id].gen();
+    DS.q = DS.tactic ? D.tacticQuestion(DS.queue[DS.i]) : D.DRILLS[DS.id].gen({ i: DS.i, adv: lessonDone('grandnull') });
     DS.answered = null; DS.sel = []; DS.seqAt = 0;
     renderDrill();
   }
@@ -2723,15 +2889,17 @@ table.liste tr.sum td { font-weight: 700; border-top: 2px solid var(--ink); }
       return;
     }
     if (q.tricksShown) h += '<div class="tricklist">' + q.tricksShown.map((t, i) => '<div class="tl"><span style="width:18px">' + (i + 1) + '.</span>' + t.map((c) => cardHTML(c)).join('') + '</div>').join('') + '</div>';
-    h += '<div class="qtext">' + rich(q.text) + '</div>';
     const ans = DS.answered;
+    const how = q.how || (!DS.tactic && D.DRILLS[DS.id].how);
+    if (how && !ans) h += '<div class="how"><b>So gehst du vor:</b> ' + rich(how, { terms: false }) + '</div>';
+    h += '<div class="qtext">' + rich(q.text) + '</div>';
     if (q.trick) h += '<div class="minitrick">' + q.trick.map((x) => '<figure>' + cardHTML(x.c) + '<figcaption>' + esc(x.who) + '</figcaption></figure>').join('') + '<figure><div class="card" style="opacity:.25;background:transparent;border:2px dashed currentColor;box-shadow:none"></div><figcaption>Du</figcaption></figure></div>';
     if (q.kind === 'choice' || q.kind === 'seq') {
       if (q.hand && q.kind === 'choice') h += '<div class="pickhand" style="--cw:44px">' + q.hand.map((c) => cardHTML(c)).join('') + '</div>';
       h += '<div class="opts">' + q.options.map((o, i) => {
         let cls = 'opt';
         if (ans) { if (i === q.answer) cls += ' right'; else if (i === ans.i) cls += ' wrong'; }
-        return '<button class="' + cls + '" data-i="' + i + '"' + (ans ? ' disabled' : '') + '>' + rich(o) + '</button>';
+        return '<button class="' + cls + '" data-i="' + i + '"' + (ans ? ' disabled' : '') + '>' + rich(o, { terms: false }) + '</button>';
       }).join('') + '</div>';
     } else if (q.kind === 'trick') {
       h += '<div class="minitrick">' + q.cards.map((c, i) => {
@@ -2793,20 +2961,29 @@ table.liste tr.sum td { font-weight: 700; border-top: 2px solid var(--ink); }
   const RISK = [0.5, 0.55, 0.46];
   const POS = (st, p) => (p === st.vh ? 'Vorhand' : p === st.mh ? 'Mittelhand' : 'Hinterhand');
   const POSK = (st, p) => (p === st.vh ? 'VH' : p === st.mh ? 'MH' : 'HH');
-  let GM = lsGet(LS_G);
+  let GMN = lsGet(LS_G), GMG = lsGet(LS_GG);
+  let GM = null;
   let gameTimer = null;
-  const tempo = () => ({ langsam: { bot: 1000, hold: 1800 }, normal: { bot: 650, hold: 1200 }, schnell: { bot: 320, hold: 650 } }[P.settings.tempo] || { bot: 650, hold: 1200 });
-  const help = () => (GM && GM.m.mode) || P.settings.help;
-  const saveGame = () => lsSet(LS_G, GM);
+  const guided = () => !!(GM && GM.m.guide);
+  const tempo = () => (guided() ? { bot: 1100, hold: 0 } : { langsam: { bot: 1000, hold: 1800 }, normal: { bot: 650, hold: 1200 }, schnell: { bot: 320, hold: 650 } }[P.settings.tempo] || { bot: 650, hold: 1200 });
+  const help = () => (guided() ? 'lern' : (GM && GM.m.mode) || P.settings.help);
+  const saveGame = () => { if (!GM) return; if (GM.m.guide) { GMG = GM; lsSet(LS_GG, GM); } else { GMN = GM; lsSet(LS_G, GM); } };
+  const onTable = () => view === 'spielen' || view === 'gefuehrt';
+  const newM = (o) => Object.assign({ mode: P.settings.help, bubbles: ['', '', ''], msg: '', coach: [], hints: 0, hold: null, sel: [], hint: null, countAt: 5 + rand(3), countDone: false, decl: { gt: null, sa: false, sw: false, ov: false }, warned: false, advice: false, recorded: false, shown: false }, o || {});
 
   function newDeal() {
     P.dealer = P.dealer == null ? rand(3) : (P.dealer + 1) % 3;
     save();
     const st = E.newGame(P.dealer, E.deal(P.dealer, Math.random));
-    GM = { st, m: { mode: P.settings.help, bubbles: ['', '', ''], msg: '', coach: [], hints: 0, hold: null, sel: [], hint: null, countAt: 5 + rand(3), countDone: false, decl: { gt: null, sa: false, sw: false, ov: false }, warned: false, advice: false, recorded: false, shown: false } };
+    GM = { st, m: newM() };
     saveGame();
   }
+  function nextGame() {
+    if (guided()) { const n = GM.m.guide.n; GM = { st: guideDeal(n), m: newM({ guide: { n, i: 0 } }) }; saveGame(); }
+    else newDeal();
+  }
   function viewGame() {
+    GM = GMN;
     if (!GM || !GM.st || !GM.m) newDeal();
     if (GM.m.hold && GM.m.hold.trick) GM.m.hold = null;
     if (GM.m.hold && GM.m.hold.count) GM.m.hold = null;
@@ -2814,11 +2991,12 @@ table.liste tr.sum td { font-weight: 700; border-top: 2px solid var(--ink); }
   }
   function gameStep() {
     clearTimeout(gameTimer);
-    if (view !== 'spielen') return;
+    if (!onTable()) return;
     renderGame();
     saveGame();
     const { st, m } = GM;
     if (m.hold) return;
+    if (m.guide && m.guide.i < guideIntro(st, m.guide.n).length) return;
     const T = tempo();
     if (st.phase === 'bidding') {
       const a = E.biddingActor(st);
@@ -2828,6 +3006,7 @@ table.liste tr.sum td { font-weight: 700; border-top: 2px solid var(--ink); }
         B.declare(st);
         m.bubbles = ['', '', ''];
         m.msg = '<b>' + NAMES[st.declarer] + '</b> spielt <b>' + E.gameLabel(st.game) + '</b>' + (st.game.hand ? '' : ' (Skat aufgenommen)') + '. Reizwert ' + st.bid + '.';
+        if (m.guide) m.guideNote = NAMES[st.declarer] + ' hat das Reizen gewonnen und spielt <b>' + E.gameLabel(st.game) + '</b>. Trumpf: ' + (st.game.gt < 4 ? E.SUIT_NAMES[st.game.gt] + ' und die vier Buben.' : st.game.gt === 4 ? 'nur die vier Buben.' : 'keiner (Null).') + ' Du und ' + NAMES[3 - st.declarer] + ' seid jetzt Partner.';
         gameStep();
       }, T.bot + 400);
     } else if (st.phase === 'play' && st.turn !== 0) {
@@ -2857,15 +3036,17 @@ table.liste tr.sum td { font-weight: 700; border-top: 2px solid var(--ink); }
     if (p === 0) {
       const cm = A.coach(st, 0, c);
       m.msg = '';
-      if (cm) { m.coach.push(cm); if (help() !== 'profi') m.msg = '<span class="coach"><b>Coach:</b> ' + rich(cm) + '</span>'; }
+      m.lastCoach = cm || null;
+      if (cm) { m.coach.push(cm); if (help() !== 'profi' && !m.guide) m.msg = '<span class="coach"><b>Coach:</b> ' + rich(cm) + '</span>'; }
     }
     m.hint = null;
+    m.guideNote = null;
     const t = E.playCard(st, p, c);
     if (t) {
       m.hold = { trick: t };
       renderGame();
       saveGame();
-      gameTimer = setTimeout(releaseTrick, tempo().hold);
+      if (!m.guide) gameTimer = setTimeout(releaseTrick, tempo().hold);
     } else gameStep();
   }
   function releaseTrick() {
@@ -2877,7 +3058,8 @@ table.liste tr.sum td { font-weight: 700; border-top: 2px solid var(--ink); }
     setTimeout(() => {
       m.hold = null;
       if (m.msg && m.msg.indexOf('coach') < 0) m.msg = '';
-      if (help() !== 'lern' && st.phase === 'play' && st.game.gt !== E.GT_NULL && !m.countDone && st.tricks.length === m.countAt) {
+      m.lastCoach = null;
+      if (!m.guide && help() !== 'lern' && st.phase === 'play' && st.game.gt !== E.GT_NULL && !m.countDone && st.tricks.length === m.countAt) {
         m.countDone = true;
         return countCheck();
       }
@@ -2919,6 +3101,13 @@ table.liste tr.sum td { font-weight: 700; border-top: 2px solid var(--ink); }
     if (m.recorded) return;
     m.recorded = true;
     const r = st.result;
+    if (m.guide) {
+      const won = st.declarer === 0 ? r.won : !r.won;
+      P.guides[m.guide.n] = { done: true, won: won || (P.guides[m.guide.n] && P.guides[m.guide.n].won) || false };
+      save();
+      saveGame();
+      return;
+    }
     const humanDecl = st.declarer === 0;
     const won = humanDecl ? r.won : !r.won;
     const sf = [0, 0, 0];
@@ -2936,6 +3125,7 @@ table.liste tr.sum td { font-weight: 700; border-top: 2px solid var(--ink); }
   }
   function showResult() {
     const { st, m } = GM;
+    if (m.guide) return showGuideResult();
     const r = st.result;
     const humanDecl = st.declarer === 0;
     const won = humanDecl ? r.won : !r.won;
@@ -2956,7 +3146,7 @@ table.liste tr.sum td { font-weight: 700; border-top: 2px solid var(--ink); }
     openSheet(h, (ev) => {
       const b = ev.target.closest('button');
       if (!b) return;
-      if (b.dataset.a === 'next') { closeSheet(); newDeal(); gameStep(); }
+      if (b.dataset.a === 'next') { closeSheet(); nextGame(); gameStep(); }
       if (b.dataset.a === 'hist') showHistory();
     });
   }
@@ -2973,7 +3163,237 @@ table.liste tr.sum td { font-weight: 700; border-top: 2px solid var(--ink); }
       const b = ev.target.closest('button');
       if (!b) return;
       if (b.dataset.a === 'back') showResult();
-      if (b.dataset.a === 'next') { closeSheet(); newDeal(); gameStep(); }
+      if (b.dataset.a === 'next') { closeSheet(); nextGame(); gameStep(); }
+    });
+  }
+
+  // ================= Geführte Spiele =================
+  const stepsHTML = (arr) => '<ol class="think">' + arr.filter(Boolean).map((x) => '<li>' + x + '</li>').join('') + '</ol>';
+  const who = (p) => (p === 0 ? 'du' : NAMES[p]);
+  const Who = (p) => (p === 0 ? 'Du' : NAMES[p]);
+  const vb = (p, du, er) => (p === 0 ? du : er);
+  function roleOf(st, p) {
+    if (p === 0) return '';
+    if (p === st.declarer) return ' (Alleinspieler)';
+    if (st.declarer !== 0) return p === 1 ? ' (deine Partnerin)' : ' (dein Partner)';
+    return '';
+  }
+
+  function guideDeal(n) {
+    for (let tries = 0; tries < 20000; tries++) {
+      const relax = tries > 15000;
+      const dealer = 2; // du bist Vorhand
+      const dealt = E.deal(dealer, Math.random);
+      if (n === 1) {
+        const h = dealt.hands[0];
+        let best = null;
+        for (let gt = 0; gt < 4; gt++) {
+          const nt = h.filter((c) => E.isTrump(c, gt)).length;
+          const p = A.pFixed(h, gt, true, A.AVG_SKAT);
+          if (!best || p > best.p) best = { gt, p, nt };
+        }
+        if (!relax && (best.p < 0.85 || best.nt < 6)) continue;
+        const st = E.newGame(dealer, dealt);
+        st.bidding.waiting = null; st.declarer = 0; st.bid = 18; st.phase = 'skat';
+        E.playHand(st);
+        E.declare(st, { gt: best.gt, hand: true });
+        return st;
+      }
+      if (n === 2) {
+        const tom = A.bidOptions(dealt.hands[2], false)[0];
+        if (!relax && (tom.gt >= 4 || tom.p < 0.65)) continue;
+        const st = E.newGame(dealer, dealt);
+        st.bidding.waiting = null; st.declarer = 2; st.bid = 18; st.phase = 'skat';
+        B.declare(st);
+        if (!relax && (st.game.gt >= 4 || st.game.ouvert)) continue;
+        return st;
+      }
+      const me = A.bidLimit(dealt.hands[0], true, 0.5);
+      const l1 = A.bidLimit(dealt.hands[1], false, RISK[1]).limit;
+      const l2 = A.bidLimit(dealt.hands[2], false, RISK[2]).limit;
+      const ok = me.limit >= 22 && me.choice && me.choice.gt < 4 && !me.choice.hand && Math.max(l1, l2) < me.limit && Math.max(l1, l2) >= 18;
+      if (!relax && !ok) continue;
+      return E.newGame(dealer, dealt);
+    }
+    return E.newGame(2, E.deal(2, Math.random));
+  }
+
+  function viewGuide(n) {
+    const keep = GMG && GMG.m && GMG.m.guide && GMG.m.guide.n === n && !GMG.m.recorded;
+    GM = keep ? GMG : { st: guideDeal(n), m: newM({ guide: { n, i: 0 } }) };
+    saveGame();
+    gameStep();
+  }
+
+  const PTS_TABLE = '<table class="pts"><tr><td>Ass</td><td>11</td></tr><tr><td>Zehn</td><td>10</td></tr><tr><td>König</td><td>4</td></tr><tr><td>Dame</td><td>3</td></tr><tr><td>Bube</td><td>2</td></tr><tr><td>9, 8, 7</td><td>0</td></tr></table>';
+  function guideIntro(st, n) {
+    const gt = st.game ? st.game.gt : null;
+    const tn = gt != null && gt < 4 ? E.SUIT_NAMES[gt] : '';
+    if (n === 1) {
+      const nT = st.hands[0].filter((c) => E.isTrump(c, gt)).length + st.tricks.reduce((a, t) => a + t.cards.filter((x) => x.p === 0 && E.isTrump(x.c, gt)).length, 0);
+      return [
+        '<b>Willkommen am Skattisch!</b> Ihr seid zu dritt: du, Lena (oben links) und Tom (oben rechts). Jeder hat 10 Karten. Deine liegen unten.',
+        '<b>Worum geht es?</b> Jede Karte zählt Punkte. Beim Skat heißen sie Augen:' + PTS_TABLE + 'Zusammen gibt es 120 Augen.',
+        '<b>Du spielst allein</b> gegen Lena und Tom. Du gewinnst, wenn du am Ende <b>mindestens 61 Augen</b> hast. Lena und Tom halten zusammen.',
+        '<b>Trumpf</b> sind die stärksten Karten. In diesem Spiel ist <b>' + tn + '</b> Trumpf – und dazu immer die vier Buben. Deine Trümpfe haben unten einen goldenen Streifen. Du hast ' + nT + ' davon – ein starkes Blatt!',
+        '<b>So läuft ein Stich:</b> Einer legt die erste Karte – er spielt aus. Dann legt reihum jeder eine Karte dazu. Die stärkste Karte gewinnt alle drei Karten. Diese drei Karten heißen Stich.',
+        'Zwei Karten liegen verdeckt beiseite. Sie heißen Skat, gehören in diesem Spiel dir und zählen am Ende mit. Mehr dazu später.<br><b>Los geht’s: Du spielst aus.</b> Bei jedem Zug erkläre ich dir hier unten, was du darfst.',
+      ];
+    }
+    if (n === 2) {
+      const D = st.declarer, Pn = 3 - D;
+      return [
+        '<b>Diesmal spielt ' + NAMES[D] + ' allein.</b> ' + (D === 2 ? 'Er' : 'Sie') + ' spielt <b>' + E.gameLabel(st.game) + '</b>. Du und ' + NAMES[Pn] + ' seid Partner – ihr spielt zusammen.',
+        gt === E.GT_GRAND ? '<b>Trumpf</b> sind in diesem Spiel nur die vier Buben (das ist ein Grand). Deine Trümpfe sind gold markiert.' : '<b>Trumpf</b> ist ' + tn + ' – und die vier Buben. Deine Trümpfe sind gold markiert.',
+        '<b>Euer Ziel:</b> ' + NAMES[D] + ' braucht 61 Augen. Holt ihr zwei zusammen 60 Augen, verliert ' + (D === 2 ? 'er' : 'sie') + '. Eure Stiche zählen gemeinsam.',
+        '<b>Der wichtigste Trick zu zweit:</b> Gewinnt ' + NAMES[Pn] + ' einen Stich sicher, gib eine Karte mit vielen Augen dazu – ein Ass oder eine Zehn. Das heißt schmieren. Gewinnt ' + NAMES[D] + ' den Stich, gib möglichst wenig.',
+        (st.vh === 0 ? '<b>Du spielst aus.</b>' : '<b>' + NAMES[st.vh] + ' spielt aus.</b>') + ' Ich erkläre dir wieder jeden Zug.',
+      ];
+    }
+    return [
+      '<b>Jetzt ein ganzes Spiel.</b> Vor jedem Spiel wird entschieden, wer allein spielt. Das heißt Reizen.',
+      'Beim Reizen sagt man Zahlen: 18, 20, 22, 23, 24, 27, 30 … Jede Zahl ist ein möglicher Spielwert. Wer sich das wertvollste Spiel zutraut, spielt allein.',
+      'Wie viel dein Blatt wert ist, rechne ich dir aus. Die wichtigste Regel: <b>Sag nie mehr, als dein Blatt wert ist.</b>',
+      'Zuerst sagt ' + NAMES[st.mh] + ' Zahlen zu ' + (st.vh === 0 ? 'dir' : NAMES[st.vh]) + '. ' + (st.vh === 0 ? 'Du antwortest' : NAMES[st.vh] + ' antwortet') + ' mit „Ja“ (ich kann mithalten) oder „Passe“ (ich steige aus).',
+    ];
+  }
+
+  function bidActText(x) {
+    const pr = x.p === 1 ? 'sie' : 'er';
+    if (x.txt === 'Passe') return NAMES[x.p] + ' passt – ' + pr + ' steigt aus.';
+    if (x.txt === 'Ja') return NAMES[x.p] + ' sagt „Ja“ – ' + pr + ' kann auch so viel.';
+    return NAMES[x.p] + ' sagt <b>' + x.txt + '</b> – ' + pr + ' traut sich ein Spiel im Wert von ' + x.txt + ' zu.';
+  }
+  function guideBid(st) {
+    const b = st.bidding;
+    const a = E.biddingActor(st);
+    const bl = A.bidLimit(st.hands[0], st.vh === 0, 0.5);
+    const lim = bl.limit, ch = bl.choice;
+    let worth = 'Dein Blatt ist zu schwach für ein eigenes Spiel.';
+    if (lim && ch) worth = 'Dein Blatt ist etwa <b>' + lim + '</b> wert' + (ch.gt < 5 && !ch.hand ? ': ' + E.GAME_NAMES[ch.gt] + ' ' + (ch.sp.mit ? 'mit ' : 'ohne ') + ch.sp.n + ' → (' + ch.sp.n + ' + 1) × ' + E.BASE[ch.gt] + ' = ' + lim : '') + '.';
+    const last = b.log[b.log.length - 1];
+    const lastTxt = last && last.p !== 0 ? bidActText(last) + ' ' : '';
+    let t;
+    if (a === 0) {
+      if (b.waiting === 'hear') t = lastTxt + worth + ' ' + (b.bid <= lim ? 'Du kannst mithalten – tippe auf <b>„Ja“</b>.' : 'Das ist mehr, als dein Blatt wert ist – tippe auf <b>„Passe“</b>.');
+      else if (b.waiting === 'say') { const nb = E.nextBid(b.bid); t = lastTxt + 'Jetzt sagst du eine Zahl. Die nächste wäre <b>' + nb + '</b>. ' + worth + ' ' + (nb <= lim ? 'Tippe auf <b>„Sage ' + nb + '“</b>.' : 'Mehr geht nicht – tippe auf <b>„Passe“</b>.'); }
+      else t = 'Alle anderen haben gepasst. Du darfst für 18 spielen. ' + worth + ' ' + (lim >= 18 ? 'Tippe auf „18 spielen“.' : 'Tippe auf „Passe“.');
+    } else t = lastTxt + (b.waiting === 'hear' ? NAMES[b.hearer] + ' überlegt …' : b.sayer === 0 ? '' : NAMES[b.sayer] + ' überlegt …');
+    return rich(t);
+  }
+
+  function guideTurn(st, m) {
+    const gt = st.game.gt;
+    const hand = st.hands[0];
+    const s = [];
+    if (m.guideNote) s.push(m.guideNote);
+    if (!st.trick.length) {
+      s.push('Du spielst aus – du darfst <b>jede Karte</b> legen. Die anderen müssen dann bedienen.');
+    } else {
+      const lead = st.trick[0];
+      const le = E.effSuit(lead.c, gt);
+      const nd = le === 4 ? 'Trumpf' : E.SUIT_NAMES[le];
+      let s1 = 'Gefragt ist <b>' + nd + '</b> – ' + who(lead.p) + roleOf(st, lead.p) + ' hat ' + chip(lead.c) + ' ausgespielt.';
+      if (le === 4 && E.rankOf(lead.c) === 7) s1 += ' Buben sind immer Trumpf.';
+      s.push(s1);
+      const follow = hand.filter((c) => E.effSuit(c, gt) === le);
+      if (follow.length) {
+        let s2 = 'Du hast ' + nd + ': ' + follow.map(chip).join(' ') + '. Dann <b>musst</b> du eine davon legen (bedienen). Nur diese Karten sind hell.';
+        if (le < 4 && gt !== E.GT_NULL && hand.includes(E.card(le, 7))) s2 += ' ' + chip(E.card(le, 7)) + ' zählt nicht dazu – er ist Trumpf.';
+        s.push(s2);
+      } else {
+        s.push('Du hast kein ' + nd + '. Dann darfst du <b>jede Karte</b> legen' + (gt === E.GT_NULL ? '.' : ': einen Trumpf (stechen) oder eine andere Karte (abwerfen).'));
+      }
+      const cs = st.trick.map((x) => x.c);
+      const bp = st.trick[E.trickWinnerIndex(cs, gt)].p;
+      s.push('Im Moment liegt ' + who(bp) + roleOf(st, bp) + ' mit ' + chip(cs[E.trickWinnerIndex(cs, gt)]) + ' vorn.');
+    }
+    const r = A.choose(st, 0);
+    m.hint = [r.card];
+    s.push('<b>Vorschlag:</b> ' + chip(r.card) + ' (hochgestellt) – ' + r.reason + ' Du darfst aber auch eine andere erlaubte Karte nehmen.');
+    return '<div class="eyebrow">Du bist dran</div>' + rich(stepsHTML(s));
+  }
+
+  function explainTrick(st, t, m) {
+    const gt = st.game.gt;
+    const cs = t.cards;
+    const le = E.effSuit(cs[0].c, gt);
+    const nd = le === 4 ? 'Trumpf' : E.SUIT_NAMES[le];
+    const s = [Who(cs[0].p) + ' ' + vb(cs[0].p, 'hast', 'hat') + ' ' + chip(cs[0].c) + ' ausgespielt – gefragt war ' + nd + '.'];
+    for (const x of cs.slice(1)) {
+      const e = E.effSuit(x.c, gt);
+      if (e === le) s.push(Who(x.p) + ' ' + vb(x.p, 'hast', 'hat') + ' ' + chip(x.c) + ' gelegt (bedient).');
+      else if (e === 4) s.push(Who(x.p) + ' ' + vb(x.p, 'hattest', 'hatte') + ' kein ' + nd + ' und ' + vb(x.p, 'hast', 'hat') + ' mit ' + chip(x.c) + ' gestochen.');
+      else s.push(Who(x.p) + ' ' + vb(x.p, 'hattest', 'hatte') + ' kein ' + nd + ' und ' + vb(x.p, 'hast', 'hat') + ' ' + chip(x.c) + ' abgeworfen.');
+    }
+    const wc = cs.find((x) => x.p === t.winner).c;
+    const why = E.isTrump(wc, gt) ? (le === 4 ? 'der höchste Trumpf im Stich' : 'ein Trumpf – und Trumpf schlägt jede andere Farbe') : 'die höchste ' + nd + '-Karte im Stich';
+    s.push('<b>' + (t.winner === 0 ? 'Du bekommst' : NAMES[t.winner] + ' bekommt') + ' den Stich</b>: ' + chip(wc) + ' ist ' + why + '.');
+    const parts = cs.filter((x) => E.pts(x.c)).map((x) => chip(x.c) + ' ' + E.pts(x.c));
+    s.push(parts.length ? 'Augen im Stich: ' + parts.join(' + ') + ' = <b>' + t.pts + '</b>' : 'Im Stich sind keine Augen – nur Luschen.');
+    if (gt !== E.GT_NULL) {
+      const pp = E.pointsSoFar(st);
+      const dp = pp[st.declarer], op = pp[0] + pp[1] + pp[2] - dp;
+      const D = st.declarer;
+      if (D === 0) s.push('Stand: du <b>' + dp + '</b> – ' + NAMES[1] + ' und ' + NAMES[2] + ' ' + op + '. Du brauchst 61' + (st.skatTaken ? ' (dazu kommen ' + E.sumPts(st.discard) + ' gedrückte Augen).' : ' – der Skat zählt am Ende noch für dich.'));
+      else s.push('Stand: ' + (D === 1 ? 'du und ' + NAMES[2] : 'du und ' + NAMES[1]) + ' <b>' + op + '</b> – ' + NAMES[D] + ' ' + dp + '. ' + NAMES[D] + ' braucht 61, euch reichen 60.');
+    } else s.push(t.winner === st.declarer ? 'Der Alleinspieler hat einen Stich bekommen – damit ist das Nullspiel verloren.' : 'Der Alleinspieler darf keinen Stich bekommen.');
+    if (m.lastCoach) s.push('<b>Hinweis:</b> ' + m.lastCoach);
+    return '<div class="eyebrow">Stich ' + st.tricks.length + ' von 10</div>' + rich(stepsHTML(s));
+  }
+
+  function guideBox(st, m) {
+    const g = m.guide;
+    const intro = guideIntro(st, g.n);
+    if (g.i < intro.length) return { solo: '<div class="eyebrow">Erklärung ' + (g.i + 1) + ' von ' + intro.length + '</div><div class="gtext">' + rich(intro[g.i]) + '</div><button class="btn" data-a="gnext">Weiter</button>' };
+    if (m.hold && m.hold.trick) return { solo: '<div class="gtext">' + explainTrick(st, m.hold.trick, m) + '</div><button class="btn" data-a="gtrick">' + (st.phase === 'done' ? 'Zum Ergebnis' : 'Weiter') + '</button>' };
+    if (st.phase === 'bidding') { const t = guideBid(st); return E.biddingActor(st) === 0 ? { inner: t } : { solo: '<div class="eyebrow">Reizen</div><div class="gtext">' + t + '</div>' }; }
+    if (st.phase === 'eingepasst') return { inner: rich('Alle haben gepasst – niemand wollte allein spielen. Dann wird neu gegeben.') };
+    if (st.phase === 'skat') return st.declarer === 0 ? { inner: rich('<b>Du hast das Reizen gewonnen</b> und spielst allein! Zuerst nimmst du den Skat auf: Die zwei Karten aus der Mitte kommen zu deinen. Tippe auf „Skat aufnehmen“.') } : { solo: '<div class="gtext">' + NAMES[st.declarer] + ' hat das Reizen gewonnen und überlegt, was Trumpf wird …</div>' };
+    if (st.phase === 'discard') {
+      if (!m.recD) { m.recD = discardAdvice(st); m.hint = m.recD.discard.slice(); }
+      const why = D.discardReason(st.hands[0], m.recD.discard, m.recD.gt);
+      return { inner: rich('Jetzt hast du 12 Karten und legst 2 davon verdeckt weg – das heißt drücken. Ihre Augen zählen am Ende für dich.<br><b>Vorschlag:</b> ' + m.recD.discard.map(chip).join(' ') + ' (hochgestellt). ' + why + '<br>Tippe beide an (' + m.sel.length + '/2) und dann auf „Diese 2 drücken“.') };
+    }
+    if (st.phase === 'declare') {
+      if (!m.recD || m.recD.gt == null) m.recD = { gt: gameAdvice(st).gt };
+      if (m.decl.gt == null) { m.decl.gt = m.recD.gt; m.decl.nov = false; m.sortGt = m.recD.gt; }
+      const o = declOptsFor(st, m.decl).find((x) => x.gt === m.recD.gt && !x.ov);
+      const tr = m.recD.gt < 4 ? E.SUIT_NAMES[m.recD.gt] + ' (dazu die vier Buben)' : m.recD.gt === 4 ? 'Grand (nur die Buben sind Trumpf)' : 'Null (ohne Trumpf)';
+      return { inner: rich('Jetzt sagst du an, was Trumpf ist. Am besten die Farbe, von der du die meisten Karten hast – zusammen mit deinen Buben.<br><b>Vorschlag: ' + tr + '</b>. Dieses Spiel ist ' + o.v + ' wert' + (o.v >= st.bid ? ' – mindestens so viel wie gereizt (' + st.bid + '). Passt!' : '.') + ' Tippe auf „Ansagen“.') };
+    }
+    if (st.phase === 'play') {
+      if (st.turn === 0) return { solo: guideTurn(st, m) };
+      return { solo: '<div class="gtext">' + (m.guideNote ? rich(m.guideNote) + '<br>' : '') + NAMES[st.turn] + roleOf(st, st.turn) + ' ist dran …</div>' };
+    }
+    if (st.phase === 'done') return { solo: '<div class="gtext">Das Spiel ist vorbei.</div><button class="btn" data-a="result">Zum Ergebnis</button>' };
+    return {};
+  }
+
+  const LEARNED = {
+    1: ['Ein Stich: Jeder legt eine Karte, die stärkste gewinnt.', 'Bedienen: Wer die gefragte Farbe hat, muss sie legen.', 'Trumpf schlägt alle anderen Farben – Buben sind immer Trumpf.', 'Der Alleinspieler braucht 61 Augen.'],
+    2: ['Zu zweit gegen den Alleinspieler – euch reichen 60 Augen.', 'Schmieren: dem Partner Augen geben, wenn sein Stich sicher ist.', 'Dem Alleinspieler möglichst wenig Augen geben.'],
+    3: ['Reizen: Zahlen sagen – nie mehr, als dein Blatt wert ist.', 'Skat aufnehmen und zwei Karten drücken.', 'Trumpf ansagen und das Spiel durchspielen.'],
+  };
+  function showGuideResult() {
+    const { st, m } = GM;
+    const n = m.guide.n, r = st.result;
+    const me = st.declarer === 0;
+    const won = me ? r.won : !r.won;
+    let h = '<div class="eyebrow">Geführtes Spiel ' + n + '</div><h2>' + (won ? (me ? 'Gewonnen!' : 'Ihr habt gewonnen!') : me ? 'Diesmal verloren' : NAMES[st.declarer] + ' hat gewonnen') + '</h2>';
+    let p;
+    if (r.gt === E.GT_NULL) p = r.reason;
+    else if (me) p = 'Du hattest am Ende <b>' + r.declPts + ' Augen</b>' + (E.sumPts(st.discard) ? ' (davon ' + E.sumPts(st.discard) + ' aus dem Skat)' : '') + '. Zum Gewinnen brauchst du 61.';
+    else p = 'Ihr hattet zusammen <b>' + r.oppPts + ' Augen</b>, ' + NAMES[st.declarer] + ' ' + r.declPts + '. ' + NAMES[st.declarer] + ' brauchte 61.';
+    h += '<p>' + rich(p) + '</p>';
+    if (n === 3 && me && r.gt !== E.GT_NULL) h += '<p>' + rich('Spielwert: ' + valueLine(r) + '. Gereizt hattest du ' + st.bid + (r.overbid ? ' – das war zu viel (überreizt).' : ' – das passt.')) + '</p>';
+    h += '<div><div class="eyebrow">Das hast du geübt</div><ul class="coachlist">' + LEARNED[n].map((x) => '<li>' + rich(x) + '</li>').join('') + '</ul></div>';
+    h += '<div class="btns">' + (n < 3 ? '<button class="btn" data-a="gnextguide">Weiter: ' + GUIDES[n].t + '</button>' : '<a class="btn" href="#lernen">Zum Lernpfad</a>') + '<button class="btn soft" data-a="gagain">Noch einmal</button>' + (n < 3 ? '<a class="btn soft" href="#lernen">Zum Lernpfad</a>' : '') + '</div>';
+    openSheet(h, (ev) => {
+      const b = ev.target.closest('button');
+      if (!b) return;
+      if (b.dataset.a === 'gnextguide') { closeSheet(); location.hash = '#gefuehrt-' + (n + 1); }
+      if (b.dataset.a === 'gagain') { closeSheet(); nextGame(); gameStep(); }
     });
   }
 
@@ -3050,11 +3470,17 @@ table.liste tr.sum td { font-weight: 700; border-top: 2px solid var(--ink); }
     const myTurn = st.phase === 'play' && st.turn === 0 && !m.hold;
     const legal = myTurn ? E.legalFor(st, 0) : null;
     const pts = E.pointsSoFar(st);
-    const panel = panelHTML(st, m, H);
-    let h = '<div class="table' + (panel ? ' haspanel' : '') + '" id="table">';
+    let panel = panelHTML(st, m, H);
+    if (m.guide) {
+      const gb = guideBox(st, m);
+      if (gb.solo) panel = '<div class="panel guide" id="guide">' + gb.solo + '</div>';
+      else if (gb.inner) panel = panel ? panel.replace('<div class="panel">', '<div class="panel guide" id="guide"><div class="gtext">' + gb.inner + '</div>') : '<div class="panel guide" id="guide">' + gb.inner + '</div>';
+    }
+    let h = '<div class="table' + (panel ? ' haspanel' : '') + (m.guide ? ' guided' : '') + '" id="table">';
     // Kopf
     const nr = P.list.length + (m.recorded ? 0 : 1);
-    h += '<div class="tbar"><a href="#lernen" aria-label="Menü">← Menü</a><div class="ttl">Spiel ' + nr + ' · ' + ({ lern: 'Lernmodus', normal: 'Normal', profi: 'Profi' }[H]) + '</div><a href="#liste">Liste</a></div>';
+    if (m.guide) h += '<div class="tbar"><a href="#lernen" aria-label="Zurück zum Lernpfad">← Lernpfad</a><div class="ttl">Geführtes Spiel ' + m.guide.n + ' · ' + GUIDES[m.guide.n - 1].t + '</div><span style="width:60px"></span></div>';
+    else h += '<div class="tbar"><a href="#lernen" aria-label="Menü">← Menü</a><div class="ttl">Spiel ' + nr + ' · ' + ({ lern: 'Lernmodus', normal: 'Normal', profi: 'Profi' }[H]) + '</div><a href="#liste">Liste</a></div>';
     // Gegner
     h += '<div class="opps">' + [1, 2].map((p) => {
       const isTurn = (st.phase === 'bidding' && E.biddingActor(st) === p) || (st.phase === 'play' && st.turn === p && !m.hold);
@@ -3084,7 +3510,7 @@ table.liste tr.sum td { font-weight: 700; border-top: 2px solid var(--ink); }
       info.push('Reizwert ' + st.bid);
       info.push('Stich ' + (m.hold && m.hold.trick ? st.tricks.length : Math.min(st.tricks.length + 1, 10)) + '/10');
       if (H === 'lern' && gt !== E.GT_NULL) {
-        const dp = pts[st.declarer] + (st.declarer === 0 ? E.sumPts(st.discard) : 0);
+        const dp = pts[st.declarer] + (st.declarer === 0 && st.skatTaken ? E.sumPts(st.discard) : 0);
         const op = pts[0] + pts[1] + pts[2] - pts[st.declarer];
         info.push(st.declarer === 0 ? 'Augen: du ' + dp + ' : ' + op + ' Gegner' : 'Augen: Alleinspieler ' + dp + ' : ' + op + ' ihr');
         const v = A.makeView(st, 0);
@@ -3097,13 +3523,13 @@ table.liste tr.sum td { font-weight: 700; border-top: 2px solid var(--ink); }
     }
     if (info.length) h += '<div class="infobar">' + info.map((x) => '<span>' + esc(x) + '</span>').join('') + '</div>';
     // Nachricht
-    h += '<div class="msg" id="msg">' + (m.msg || statusText(st, m)) + '</div>';
+    if (!m.guide) h += '<div class="msg" id="msg">' + (m.msg || statusText(st, m)) + '</div>';
     // Panel je Phase
     h += panel;
     // Aktionen
     const acts = [];
-    if (st.phase === 'play' && H !== 'profi' && myTurn) acts.push('<button class="btn small tbtn" data-a="tipp">Tipp</button>');
-    if (st.phase === 'play' && st.tricks.length) acts.push('<button class="btn small tbtn" data-a="last">Letzter Stich</button>');
+    if (st.phase === 'play' && H !== 'profi' && myTurn && !m.guide) acts.push('<button class="btn small tbtn" data-a="tipp">Tipp</button>');
+    if (st.phase === 'play' && st.tricks.length && !m.guide) acts.push('<button class="btn small tbtn" data-a="last">Letzter Stich</button>');
     if (st.phase === 'done' && !m.hold) acts.push('<button class="btn small brass" data-a="result">Abrechnung</button><button class="btn small" data-a="next">Nächstes Spiel</button>');
     if (acts.length) h += '<div class="actions">' + acts.join('') + '</div>';
     // eigene Hand
@@ -3167,20 +3593,22 @@ table.liste tr.sum td { font-weight: 700; border-top: 2px solid var(--ink); }
       if (b.waiting === 'say') { const nb = E.nextBid(b.bid); btns = '<button class="btn" data-bid="say" data-v="' + nb + '">Sage ' + nb + '</button><button class="btn soft" data-bid="pass">Passe</button>'; }
       else if (b.waiting === 'hear') btns = '<button class="btn" data-bid="yes">Ja (' + b.bid + ')</button><button class="btn soft" data-bid="pass">Passe</button>';
       else btns = '<button class="btn" data-bid="play18">18 spielen</button><button class="btn soft" data-bid="pass">Passe</button>';
-      const adv = H === 'lern' || m.advice ? bidAdvice(st) : H === 'normal' ? '<button class="btn small soft" data-a="advice">Tipp anzeigen</button>' : '';
+      const adv = m.guide ? '' : H === 'lern' || m.advice ? bidAdvice(st) : H === 'normal' ? '<button class="btn small soft" data-a="advice">Tipp anzeigen</button>' : '';
       const role = b.waiting === 'say' ? 'Du sagst' : b.waiting === 'hear' ? 'Du hörst' : 'Vorhand';
-      return '<div class="panel"><h3>Reizen · ' + role + '</h3>' + adv + '<div class="btns">' + btns + '</div></div>';
+      return '<div class="panel">' + (m.guide ? '' : '<h3>Reizen · ' + role + '</h3>') + adv + '<div class="btns">' + btns + '</div></div>';
     }
     if (st.phase === 'eingepasst') return '<div class="panel"><h3>Eingepasst</h3><p>Niemand wollte spielen. Der nächste Spieler gibt neu.</p><button class="btn" data-a="next">Neu geben</button></div>';
     if (st.phase === 'skat' && st.declarer === 0) {
+      if (m.guide) return '<div class="panel"><div class="btns"><button class="btn" data-a="take">Skat aufnehmen</button></div></div>';
       const adv = H === 'lern' || m.advice ? skatAdvice(st) : H === 'normal' ? '<button class="btn small soft" data-a="advice">Tipp anzeigen</button>' : '';
       return '<div class="panel"><h3>Du spielst! Reizwert ' + st.bid + '</h3><p>Nimmst du den Skat auf oder spielst du Hand?</p>' + adv + '<div class="btns"><button class="btn" data-a="take">Skat aufnehmen</button><button class="btn soft" data-a="hand">Hand spielen</button></div></div>';
     }
     if (st.phase === 'discard') {
       let adv = '';
-      if (m.recD) adv = '<div class="advice"><b>Empfehlung:</b> ' + E.GAME_NAMES[m.recD.gt] + ' spielen, ' + m.recD.discard.map(chip).join(' ') + ' drücken (Chance ca. ' + pct(m.recD.p) + ').</div>';
+      if (m.guide) adv = '';
+      else if (m.recD) adv = '<div class="advice"><b>Empfehlung:</b> ' + E.GAME_NAMES[m.recD.gt] + ' spielen, ' + m.recD.discard.map(chip).join(' ') + ' drücken (Chance ca. ' + pct(m.recD.p) + ').</div>';
       else if (H !== 'profi') adv = '<button class="btn small soft" data-a="dtipp">Tipp anzeigen</button>';
-      return '<div class="panel"><h3>Drücken (' + m.sel.length + '/2)</h3><p class="note">Tippe zwei Karten an. Ihre Augen zählen für dich.</p>' + adv + '<button class="btn" data-a="discard"' + (m.sel.length !== 2 ? ' disabled' : '') + '>Diese 2 drücken</button></div>';
+      return '<div class="panel">' + (m.guide ? '' : '<h3>Drücken (' + m.sel.length + '/2)</h3><p class="note">Tippe zwei Karten an. Ihre Augen zählen für dich.</p>') + adv + '<button class="btn" data-a="discard"' + (m.sel.length !== 2 ? ' disabled' : '') + '>Diese 2 drücken</button></div>';
     }
     if (st.phase === 'declare') {
       const d = m.decl;
@@ -3189,16 +3617,17 @@ table.liste tr.sum td { font-weight: 700; border-top: 2px solid var(--ink); }
       const rec = H === 'profi' ? null : m.recD ? m.recD.gt : H === 'lern' ? gameAdvice(st).gt : null;
       let g = '<div class="gamegrid">' + opts.map((o) => {
         if (o.gt === E.GT_NULL && (d.sa || d.sw || d.ov)) return '';
+        if (m.guide && o.ov) return '';
         const sel = d.gt === o.gt && !!d.nov === !!o.ov;
         return '<button class="gopt' + (o.low ? ' low' : '') + (sel ? ' sel' : '') + (rec === o.gt && !o.ov && H !== 'profi' ? ' rec' : '') + '" data-g="' + o.i + '"' + (o.blocked ? ' disabled' : '') + '><span class="gn"><span class="' + o.cls + '">' + o.s + '</span> ' + o.l + '</span><span class="gv">' + (H === 'profi' ? '' : o.txt + (o.low ? ' · unter ' + st.bid : '')) + '</span></button>';
       }).join('') + '</div>';
       let tg = '';
-      if (hand && d.gt !== E.GT_NULL) tg = '<div class="toggles"><button class="toggle' + (d.sa ? ' on' : '') + '" data-t="sa">Schneider angesagt</button><button class="toggle' + (d.sw ? ' on' : '') + '" data-t="sw">Schwarz angesagt</button><button class="toggle' + (d.ov ? ' on' : '') + '" data-t="ov">Ouvert</button></div>';
+      if (hand && d.gt !== E.GT_NULL && !m.guide) tg = '<div class="toggles"><button class="toggle' + (d.sa ? ' on' : '') + '" data-t="sa">Schneider angesagt</button><button class="toggle' + (d.sw ? ' on' : '') + '" data-t="sw">Schwarz angesagt</button><button class="toggle' + (d.ov ? ' on' : '') + '" data-t="ov">Ouvert</button></div>';
       const chosen = opts.find((o) => o.gt === d.gt && !!o.ov === !!d.nov);
       const warn = chosen && chosen.low ? '<div class="advice">Achtung: ' + chosen.l + ' ist nur ' + chosen.v + ' wert, gereizt sind ' + st.bid + '. Damit wärst du überreizt und verlierst.</div>' : '';
       const tip = H === 'normal' && rec == null ? '<button class="btn small soft" data-a="gtipp">Tipp anzeigen</button>' : '';
-      const note = hand ? '<p class="note">Beim Handspiel kennst du den Skat nicht. Die Werte rechnen nur mit deinen Karten – der Skat zählt am Ende bei den Spitzen mit.</p>' : '';
-      return '<div class="panel"><h3>Spiel ansagen' + (hand ? ' (Hand)' : '') + '</h3>' + note + g + tg + tip + warn + '<button class="btn" data-a="declare"' + (chosen ? '' : ' disabled') + '>' + (chosen ? (chosen.low ? 'Trotzdem ' : '') + 'Ansagen: ' + chosen.l + ' (' + chosen.v + ')' : 'Spiel wählen') + '</button></div>';
+      const note = hand && !m.guide ? '<p class="note">Beim Handspiel kennst du den Skat nicht. Die Werte rechnen nur mit deinen Karten – der Skat zählt am Ende bei den Spitzen mit.</p>' : '';
+      return '<div class="panel">' + (m.guide ? '' : '<h3>Spiel ansagen' + (hand ? ' (Hand)' : '') + '</h3>') + note + g + tg + tip + warn + '<button class="btn" data-a="declare"' + (chosen ? '' : ' disabled') + '>' + (chosen ? (chosen.low ? 'Trotzdem ' : '') + 'Ansagen: ' + chosen.l + ' (' + chosen.v + ')' : 'Spiel wählen') + '</button></div>';
     }
     return '';
   }
@@ -3217,10 +3646,11 @@ table.liste tr.sum td { font-weight: 700; border-top: 2px solid var(--ink); }
     const root = $('#table');
     root.onclick = (ev) => {
       const t = ev.target;
+      if (t.closest('.term')) return;
       const cardBtn = t.closest('#hand .card');
       if (cardBtn) return onHandCard(Number(cardBtn.dataset.c), cardBtn);
       const b = t.closest('button');
-      if (!b) { if (m.hold && m.hold.trick && t.closest('#center')) releaseTrick(); return; }
+      if (!b) { if (m.hold && m.hold.trick && t.closest('#center') && !m.guide) releaseTrick(); return; }
       if (b.dataset.bid) {
         const k = b.dataset.bid;
         if (k === 'say') humanBid({ type: 'say', value: Number(b.dataset.v) });
@@ -3229,7 +3659,9 @@ table.liste tr.sum td { font-weight: 700; border-top: 2px solid var(--ink); }
       }
       const a = b.dataset.a;
       if (a === 'advice') { m.advice = true; m.hints++; renderGame(); }
-      if (a === 'next') { closeSheet(); newDeal(); gameStep(); }
+      if (a === 'next') { closeSheet(); nextGame(); gameStep(); }
+      if (a === 'gnext') { m.guide.i++; gameStep(); }
+      if (a === 'gtrick') releaseTrick();
       if (a === 'result') showResult();
       if (a === 'take') { E.takeSkat(st); m.sel = []; m.recD = null; m.msg = 'Im Skat lagen ' + st.skat.map(chip).join(' ') + '.'; gameStep(); }
       if (a === 'hand') { E.playHand(st); m.recD = null; m.decl = { gt: null, sa: false, sw: false, ov: false }; m.msg = ''; gameStep(); }
@@ -3285,6 +3717,7 @@ table.liste tr.sum td { font-weight: 700; border-top: 2px solid var(--ink); }
   }
   function onHandCard(c, el) {
     const { st, m } = GM;
+    if (m.guide && m.guide.i < guideIntro(st, m.guide.n).length) return toast('Lies erst die Erklärung und tippe auf „Weiter“.');
     if (st.phase === 'discard' && st.declarer === 0) {
       if (m.sel.includes(c)) m.sel = m.sel.filter((x) => x !== c);
       else if (m.sel.length < 2) m.sel.push(c);
@@ -3360,7 +3793,7 @@ table.liste tr.sum td { font-weight: 700; border-top: 2px solid var(--ink); }
     $('#reset').onclick = () => {
       openSheet('<h2>Alles zurücksetzen?</h2><p>Lektionen, Übungen, Spiele und die Liste werden gelöscht. Das lässt sich nicht rückgängig machen.</p><div class="btns"><button class="btn soft" data-x="no">Abbrechen</button><button class="btn" data-x="yes" style="background:var(--bad)">Zurücksetzen</button></div>', (ev) => {
         const b = ev.target.closest('button'); if (!b) return;
-        if (b.dataset.x === 'yes') { const s = P.settings; P = defaults(); P.settings = s; save(); GM = null; lsDel(LS_G); }
+        if (b.dataset.x === 'yes') { const s = P.settings; P = defaults(); P.settings = s; save(); GM = GMN = GMG = null; lsDel(LS_G); lsDel(LS_GG); }
         closeSheet(); viewProgress();
       });
     };
@@ -3372,8 +3805,10 @@ table.liste tr.sum td { font-weight: 700; border-top: 2px solid var(--ink); }
     applyDeck();
     document.querySelectorAll('.tabbar a').forEach((a) => { a.insertAdjacentHTML('afterbegin', ICON[a.dataset.tab]); });
     window.addEventListener('hashchange', route);
+    document.addEventListener('click', (ev) => { const t = ev.target.closest && ev.target.closest('.term'); if (t) { ev.stopPropagation(); ev.preventDefault(); showTerm(t.dataset.term); } }, true);
+    document.addEventListener('keydown', (ev) => { if ((ev.key === 'Enter' || ev.key === ' ') && ev.target.classList && ev.target.classList.contains('term')) { ev.preventDefault(); showTerm(ev.target.dataset.term); } });
     let rt;
-    window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { if (view === 'spielen' && GM) renderGame(); }, 150); });
+    window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { if (onTable() && GM) renderGame(); }, 150); });
     route();
     Cloud.init();
   }

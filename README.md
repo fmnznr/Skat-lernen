@@ -4,7 +4,9 @@ Web-App fürs iPhone, mit der du Skat vom ersten Kartenzählen bis zum ernstzune
 
 ## Was drin ist
 
-- **Lernpfad in 5 Stufen**: Einsteiger → Grundkenntnisse → Hobbyspieler → Fortgeschritten → Ernstzunehmender Spieler. 20 kurze Lektionen mit Quiz.
+- **Geführte Spiele** für den Einstieg: Die App spielt mit dir und erklärt bei jedem Zug, was gefragt ist, was du darfst und wer den Stich bekommt – erst ohne Reizen, dann als Partner, dann ein ganzes Spiel mit Reizen und Skat.
+- **Begriffe zum Antippen**: Fachwörter wie Trumpf, Stich oder bedienen öffnen eine kurze Erklärung.
+- **Lernpfad in 5 Stufen**: Einsteiger → Grundkenntnisse → Hobbyspieler → Fortgeschritten → Ernstzunehmender Spieler. 20 kurze Lektionen mit Quiz. Stufe 1 bleibt beim Farbspiel, Grand und Null kommen in Stufe 2.
 - **12 Übungen** mit unbegrenzt neuen Aufgaben (Augen zählen, Trumpf, Bedienen, Stichsieger, Spitzen, Spielwert, Reizwerte, Blatt bewerten, Drücken, Schmieren, Mitzählen, Trümpfe zählen) und **16 Taktik-Aufgaben**.
 - **Übungsspiel** gegen zwei Computergegner: Reizen, Skat aufnehmen oder Hand, Drücken, Farbe/Grand/Null, Schneider/Schwarz angesagt, Ouvert, Überreizen. Tipps mit Begründung, Coach-Hinweise bei Fehlern, Mitzähl-Proben, Spielverlauf und Liste mit Seeger-Fabian-Wertung.
 - **Hilfe-Stufen**: Lernen (alles angezeigt) · Normal · Profi (ohne Hilfen, zählt für Stufe 5).

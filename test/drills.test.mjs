@@ -8,7 +8,8 @@ const t0 = Date.now();
 for (const id of D.ORDER) {
   const t1 = Date.now();
   for (let i = 0; i < 40; i++) {
-    const q = D.DRILLS[id].gen();
+    const q = D.DRILLS[id].gen({ i: i % 10, adv: i >= 20 });
+    if (['bedienen', 'stich', 'trumpf'].includes(id) && i < 20) assert.ok(!q.gt || q.gt < 4 || q.kind === 'choice' && !/Grand|Null/.test(q.text), id + ': Grand/Null vor der Lektion');
     assert.ok(q.text, id);
     if (q.kind === 'choice' || q.kind === 'seq') { assert.ok(q.options.length >= 2, id); assert.ok(q.answer >= 0 && q.answer < q.options.length, id + ' answer ' + q.answer); assert.equal(new Set(q.options).size, q.options.length, id + ' doppelte Optionen ' + q.options); }
     if (q.kind === 'pick') { assert.ok(q.hand.length > 0); assert.ok(q.answer.length > 0, id); }

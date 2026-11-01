@@ -34,102 +34,147 @@
   // ---------------- einzelne Übungen ----------------
   const DRILLS = {};
 
+  // ctx: { i: Nummer der Aufgabe in der Runde (0–9), adv: Grand/Null schon gelernt }
+  const ctxOf = (ctx) => Object.assign({ i: 9, adv: true }, ctx || {});
+  const need = (e) => (e === 4 ? 'Trumpf' : E.SUIT_NAMES[e]);
+  const steps = (arr) => '<ol class="think">' + arr.filter(Boolean).map((x) => '<li>' + x + '</li>').join('') + '</ol>';
+  const toks = (cs) => cs.map(tok).join(' ');
+  const TRUMP_ORDER = 'Kreuz-Bube, Pik-Bube, Herz-Bube, Karo-Bube, dann Ass, Zehn, König, Dame, 9, 8, 7 der Trumpffarbe';
+  const SUIT_ORDER = 'Ass, Zehn, König, Dame, 9, 8, 7';
+  const NULL_ORDER = 'Ass, König, Dame, Bube, Zehn, 9, 8, 7';
+
   DRILLS.augen = {
     title: 'Augen zählen', stage: 1, desc: 'Wie viele Augen liegen auf dem Tisch?',
-    gen() {
-      const n = 2 + ri(4);
+    how: 'Zähle die Augen jeder Karte zusammen: Ass 11 · Zehn 10 · König 4 · Dame 3 · Bube 2 · 9, 8, 7 zählen 0.',
+    gen(ctx) {
+      const c = ctxOf(ctx);
+      const n = c.i < 4 ? 2 + ri(2) : 2 + ri(4);
       const cs = deck().slice(0, n);
       const s = E.sumPts(cs);
-      const o = numOptions(s, [s - 1 > 0 ? s + 6 : s + 6]);
-      return { kind: 'choice', text: 'Wie viele Augen sind das?' + row(cs), ...o, explain: cs.map((c) => cardName(c) + ' ' + pts(c)).join(' + ') + ' = <b>' + s + '</b>' };
+      const o = numOptions(s, [s + 6]);
+      return { kind: 'choice', text: 'Wie viele Augen sind das?' + row(cs), ...o, explain: cs.map((x) => tok(x) + ' ' + pts(x)).join(' + ') + ' = <b>' + s + ' Augen</b>' };
     },
   };
 
   DRILLS.trumpf = {
-    title: 'Trumpf erkennen', stage: 1, desc: 'Ist die Karte Trumpf? Welche ist höher?',
-    gen() {
-      const gt = R() < 0.75 ? ri(4) : R() < 0.6 ? GT_GRAND : GT_NULL;
-      if (R() < 0.5) {
-        let c;
-        const x = R();
-        if (x < 0.35) c = E.card(ri(4), 7); // Bube
-        else if (x < 0.6 && gt < 4) c = E.card(gt, ri(7));
-        else c = ri(32);
-        const t = isTrump(c, gt);
-        return {
-          kind: 'choice', text: '<span class="game">' + gname(gt) + '</span> Ist ' + tok(c) + ' Trumpf?', options: ['Ja, Trumpf', 'Nein'], answer: t ? 0 : 1,
-          explain: (t ? cardName(c) + ' ist Trumpf. ' : cardName(c) + ' ist kein Trumpf. ') + trumpOrderText(gt),
-        };
+    title: 'Trumpf erkennen', stage: 1, desc: 'Ist die Karte Trumpf? Welche ist stärker?',
+    how: 'Trumpf sind im Farbspiel die vier Buben und alle Karten der Trumpffarbe. Die Buben sind die stärksten Trümpfe.',
+    gen(ctx) {
+      const c = ctxOf(ctx);
+      const gt = c.adv && c.i >= 6 && R() < 0.6 ? (R() < 0.5 ? GT_GRAND : GT_NULL) : ri(4);
+      const trumpDef = gt === GT_NULL ? 'Im Null gibt es keine Trümpfe.' : gt === GT_GRAND ? 'Im Grand sind nur die vier Buben Trumpf.' : 'Trumpf sind die vier Buben und alle ' + E.SUIT_NAMES[gt] + '-Karten.';
+      if (c.i < 5 || R() < 0.5) {
+        let x;
+        const r = R();
+        if (r < 0.4) x = E.card(ri(4), 7);
+        else if (r < 0.7 && gt < 4) x = E.card(gt, ri(7));
+        else x = ri(32);
+        const t = isTrump(x, gt);
+        let why;
+        if (gt === GT_NULL) why = tok(x) + ' ist kein Trumpf.';
+        else if (rankOf(x) === 7) why = tok(x) + ' ist ein Bube – Buben sind ' + (gt === GT_GRAND ? 'im Grand die einzigen Trümpfe.' : 'immer Trumpf, egal welche Farbe Trumpf ist.');
+        else if (gt < 4 && suitOf(x) === gt) why = tok(x) + ' ist eine ' + E.SUIT_NAMES[gt] + '-Karte – also Trumpf.';
+        else why = tok(x) + ' ist ' + (gt < 4 ? 'weder Bube noch ' + E.SUIT_NAMES[gt] : 'kein Bube') + ' – also kein Trumpf. Seine Farbe ist eine Fehlfarbe.';
+        return { kind: 'choice', text: '<span class="game">' + gname(gt) + '</span> Ist ' + tok(x) + ' Trumpf?', options: ['Ja, Trumpf', 'Nein'], answer: t ? 0 : 1, explain: steps([trumpDef, why]) };
       }
-      // welche ist höher – gleiche effektive Farbe
       let a, b;
       for (;;) {
         a = ri(32); b = ri(32);
-        if (a === b) continue;
-        if (effSuit(a, gt) !== effSuit(b, gt)) continue;
-        if (gt !== GT_NULL && R() < 0.5 && !isTrump(a, gt)) continue;
+        if (a === b || effSuit(a, gt) !== effSuit(b, gt)) continue;
+        if (gt < 4 && R() < 0.5 && !isTrump(a, gt)) continue;
         break;
       }
-      const higher = E.strength(a, gt) > E.strength(b, gt) ? 0 : 1;
-      const isT = isTrump(a, gt);
+      const hi = E.strength(a, gt) > E.strength(b, gt) ? 0 : 1;
+      const both = isTrump(a, gt);
+      const order = both ? 'Reihenfolge der Trümpfe: ' + (gt === GT_GRAND ? 'Kreuz-Bube, Pik-Bube, Herz-Bube, Karo-Bube' : TRUMP_ORDER) + '.' : 'Beide sind ' + E.SUIT_NAMES[suitOf(a)] + '-Karten. Reihenfolge: ' + (gt === GT_NULL ? NULL_ORDER : SUIT_ORDER) + '.';
       return {
-        kind: 'choice', text: '<span class="game">' + gname(gt) + '</span> Welche Karte ist höher?', options: [tok(a), tok(b)], answer: higher,
-        explain: (isT ? 'Beide sind Trumpf. ' : 'Beide sind ' + E.SUIT_NAMES[suitOf(a)] + '. ') + trumpOrderText(gt) + (gt < 5 && !isT ? ' In Fehlfarben: Ass, Zehn, König, Dame, 9, 8, 7.' : ''),
+        kind: 'choice', text: '<span class="game">' + gname(gt) + '</span> Welche Karte ist stärker?', options: [tok(a), tok(b)], answer: hi,
+        explain: steps([both ? 'Beide sind Trumpf. ' + order : order, tok(hi ? b : a) + ' ist stärker.']),
       };
     },
   };
 
   DRILLS.bedienen = {
-    title: 'Erlaubte Karten', stage: 1, desc: 'Tippe alle Karten an, die du legen darfst.',
-    gen() {
-      const gt = randGame(0.15);
-      const d = deck();
-      const lead = d[0];
-      let hand = d.slice(1, 7);
-      if (R() < 0.6 && gt !== GT_NULL) {
+    title: 'Erlaubte Karten', stage: 1, desc: 'Welche Karten darfst du legen?',
+    how: 'Tippe <b>alle</b> Karten an, die du legen darfst (oft mehrere), dann auf „Prüfen“.<br>1. Welche Farbe ist gefragt? 2. Hast du sie? Dann musst du eine davon legen. 3. Sonst darfst du jede Karte legen.',
+    gen(ctx) {
+      const c = ctxOf(ctx);
+      let gt, tricky;
+      if (c.i < 3) { gt = ri(4); tricky = false; } else if (c.i < 7 || !c.adv) { gt = ri(4); tricky = true; } else { gt = R() < 0.5 ? GT_GRAND : GT_NULL; tricky = true; }
+      let lead, hand;
+      for (;;) {
+        const d = deck();
+        lead = d[0];
+        if (!tricky && rankOf(lead) === 7) continue;
+        const le = effSuit(lead, gt);
+        hand = [];
+        for (const x of d.slice(1)) {
+          if (hand.length >= 6) break;
+          if (!tricky && rankOf(x) === 7 && gt !== GT_NULL) continue;
+          hand.push(x);
+        }
         const jack = E.card(suitOf(lead), 7);
-        if (jack !== lead && !hand.includes(jack)) hand[0] = jack;
+        if (tricky && jack !== lead && !hand.includes(jack) && R() < 0.6) hand[0] = jack;
+        const follows = hand.some((x) => effSuit(x, gt) === le);
+        if (!follows && R() < 0.5) continue; // meist muss man bedienen
+        break;
       }
       hand = E.sortHand(hand, gt);
       const legal = E.legalCards(hand, [lead], gt);
       const le = effSuit(lead, gt);
-      const suitTxt = le === 4 ? 'Trumpf' : E.SUIT_NAMES[le];
-      const follow = hand.some((c) => effSuit(c, gt) === le);
-      let ex = 'Ausgespielt ist ' + suitTxt + '. ';
-      ex += follow ? 'Du hast ' + suitTxt + ' und musst bedienen: ' + legal.map(tok).join(' ') + '.' : 'Du hast kein ' + suitTxt + ' und darfst jede Karte legen.';
-      if (gt !== GT_NULL && le !== 4 && hand.includes(E.card(le, 7))) ex += ' ' + tok(E.card(le, 7)) + ' ist Trumpf und zählt nicht zu ' + suitTxt + '.';
-      if (gt !== GT_NULL && le === 4 && hand.some((c) => rankOf(c) === 7)) ex += ' Buben sind Trumpf und müssen Trumpf bedienen.';
-      return { kind: 'pick', multi: true, gt, text: '<span class="game">' + gname(gt) + '</span> Ausgespielt wird ' + tok(lead) + '. Welche Karten darfst du legen?', hand, answer: legal, explain: ex };
+      const follow = hand.filter((x) => effSuit(x, gt) === le);
+      const s = [];
+      let s1 = 'Ausgespielt ist ' + tok(lead) + ' – gefragt ist <b>' + need(le) + '</b>.';
+      if (gt === GT_NULL) s1 += ' Im Null gibt es keinen Trumpf.';
+      else if (rankOf(lead) === 7) s1 += ' Buben sind Trumpf.';
+      s.push(s1);
+      s.push(follow.length ? 'Du hast ' + need(le) + ': ' + toks(follow) + '. Also musst du eine davon legen.' : 'Du hast kein ' + need(le) + '. Also darfst du jede Karte legen.');
+      const myJack = E.card(le < 4 ? le : 0, 7);
+      if (le < 4 && hand.includes(myJack)) s.push(gt === GT_NULL ? tok(myJack) + ' gehört im Null zu ' + need(le) + ' – dort ist der Bube kein Trumpf.' : tok(myJack) + ' zählt nicht als ' + need(le) + ' – Buben sind Trumpf.');
+      if (le === 4 && hand.some((x) => rankOf(x) === 7)) s.push('Auch ' + toks(hand.filter((x) => rankOf(x) === 7)) + ' ist Trumpf.');
+      return { kind: 'pick', multi: true, gt, text: '<span class="game">' + gname(gt) + '</span> Ausgespielt wird ' + tok(lead) + '. Welche deiner Karten darfst du legen?', hand, answer: legal, explain: steps(s) };
     },
   };
 
   DRILLS.stich = {
     title: 'Stichsieger', stage: 1, desc: 'Welche Karte gewinnt den Stich?',
-    gen() {
-      const gt = randGame(0.12);
-      const d = deck();
-      const lead = d[0];
-      const cs = [lead];
-      for (const c of d.slice(1)) {
-        if (cs.length === 3) break;
-        if (R() < 0.6 && effSuit(c, gt) !== effSuit(lead, gt) && !(isTrump(c, gt) && R() < 0.5)) continue;
-        cs.push(c);
+    how: '1. Liegt ein Trumpf im Stich? Dann gewinnt der höchste Trumpf. 2. Sonst gewinnt die höchste Karte der Farbe, die zuerst gelegt wurde. Tippe die Gewinner-Karte an.',
+    gen(ctx) {
+      const c = ctxOf(ctx);
+      const gt = c.adv && c.i >= 7 && R() < 0.6 ? (R() < 0.5 ? GT_GRAND : GT_NULL) : ri(4);
+      const allowTrump = c.i >= 3;
+      let cs;
+      for (;;) {
+        const d = deck();
+        const lead = d[0];
+        if (!allowTrump && isTrump(lead, gt)) continue;
+        cs = [lead];
+        for (const x of d.slice(1)) {
+          if (cs.length === 3) break;
+          if (!allowTrump && isTrump(x, gt)) continue;
+          if (R() < 0.6 && effSuit(x, gt) !== effSuit(lead, gt) && !(isTrump(x, gt) && R() < 0.5)) continue;
+          cs.push(x);
+        }
+        break;
       }
       const w = E.trickWinnerIndex(cs, gt);
-      const wc = cs[w];
-      let ex = cardName(wc) + ' gewinnt. ';
-      if (isTrump(wc, gt) && !isTrump(lead, gt)) ex += 'Sie ist Trumpf und sticht.';
-      else if (w === 0) ex += 'Es wurde ' + (isTrump(lead, gt) ? 'Trumpf' : E.SUIT_NAMES[suitOf(lead)]) + ' ausgespielt und keine höhere Karte dieser Farbe ' + (gt !== GT_NULL ? 'oder Trumpf ' : '') + 'gelegt.';
-      else ex += 'Sie ist die höchste Karte der ausgespielten Farbe.';
-      const off = cs.filter((c) => effSuit(c, gt) !== effSuit(lead, gt) && !isTrump(c, gt));
-      if (off.length) ex += ' ' + off.map(tok).join(' ') + ' ist abgeworfen und zählt nicht.';
-      return { kind: 'trick', gt, text: '<span class="game">' + gname(gt) + '</span> Wer gewinnt den Stich? Die erste Karte wurde ausgespielt.', cards: cs, answer: w, explain: ex };
+      const lead = cs[0], le = effSuit(lead, gt), wc = cs[w];
+      const trumps = cs.filter((x) => isTrump(x, gt));
+      const off = cs.filter((x) => effSuit(x, gt) !== le && !isTrump(x, gt));
+      const s = ['Ausgespielt wurde ' + tok(lead) + ' – gefragt ist <b>' + need(le) + '</b>.'];
+      if (gt === GT_NULL) s.push('Im Null gibt es keinen Trumpf.');
+      else if (le === 4) s.push('Es wurde Trumpf gespielt. Reihenfolge: ' + (gt === GT_GRAND ? 'Kreuz-Bube, Pik-Bube, Herz-Bube, Karo-Bube' : TRUMP_ORDER) + '.');
+      else if (trumps.length) s.push('Im Stich liegt Trumpf: ' + toks(trumps) + '. Trumpf schlägt jede andere Farbe.');
+      else s.push('Im Stich liegt kein Trumpf.');
+      if (off.length) s.push(toks(off) + ' wurde abgeworfen und kann nicht gewinnen.');
+      s.push('→ ' + tok(wc) + ' gewinnt: ' + (isTrump(wc, gt) ? 'der höchste Trumpf im Stich.' : 'die höchste ' + need(le) + '-Karte (' + (gt === GT_NULL ? NULL_ORDER : SUIT_ORDER) + ').'));
+      return { kind: 'trick', gt, text: '<span class="game">' + gname(gt) + '</span> Wer gewinnt den Stich? Die erste Karte wurde ausgespielt.', cards: cs, answer: w, explain: steps(s) };
     },
   };
 
   function spitzenLabel(sp) { return (sp.mit ? 'mit ' : 'ohne ') + sp.n; }
   DRILLS.spitzen = {
-    title: 'Spitzen zählen', stage: 2, desc: 'Mit oder ohne wie viele?',
+    title: 'Spitzen zählen', stage: 2, desc: 'Mit oder ohne wie viele?', how: 'Beginne beim Kreuz-Buben. Hast du ihn, zähle die Trümpfe von oben ohne Lücke („mit“). Fehlt er, zähle, wie viele Trümpfe von oben fehlen („ohne“).',
     gen() {
       const gt = R() < 0.75 ? ri(4) : GT_GRAND;
       let hand;
@@ -154,7 +199,7 @@
   };
 
   DRILLS.spielwert = {
-    title: 'Spielwert berechnen', stage: 2, desc: 'Stufen × Grundwert',
+    title: 'Spielwert berechnen', stage: 2, desc: 'Stufen × Grundwert', how: 'Stufen = Spitzen + 1 + Extras (Hand, Schneider …). Spielwert = Stufen × Grundwert. Grundwerte: Karo 9, Herz 10, Pik 11, Kreuz 12, Grand 24.',
     gen() {
       const gt = R() < 0.1 ? GT_NULL : R() < 0.75 ? ri(4) : GT_GRAND;
       if (gt === GT_NULL) {
@@ -185,7 +230,7 @@
   };
 
   DRILLS.reizwerte = {
-    title: 'Reizwerte', stage: 2, desc: 'Die Reizreihe sicher beherrschen',
+    title: 'Reizwerte', stage: 2, desc: 'Die Reizreihe sicher beherrschen', how: 'Reizwerte sind mögliche Spielwerte: 18, 20, 22, 23, 24, 27, 30, 33, 35, 36, 40, 44 …',
     gen() {
       const t = R();
       if (t < 0.4) {
@@ -221,7 +266,7 @@
 
   function posName(p) { return ['Vorhand', 'Mittelhand', 'Hinterhand'][p]; }
   DRILLS.reizen = {
-    title: 'Blatt bewerten', stage: 3, desc: 'Wie weit reizt du mit diesem Blatt?',
+    title: 'Blatt bewerten', stage: 3, desc: 'Wie weit reizt du mit diesem Blatt?', how: 'Überlege, welches Spiel du gewinnen kannst, und reize höchstens bis zu seinem Wert.',
     gen() {
       let hand, pos, bl;
       for (let k = 0; k < 200; k++) {
@@ -261,21 +306,23 @@
     const why = [];
     const p = E.sumPts(d);
     if (gt !== GT_NULL) {
-      if (p) why.push(p + ' Augen sicher im Skat');
+      if (p) why.push(p + ' Augen sind dir sicher');
       const suits = new Set(d.map(suitOf));
       for (const s of suits) {
         if (gt < 4 && s === gt) continue;
         if (d.some((c) => rankOf(c) === 7)) continue;
-        if (!rest.some((c) => suitOf(c) === s && !isTrump(c, gt))) why.push(E.SUIT_NAMES[s] + ' ist danach blank – dort kannst du stechen');
+        if (!rest.some((c) => suitOf(c) === s && !isTrump(c, gt))) why.push('danach hast du kein ' + E.SUIT_NAMES[s] + ' mehr – wird ' + E.SUIT_NAMES[s] + ' gespielt, kannst du stechen');
       }
       for (const c of d) if (rankOf(c) === 5 && !cards12.includes(E.card(suitOf(c), 6))) why.push(cardName(c) + ' hatte kein Ass als Schutz');
     } else {
       why.push('Die hohen Karten aus Farben mit Lücken sind weg');
     }
-    return why.length ? why.join('; ') + '.' : 'Diese Kombination ergibt die beste Gewinnchance.';
+    if (!why.length) return 'Diese Kombination ergibt die beste Gewinnchance.';
+    const t = why.join('; ');
+    return t[0].toUpperCase() + t.slice(1) + '.';
   }
   DRILLS.druecken = {
-    title: 'Drücken', stage: 3, desc: 'Welche zwei Karten legst du in den Skat?',
+    title: 'Drücken', stage: 3, desc: 'Welche zwei Karten legst du in den Skat?', how: 'Tippe zwei Karten an. Gut zum Drücken: volle Karten, die sonst verloren gingen, oder die letzten Karten einer Farbe. Keine Trümpfe.',
     gen() {
       let cards12, ch;
       for (let k = 0; k < 100; k++) {
@@ -325,7 +372,7 @@
   const whoName = (st, p) => (p === st.declarer ? 'Alleinspieler' : 'Partner');
 
   DRILLS.schmieren = {
-    title: 'Schmieren & Abwerfen', stage: 3, desc: 'Du bist Gegenspieler und spielst als Letzter.',
+    title: 'Schmieren & Abwerfen', stage: 3, desc: 'Du bist Gegenspieler und spielst als Letzter.', how: 'Wer liegt vorn? Dein Partner: gib viele Augen (schmieren). Der Alleinspieler: schlag ihn, wenn du kannst – sonst gib wenig.',
     gen() {
       const r = findSituation((st) => {
         if (st.declarer === 0 || st.trick.length !== 2) return null;
@@ -364,7 +411,7 @@
   };
 
   DRILLS.mitzaehlen = {
-    title: 'Mitzählen', stage: 4, desc: 'Merke dir die Augen Stich für Stich.',
+    title: 'Mitzählen', stage: 4, desc: 'Merke dir die Augen Stich für Stich.', how: 'Zähle nach jedem Stich die Augen und addiere nur die Stiche des Alleinspielers.',
     gen() {
       let st;
       for (;;) {
@@ -391,7 +438,7 @@
   };
 
   DRILLS.truempfe = {
-    title: 'Trümpfe zählen', stage: 4, desc: 'Wie viele Trümpfe sind noch draußen?',
+    title: 'Trümpfe zählen', stage: 4, desc: 'Wie viele Trümpfe sind noch draußen?', how: '11 Trümpfe im Farbspiel (4 im Grand) – minus deine – minus die gefallenen.',
     gen() {
       let st, k;
       for (;;) {
@@ -431,11 +478,12 @@
     const legal = E.legalCards(hand, trick.map((x) => x.c), gt);
     return {
       kind: 'pick', multi: false, gt, hand, legal, trick, title: t.title,
+      how: 'Wer liegt im Stich vorn? Kommt noch jemand nach dir? Was bringt deiner Seite die meisten Augen?',
       text: '<span class="game">' + gname(gt) + '</span> ' + t.role + '. Welche Karte spielst du?',
       answer: t.ok.map(parse), explain: t.why,
     };
   }
 
   const ORDER = ['augen', 'trumpf', 'bedienen', 'stich', 'spitzen', 'spielwert', 'reizwerte', 'reizen', 'druecken', 'schmieren', 'mitzaehlen', 'truempfe'];
-  G.SDRILLS = { DRILLS, ORDER, tacticQuestion, tok, row, parse };
+  G.SDRILLS = { DRILLS, ORDER, tacticQuestion, tok, row, parse, discardReason };
 })(typeof globalThis !== 'undefined' ? globalThis : window);

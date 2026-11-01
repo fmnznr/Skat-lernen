@@ -8,11 +8,11 @@
   const rand = (n) => Math.floor(Math.random() * n);
 
   // ================= Speicher =================
-  const LS_P = 'skat.progress.v1', LS_G = 'skat.game.v1';
+  const LS_P = 'skat.progress.v1', LS_G = 'skat.game.v1', LS_GG = 'skat.guide.v1';
   const lsGet = (k) => { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : null; } catch (e) { return null; } };
   const lsSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* kein Speicher */ } };
   const lsDel = (k) => { try { localStorage.removeItem(k); } catch (e) { /* */ } };
-  const defaults = () => ({ v: 1, updatedAt: 0, lessons: {}, drills: {}, tactics: {}, games: [], list: [], countChecks: { ok: 0, total: 0 }, settings: { help: 'lern', tempo: 'normal', deck: 'de' }, dealer: null });
+  const defaults = () => ({ v: 1, updatedAt: 0, lessons: {}, drills: {}, tactics: {}, games: [], list: [], guides: {}, countChecks: { ok: 0, total: 0 }, settings: { help: 'lern', tempo: 'normal', deck: 'de' }, dealer: null });
   let P = normalize(lsGet(LS_P));
   function normalize(x) {
     const d = defaults();
@@ -20,6 +20,7 @@
     const o = Object.assign(d, x);
     o.settings = Object.assign(defaults().settings, x.settings || {});
     o.countChecks = Object.assign({ ok: 0, total: 0 }, x.countChecks || {});
+    o.guides = Object.assign({}, x.guides || {});
     return o;
   }
   function save() {
@@ -113,16 +114,43 @@
   }
   const backHTML = () => '<div class="card back" aria-hidden="true"></div>';
   const chip = (c) => '<span class="chip s' + E.suitOf(c) + '" title="' + E.cardName(c) + '">' + suitMark(E.suitOf(c)) + RS[E.rankOf(c)] + '</span>';
-  function rich(t) {
+  // Fachbegriffe antippbar machen
+  const GL = C.GLOSSARY;
+  const GL_KEYS = Object.keys(GL);
+  const WCH = 'A-Za-zÄÖÜäöüß';
+  const TERM_RE = new RegExp('(^|[^' + WCH + '])(' + GL_KEYS.map((k) => GL[k].re).join('|') + ')(?![' + WCH + '])', 'g');
+  const GL_MATCH = GL_KEYS.map((k) => [new RegExp('^(?:' + GL[k].re + ')$'), k]);
+  function linkTerms(html) {
+    const used = new Set();
+    return html.split(/(<[^>]+>)/).map((seg) => {
+      if (seg[0] === '<') return seg;
+      return seg.replace(TERM_RE, (m, pre, w) => {
+        const hit = GL_MATCH.find(([re]) => re.test(w));
+        if (!hit || used.has(hit[1])) return m;
+        used.add(hit[1]);
+        return pre + '<span class="term" data-term="' + hit[1] + '" role="button" tabindex="0">' + w + '</span>';
+      });
+    }).join('');
+  }
+  function showTerm(k) {
+    const g = GL[k];
+    if (!g) return;
+    let el = $('#gloss');
+    if (!el) { el = document.createElement('div'); el.id = 'gloss'; document.body.appendChild(el); el.onclick = (ev) => { if (ev.target === el || ev.target.closest('[data-close]')) el.hidden = true; }; }
+    el.innerHTML = '<div class="gl-in" role="dialog" aria-modal="true"><div class="eyebrow">Begriff</div><h3>' + esc(T(g.t)) + '</h3><p>' + rich(g.d, { terms: false }) + '</p><button class="btn small" data-close="1">Verstanden</button></div>';
+    el.hidden = false;
+  }
+  function rich(t, o) {
     let h = T(t)
       .replace(/\[\[([^\]]+)\]\]/g, (_, s) => '<span class="crow">' + s.trim().split(/\s+/).map((x) => cardHTML(D.parse(x))).join('') + '</span>')
       .replace(/\{([dhpk])(10|[789DKAB])\}/g, (_, su, rk) => chip(D.parse(su + rk)));
     if (isDe()) h = h.replace(/[♦♥♠♣]/g, (m) => suitMark('♦♥♠♣'.indexOf(m)));
+    if (!o || o.terms !== false) h = linkTerms(h);
     return h;
   }
   function toast(msg, ms) {
     const el = $('#toast');
-    el.innerHTML = rich(msg);
+    el.innerHTML = rich(msg, { terms: false });
     el.hidden = false;
     clearTimeout(toast.t);
     toast.t = setTimeout(() => { el.hidden = true; }, ms || 2600);
@@ -160,6 +188,13 @@
     const n = ts.filter((t) => P.tactics[t.id]).length;
     return { t: 'Taktik-Aufgaben gelöst', ok: n >= need, pv: n + '/' + need, href: '#taktik', label: 'Taktik-Aufgaben' };
   }
+  const GUIDES = [
+    { n: 1, stage: 1, t: 'Dein erstes Spiel', d: 'Karten, Stiche, Trumpf – jeder Zug wird erklärt' },
+    { n: 2, stage: 1, t: 'Zu zweit gegen einen', d: 'Als Partnerin von Lena: gemeinsam gegen Tom' },
+    { n: 3, stage: 2, t: 'Reizen und Skat', d: 'Ein ganzes Spiel, vom Reizen bis zur Abrechnung' },
+  ];
+  const guideDone = (n) => !!(P.guides[n] && P.guides[n].done);
+  const reqGuide = (n) => { const g = GUIDES[n - 1]; return { t: 'Geführtes Spiel „' + g.t + '“', ok: guideDone(n), pv: guideDone(n) ? '✓' : '–', href: '#gefuehrt-' + n, label: 'Geführtes Spiel „' + g.t + '“' }; };
   const reqGames = (n) => ({ t: n + ' Übungsspiele gespielt', ok: P.games.length >= n, pv: Math.min(P.games.length, n) + '/' + n, href: '#spielen', label: 'Übungsspiel' });
   function reqProfi(n) {
     const k = P.games.filter((g) => g.mode === 'profi').length;
@@ -178,8 +213,8 @@
     return { t: 'Höchstens 0,5 Patzer pro Spiel (letzte 10 Profi-Spiele)', ok: g.length >= 10 && avg <= 0.5, pv: g.length ? avg.toFixed(1).replace('.', ',') + ' (' + g.length + ')' : '–', href: '#spielen', label: 'Spiel im Profi-Modus', profi: true };
   }
   const REQ = {
-    2: () => [reqLessons(1), reqDrill('augen'), reqDrill('trumpf'), reqDrill('bedienen'), reqDrill('stich')],
-    3: () => [reqLessons(2), reqDrill('spitzen'), reqDrill('spielwert'), reqDrill('reizwerte'), reqGames(3)],
+    2: () => [reqGuide(1), reqGuide(2), reqLessons(1), reqDrill('augen'), reqDrill('trumpf'), reqDrill('bedienen'), reqDrill('stich')],
+    3: () => [reqGuide(3), reqLessons(2), reqDrill('spitzen'), reqDrill('spielwert'), reqDrill('reizwerte'), reqGames(3)],
     4: () => [reqLessons(3), reqDrill('reizen'), reqDrill('druecken'), reqDrill('schmieren'), reqTactics(3, 9), reqGames(10)],
     5: () => [reqLessons(4), reqDrill('mitzaehlen'), reqDrill('truempfe'), reqTactics(4, 13), reqProfi(15), reqCount(5), reqDecl(), reqCoach()],
   };
@@ -214,10 +249,11 @@
     clearTimeout(gameTimer);
     closeSheet();
     view = name;
-    const tabOf = { lernen: 'lernen', lektion: 'lernen', ueben: 'ueben', uebung: 'ueben', taktik: 'ueben', spielen: 'spielen', liste: 'spielen', fortschritt: 'fortschritt' };
+    const tabOf = { lernen: 'lernen', lektion: 'lernen', gefuehrt: 'lernen', ueben: 'ueben', uebung: 'ueben', taktik: 'ueben', spielen: 'spielen', liste: 'spielen', fortschritt: 'fortschritt' };
     document.querySelectorAll('.tabbar a').forEach((a) => a.classList.toggle('on', a.dataset.tab === tabOf[name]));
-    $('#app').classList.toggle('fullscreen', name === 'spielen');
-    document.body.classList.toggle('felt', name === 'spielen');
+    const table = name === 'spielen' || name === 'gefuehrt';
+    $('#app').classList.toggle('fullscreen', table);
+    document.body.classList.toggle('felt', table);
     const scr = $('#screen');
     scr.scrollTop = 0;
     if (name === 'lektion' && C.LESSONS.some((l) => l.id === arg)) return viewLesson(arg);
@@ -225,6 +261,7 @@
     if (name === 'taktik') return viewDrill('taktik');
     if (name === 'ueben') return viewDrills();
     if (name === 'spielen') return viewGame();
+    if (name === 'gefuehrt' && GUIDES[Number(arg) - 1]) return viewGuide(Number(arg));
     if (name === 'liste') return viewList();
     if (name === 'fortschritt') return viewProgress();
     view = 'lernen';
@@ -235,12 +272,19 @@
   // ================= Lernpfad =================
   function viewLearn() {
     const nu = nextUp();
-    let h = '<div class="page"><div class="brand"><h1>Skat lernen</h1><span class="eyebrow">Regeln nach ISkO</span></div>' + levelCard();
-    h += '<a class="nextup" href="' + nu.href + '"><div><div class="eyebrow">Als Nächstes</div><div class="t">' + esc(nu.t) + '</div><div class="d">' + esc(nu.d) + '</div></div><span class="btn small">Los</span></a>';
+    let h = '<div class="page"><div class="brand"><h1>Skat lernen</h1><span class="eyebrow">Regeln nach ISkO</span></div>';
+    if (!guideDone(1)) {
+      h += '<a class="startcard" href="#gefuehrt-1"><div class="eyebrow">Neu beim Skat?</div><div class="t">Spiel dein erstes Spiel</div><p>Du brauchst kein Vorwissen. Die App spielt mit dir und erklärt bei jedem Zug, was du darfst und warum.</p><span class="btn brass">Erstes Spiel starten</span></a>';
+    }
+    h += levelCard();
+    if (guideDone(1)) h += '<a class="nextup" href="' + nu.href + '"><div><div class="eyebrow">Als Nächstes</div><div class="t">' + esc(nu.t) + '</div><div class="d">' + esc(nu.d) + '</div></div><span class="btn small">Los</span></a>';
     for (const L of LEVELS.slice(0, 4)) {
       const ls = C.LESSONS.filter((l) => l.stage === L.n);
       const done = ls.filter((l) => lessonDone(l.id)).length;
       h += '<section class="block"><div class="block-h"><h3>Stufe ' + L.n + ' · ' + L.short + '</h3><span class="eyebrow">' + done + '/' + ls.length + '</span></div>';
+      for (const g of GUIDES.filter((x) => x.stage === L.n)) {
+        h += '<a class="row" href="#gefuehrt-' + g.n + '"><span class="mark' + (guideDone(g.n) ? ' done' : '') + '">' + (guideDone(g.n) ? '✓' : '') + '</span><span><span class="t">Geführtes Spiel: ' + g.t + '</span><br><span class="d">' + g.d + '</span></span><span class="score">' + ICON.spielen + '</span></a>';
+      }
       ls.forEach((l, k) => {
         const st = P.lessons[l.id];
         const dr = l.drill ? drillBest(l.drill) : null;
@@ -278,7 +322,7 @@
       q.o.forEach((o, i) => {
         let cls = 'opt';
         if (ans != null) { if (i === q.a) cls += ' right'; else if (i === ans) cls += ' wrong'; }
-        h += '<button class="' + cls + '" data-i="' + i + '"' + (ans != null ? ' disabled' : '') + '>' + rich(o) + '</button>';
+        h += '<button class="' + cls + '" data-i="' + i + '"' + (ans != null ? ' disabled' : '') + '>' + rich(o, { terms: false }) + '</button>';
       });
       h += '</div>';
       if (ans != null) h += '<div class="feedback ' + (ans === q.a ? 'ok' : 'no') + '"><b class="h">' + (ans === q.a ? 'Richtig.' : 'Nicht ganz.') + '</b>' + rich(q.why) + '</div><button class="btn" id="qnext">' + (LS.q < l.quiz.length - 1 ? 'Nächste Frage' : 'Auswerten') + '</button>';
@@ -347,7 +391,7 @@
   }
   function nextQuestion() {
     if (DS.i >= DS.n) { DS.done = true; return renderDrill(); }
-    DS.q = DS.tactic ? D.tacticQuestion(DS.queue[DS.i]) : D.DRILLS[DS.id].gen();
+    DS.q = DS.tactic ? D.tacticQuestion(DS.queue[DS.i]) : D.DRILLS[DS.id].gen({ i: DS.i, adv: lessonDone('grandnull') });
     DS.answered = null; DS.sel = []; DS.seqAt = 0;
     renderDrill();
   }
@@ -386,15 +430,17 @@
       return;
     }
     if (q.tricksShown) h += '<div class="tricklist">' + q.tricksShown.map((t, i) => '<div class="tl"><span style="width:18px">' + (i + 1) + '.</span>' + t.map((c) => cardHTML(c)).join('') + '</div>').join('') + '</div>';
-    h += '<div class="qtext">' + rich(q.text) + '</div>';
     const ans = DS.answered;
+    const how = q.how || (!DS.tactic && D.DRILLS[DS.id].how);
+    if (how && !ans) h += '<div class="how"><b>So gehst du vor:</b> ' + rich(how, { terms: false }) + '</div>';
+    h += '<div class="qtext">' + rich(q.text) + '</div>';
     if (q.trick) h += '<div class="minitrick">' + q.trick.map((x) => '<figure>' + cardHTML(x.c) + '<figcaption>' + esc(x.who) + '</figcaption></figure>').join('') + '<figure><div class="card" style="opacity:.25;background:transparent;border:2px dashed currentColor;box-shadow:none"></div><figcaption>Du</figcaption></figure></div>';
     if (q.kind === 'choice' || q.kind === 'seq') {
       if (q.hand && q.kind === 'choice') h += '<div class="pickhand" style="--cw:44px">' + q.hand.map((c) => cardHTML(c)).join('') + '</div>';
       h += '<div class="opts">' + q.options.map((o, i) => {
         let cls = 'opt';
         if (ans) { if (i === q.answer) cls += ' right'; else if (i === ans.i) cls += ' wrong'; }
-        return '<button class="' + cls + '" data-i="' + i + '"' + (ans ? ' disabled' : '') + '>' + rich(o) + '</button>';
+        return '<button class="' + cls + '" data-i="' + i + '"' + (ans ? ' disabled' : '') + '>' + rich(o, { terms: false }) + '</button>';
       }).join('') + '</div>';
     } else if (q.kind === 'trick') {
       h += '<div class="minitrick">' + q.cards.map((c, i) => {
@@ -456,20 +502,29 @@
   const RISK = [0.5, 0.55, 0.46];
   const POS = (st, p) => (p === st.vh ? 'Vorhand' : p === st.mh ? 'Mittelhand' : 'Hinterhand');
   const POSK = (st, p) => (p === st.vh ? 'VH' : p === st.mh ? 'MH' : 'HH');
-  let GM = lsGet(LS_G);
+  let GMN = lsGet(LS_G), GMG = lsGet(LS_GG);
+  let GM = null;
   let gameTimer = null;
-  const tempo = () => ({ langsam: { bot: 1000, hold: 1800 }, normal: { bot: 650, hold: 1200 }, schnell: { bot: 320, hold: 650 } }[P.settings.tempo] || { bot: 650, hold: 1200 });
-  const help = () => (GM && GM.m.mode) || P.settings.help;
-  const saveGame = () => lsSet(LS_G, GM);
+  const guided = () => !!(GM && GM.m.guide);
+  const tempo = () => (guided() ? { bot: 1100, hold: 0 } : { langsam: { bot: 1000, hold: 1800 }, normal: { bot: 650, hold: 1200 }, schnell: { bot: 320, hold: 650 } }[P.settings.tempo] || { bot: 650, hold: 1200 });
+  const help = () => (guided() ? 'lern' : (GM && GM.m.mode) || P.settings.help);
+  const saveGame = () => { if (!GM) return; if (GM.m.guide) { GMG = GM; lsSet(LS_GG, GM); } else { GMN = GM; lsSet(LS_G, GM); } };
+  const onTable = () => view === 'spielen' || view === 'gefuehrt';
+  const newM = (o) => Object.assign({ mode: P.settings.help, bubbles: ['', '', ''], msg: '', coach: [], hints: 0, hold: null, sel: [], hint: null, countAt: 5 + rand(3), countDone: false, decl: { gt: null, sa: false, sw: false, ov: false }, warned: false, advice: false, recorded: false, shown: false }, o || {});
 
   function newDeal() {
     P.dealer = P.dealer == null ? rand(3) : (P.dealer + 1) % 3;
     save();
     const st = E.newGame(P.dealer, E.deal(P.dealer, Math.random));
-    GM = { st, m: { mode: P.settings.help, bubbles: ['', '', ''], msg: '', coach: [], hints: 0, hold: null, sel: [], hint: null, countAt: 5 + rand(3), countDone: false, decl: { gt: null, sa: false, sw: false, ov: false }, warned: false, advice: false, recorded: false, shown: false } };
+    GM = { st, m: newM() };
     saveGame();
   }
+  function nextGame() {
+    if (guided()) { const n = GM.m.guide.n; GM = { st: guideDeal(n), m: newM({ guide: { n, i: 0 } }) }; saveGame(); }
+    else newDeal();
+  }
   function viewGame() {
+    GM = GMN;
     if (!GM || !GM.st || !GM.m) newDeal();
     if (GM.m.hold && GM.m.hold.trick) GM.m.hold = null;
     if (GM.m.hold && GM.m.hold.count) GM.m.hold = null;
@@ -477,11 +532,12 @@
   }
   function gameStep() {
     clearTimeout(gameTimer);
-    if (view !== 'spielen') return;
+    if (!onTable()) return;
     renderGame();
     saveGame();
     const { st, m } = GM;
     if (m.hold) return;
+    if (m.guide && m.guide.i < guideIntro(st, m.guide.n).length) return;
     const T = tempo();
     if (st.phase === 'bidding') {
       const a = E.biddingActor(st);
@@ -491,6 +547,7 @@
         B.declare(st);
         m.bubbles = ['', '', ''];
         m.msg = '<b>' + NAMES[st.declarer] + '</b> spielt <b>' + E.gameLabel(st.game) + '</b>' + (st.game.hand ? '' : ' (Skat aufgenommen)') + '. Reizwert ' + st.bid + '.';
+        if (m.guide) m.guideNote = NAMES[st.declarer] + ' hat das Reizen gewonnen und spielt <b>' + E.gameLabel(st.game) + '</b>. Trumpf: ' + (st.game.gt < 4 ? E.SUIT_NAMES[st.game.gt] + ' und die vier Buben.' : st.game.gt === 4 ? 'nur die vier Buben.' : 'keiner (Null).') + ' Du und ' + NAMES[3 - st.declarer] + ' seid jetzt Partner.';
         gameStep();
       }, T.bot + 400);
     } else if (st.phase === 'play' && st.turn !== 0) {
@@ -520,15 +577,17 @@
     if (p === 0) {
       const cm = A.coach(st, 0, c);
       m.msg = '';
-      if (cm) { m.coach.push(cm); if (help() !== 'profi') m.msg = '<span class="coach"><b>Coach:</b> ' + rich(cm) + '</span>'; }
+      m.lastCoach = cm || null;
+      if (cm) { m.coach.push(cm); if (help() !== 'profi' && !m.guide) m.msg = '<span class="coach"><b>Coach:</b> ' + rich(cm) + '</span>'; }
     }
     m.hint = null;
+    m.guideNote = null;
     const t = E.playCard(st, p, c);
     if (t) {
       m.hold = { trick: t };
       renderGame();
       saveGame();
-      gameTimer = setTimeout(releaseTrick, tempo().hold);
+      if (!m.guide) gameTimer = setTimeout(releaseTrick, tempo().hold);
     } else gameStep();
   }
   function releaseTrick() {
@@ -540,7 +599,8 @@
     setTimeout(() => {
       m.hold = null;
       if (m.msg && m.msg.indexOf('coach') < 0) m.msg = '';
-      if (help() !== 'lern' && st.phase === 'play' && st.game.gt !== E.GT_NULL && !m.countDone && st.tricks.length === m.countAt) {
+      m.lastCoach = null;
+      if (!m.guide && help() !== 'lern' && st.phase === 'play' && st.game.gt !== E.GT_NULL && !m.countDone && st.tricks.length === m.countAt) {
         m.countDone = true;
         return countCheck();
       }
@@ -582,6 +642,13 @@
     if (m.recorded) return;
     m.recorded = true;
     const r = st.result;
+    if (m.guide) {
+      const won = st.declarer === 0 ? r.won : !r.won;
+      P.guides[m.guide.n] = { done: true, won: won || (P.guides[m.guide.n] && P.guides[m.guide.n].won) || false };
+      save();
+      saveGame();
+      return;
+    }
     const humanDecl = st.declarer === 0;
     const won = humanDecl ? r.won : !r.won;
     const sf = [0, 0, 0];
@@ -599,6 +666,7 @@
   }
   function showResult() {
     const { st, m } = GM;
+    if (m.guide) return showGuideResult();
     const r = st.result;
     const humanDecl = st.declarer === 0;
     const won = humanDecl ? r.won : !r.won;
@@ -619,7 +687,7 @@
     openSheet(h, (ev) => {
       const b = ev.target.closest('button');
       if (!b) return;
-      if (b.dataset.a === 'next') { closeSheet(); newDeal(); gameStep(); }
+      if (b.dataset.a === 'next') { closeSheet(); nextGame(); gameStep(); }
       if (b.dataset.a === 'hist') showHistory();
     });
   }
@@ -636,7 +704,237 @@
       const b = ev.target.closest('button');
       if (!b) return;
       if (b.dataset.a === 'back') showResult();
-      if (b.dataset.a === 'next') { closeSheet(); newDeal(); gameStep(); }
+      if (b.dataset.a === 'next') { closeSheet(); nextGame(); gameStep(); }
+    });
+  }
+
+  // ================= Geführte Spiele =================
+  const stepsHTML = (arr) => '<ol class="think">' + arr.filter(Boolean).map((x) => '<li>' + x + '</li>').join('') + '</ol>';
+  const who = (p) => (p === 0 ? 'du' : NAMES[p]);
+  const Who = (p) => (p === 0 ? 'Du' : NAMES[p]);
+  const vb = (p, du, er) => (p === 0 ? du : er);
+  function roleOf(st, p) {
+    if (p === 0) return '';
+    if (p === st.declarer) return ' (Alleinspieler)';
+    if (st.declarer !== 0) return p === 1 ? ' (deine Partnerin)' : ' (dein Partner)';
+    return '';
+  }
+
+  function guideDeal(n) {
+    for (let tries = 0; tries < 20000; tries++) {
+      const relax = tries > 15000;
+      const dealer = 2; // du bist Vorhand
+      const dealt = E.deal(dealer, Math.random);
+      if (n === 1) {
+        const h = dealt.hands[0];
+        let best = null;
+        for (let gt = 0; gt < 4; gt++) {
+          const nt = h.filter((c) => E.isTrump(c, gt)).length;
+          const p = A.pFixed(h, gt, true, A.AVG_SKAT);
+          if (!best || p > best.p) best = { gt, p, nt };
+        }
+        if (!relax && (best.p < 0.85 || best.nt < 6)) continue;
+        const st = E.newGame(dealer, dealt);
+        st.bidding.waiting = null; st.declarer = 0; st.bid = 18; st.phase = 'skat';
+        E.playHand(st);
+        E.declare(st, { gt: best.gt, hand: true });
+        return st;
+      }
+      if (n === 2) {
+        const tom = A.bidOptions(dealt.hands[2], false)[0];
+        if (!relax && (tom.gt >= 4 || tom.p < 0.65)) continue;
+        const st = E.newGame(dealer, dealt);
+        st.bidding.waiting = null; st.declarer = 2; st.bid = 18; st.phase = 'skat';
+        B.declare(st);
+        if (!relax && (st.game.gt >= 4 || st.game.ouvert)) continue;
+        return st;
+      }
+      const me = A.bidLimit(dealt.hands[0], true, 0.5);
+      const l1 = A.bidLimit(dealt.hands[1], false, RISK[1]).limit;
+      const l2 = A.bidLimit(dealt.hands[2], false, RISK[2]).limit;
+      const ok = me.limit >= 22 && me.choice && me.choice.gt < 4 && !me.choice.hand && Math.max(l1, l2) < me.limit && Math.max(l1, l2) >= 18;
+      if (!relax && !ok) continue;
+      return E.newGame(dealer, dealt);
+    }
+    return E.newGame(2, E.deal(2, Math.random));
+  }
+
+  function viewGuide(n) {
+    const keep = GMG && GMG.m && GMG.m.guide && GMG.m.guide.n === n && !GMG.m.recorded;
+    GM = keep ? GMG : { st: guideDeal(n), m: newM({ guide: { n, i: 0 } }) };
+    saveGame();
+    gameStep();
+  }
+
+  const PTS_TABLE = '<table class="pts"><tr><td>Ass</td><td>11</td></tr><tr><td>Zehn</td><td>10</td></tr><tr><td>König</td><td>4</td></tr><tr><td>Dame</td><td>3</td></tr><tr><td>Bube</td><td>2</td></tr><tr><td>9, 8, 7</td><td>0</td></tr></table>';
+  function guideIntro(st, n) {
+    const gt = st.game ? st.game.gt : null;
+    const tn = gt != null && gt < 4 ? E.SUIT_NAMES[gt] : '';
+    if (n === 1) {
+      const nT = st.hands[0].filter((c) => E.isTrump(c, gt)).length + st.tricks.reduce((a, t) => a + t.cards.filter((x) => x.p === 0 && E.isTrump(x.c, gt)).length, 0);
+      return [
+        '<b>Willkommen am Skattisch!</b> Ihr seid zu dritt: du, Lena (oben links) und Tom (oben rechts). Jeder hat 10 Karten. Deine liegen unten.',
+        '<b>Worum geht es?</b> Jede Karte zählt Punkte. Beim Skat heißen sie Augen:' + PTS_TABLE + 'Zusammen gibt es 120 Augen.',
+        '<b>Du spielst allein</b> gegen Lena und Tom. Du gewinnst, wenn du am Ende <b>mindestens 61 Augen</b> hast. Lena und Tom halten zusammen.',
+        '<b>Trumpf</b> sind die stärksten Karten. In diesem Spiel ist <b>' + tn + '</b> Trumpf – und dazu immer die vier Buben. Deine Trümpfe haben unten einen goldenen Streifen. Du hast ' + nT + ' davon – ein starkes Blatt!',
+        '<b>So läuft ein Stich:</b> Einer legt die erste Karte – er spielt aus. Dann legt reihum jeder eine Karte dazu. Die stärkste Karte gewinnt alle drei Karten. Diese drei Karten heißen Stich.',
+        'Zwei Karten liegen verdeckt beiseite. Sie heißen Skat, gehören in diesem Spiel dir und zählen am Ende mit. Mehr dazu später.<br><b>Los geht’s: Du spielst aus.</b> Bei jedem Zug erkläre ich dir hier unten, was du darfst.',
+      ];
+    }
+    if (n === 2) {
+      const D = st.declarer, Pn = 3 - D;
+      return [
+        '<b>Diesmal spielt ' + NAMES[D] + ' allein.</b> ' + (D === 2 ? 'Er' : 'Sie') + ' spielt <b>' + E.gameLabel(st.game) + '</b>. Du und ' + NAMES[Pn] + ' seid Partner – ihr spielt zusammen.',
+        gt === E.GT_GRAND ? '<b>Trumpf</b> sind in diesem Spiel nur die vier Buben (das ist ein Grand). Deine Trümpfe sind gold markiert.' : '<b>Trumpf</b> ist ' + tn + ' – und die vier Buben. Deine Trümpfe sind gold markiert.',
+        '<b>Euer Ziel:</b> ' + NAMES[D] + ' braucht 61 Augen. Holt ihr zwei zusammen 60 Augen, verliert ' + (D === 2 ? 'er' : 'sie') + '. Eure Stiche zählen gemeinsam.',
+        '<b>Der wichtigste Trick zu zweit:</b> Gewinnt ' + NAMES[Pn] + ' einen Stich sicher, gib eine Karte mit vielen Augen dazu – ein Ass oder eine Zehn. Das heißt schmieren. Gewinnt ' + NAMES[D] + ' den Stich, gib möglichst wenig.',
+        (st.vh === 0 ? '<b>Du spielst aus.</b>' : '<b>' + NAMES[st.vh] + ' spielt aus.</b>') + ' Ich erkläre dir wieder jeden Zug.',
+      ];
+    }
+    return [
+      '<b>Jetzt ein ganzes Spiel.</b> Vor jedem Spiel wird entschieden, wer allein spielt. Das heißt Reizen.',
+      'Beim Reizen sagt man Zahlen: 18, 20, 22, 23, 24, 27, 30 … Jede Zahl ist ein möglicher Spielwert. Wer sich das wertvollste Spiel zutraut, spielt allein.',
+      'Wie viel dein Blatt wert ist, rechne ich dir aus. Die wichtigste Regel: <b>Sag nie mehr, als dein Blatt wert ist.</b>',
+      'Zuerst sagt ' + NAMES[st.mh] + ' Zahlen zu ' + (st.vh === 0 ? 'dir' : NAMES[st.vh]) + '. ' + (st.vh === 0 ? 'Du antwortest' : NAMES[st.vh] + ' antwortet') + ' mit „Ja“ (ich kann mithalten) oder „Passe“ (ich steige aus).',
+    ];
+  }
+
+  function bidActText(x) {
+    const pr = x.p === 1 ? 'sie' : 'er';
+    if (x.txt === 'Passe') return NAMES[x.p] + ' passt – ' + pr + ' steigt aus.';
+    if (x.txt === 'Ja') return NAMES[x.p] + ' sagt „Ja“ – ' + pr + ' kann auch so viel.';
+    return NAMES[x.p] + ' sagt <b>' + x.txt + '</b> – ' + pr + ' traut sich ein Spiel im Wert von ' + x.txt + ' zu.';
+  }
+  function guideBid(st) {
+    const b = st.bidding;
+    const a = E.biddingActor(st);
+    const bl = A.bidLimit(st.hands[0], st.vh === 0, 0.5);
+    const lim = bl.limit, ch = bl.choice;
+    let worth = 'Dein Blatt ist zu schwach für ein eigenes Spiel.';
+    if (lim && ch) worth = 'Dein Blatt ist etwa <b>' + lim + '</b> wert' + (ch.gt < 5 && !ch.hand ? ': ' + E.GAME_NAMES[ch.gt] + ' ' + (ch.sp.mit ? 'mit ' : 'ohne ') + ch.sp.n + ' → (' + ch.sp.n + ' + 1) × ' + E.BASE[ch.gt] + ' = ' + lim : '') + '.';
+    const last = b.log[b.log.length - 1];
+    const lastTxt = last && last.p !== 0 ? bidActText(last) + ' ' : '';
+    let t;
+    if (a === 0) {
+      if (b.waiting === 'hear') t = lastTxt + worth + ' ' + (b.bid <= lim ? 'Du kannst mithalten – tippe auf <b>„Ja“</b>.' : 'Das ist mehr, als dein Blatt wert ist – tippe auf <b>„Passe“</b>.');
+      else if (b.waiting === 'say') { const nb = E.nextBid(b.bid); t = lastTxt + 'Jetzt sagst du eine Zahl. Die nächste wäre <b>' + nb + '</b>. ' + worth + ' ' + (nb <= lim ? 'Tippe auf <b>„Sage ' + nb + '“</b>.' : 'Mehr geht nicht – tippe auf <b>„Passe“</b>.'); }
+      else t = 'Alle anderen haben gepasst. Du darfst für 18 spielen. ' + worth + ' ' + (lim >= 18 ? 'Tippe auf „18 spielen“.' : 'Tippe auf „Passe“.');
+    } else t = lastTxt + (b.waiting === 'hear' ? NAMES[b.hearer] + ' überlegt …' : b.sayer === 0 ? '' : NAMES[b.sayer] + ' überlegt …');
+    return rich(t);
+  }
+
+  function guideTurn(st, m) {
+    const gt = st.game.gt;
+    const hand = st.hands[0];
+    const s = [];
+    if (m.guideNote) s.push(m.guideNote);
+    if (!st.trick.length) {
+      s.push('Du spielst aus – du darfst <b>jede Karte</b> legen. Die anderen müssen dann bedienen.');
+    } else {
+      const lead = st.trick[0];
+      const le = E.effSuit(lead.c, gt);
+      const nd = le === 4 ? 'Trumpf' : E.SUIT_NAMES[le];
+      let s1 = 'Gefragt ist <b>' + nd + '</b> – ' + who(lead.p) + roleOf(st, lead.p) + ' hat ' + chip(lead.c) + ' ausgespielt.';
+      if (le === 4 && E.rankOf(lead.c) === 7) s1 += ' Buben sind immer Trumpf.';
+      s.push(s1);
+      const follow = hand.filter((c) => E.effSuit(c, gt) === le);
+      if (follow.length) {
+        let s2 = 'Du hast ' + nd + ': ' + follow.map(chip).join(' ') + '. Dann <b>musst</b> du eine davon legen (bedienen). Nur diese Karten sind hell.';
+        if (le < 4 && gt !== E.GT_NULL && hand.includes(E.card(le, 7))) s2 += ' ' + chip(E.card(le, 7)) + ' zählt nicht dazu – er ist Trumpf.';
+        s.push(s2);
+      } else {
+        s.push('Du hast kein ' + nd + '. Dann darfst du <b>jede Karte</b> legen' + (gt === E.GT_NULL ? '.' : ': einen Trumpf (stechen) oder eine andere Karte (abwerfen).'));
+      }
+      const cs = st.trick.map((x) => x.c);
+      const bp = st.trick[E.trickWinnerIndex(cs, gt)].p;
+      s.push('Im Moment liegt ' + who(bp) + roleOf(st, bp) + ' mit ' + chip(cs[E.trickWinnerIndex(cs, gt)]) + ' vorn.');
+    }
+    const r = A.choose(st, 0);
+    m.hint = [r.card];
+    s.push('<b>Vorschlag:</b> ' + chip(r.card) + ' (hochgestellt) – ' + r.reason + ' Du darfst aber auch eine andere erlaubte Karte nehmen.');
+    return '<div class="eyebrow">Du bist dran</div>' + rich(stepsHTML(s));
+  }
+
+  function explainTrick(st, t, m) {
+    const gt = st.game.gt;
+    const cs = t.cards;
+    const le = E.effSuit(cs[0].c, gt);
+    const nd = le === 4 ? 'Trumpf' : E.SUIT_NAMES[le];
+    const s = [Who(cs[0].p) + ' ' + vb(cs[0].p, 'hast', 'hat') + ' ' + chip(cs[0].c) + ' ausgespielt – gefragt war ' + nd + '.'];
+    for (const x of cs.slice(1)) {
+      const e = E.effSuit(x.c, gt);
+      if (e === le) s.push(Who(x.p) + ' ' + vb(x.p, 'hast', 'hat') + ' ' + chip(x.c) + ' gelegt (bedient).');
+      else if (e === 4) s.push(Who(x.p) + ' ' + vb(x.p, 'hattest', 'hatte') + ' kein ' + nd + ' und ' + vb(x.p, 'hast', 'hat') + ' mit ' + chip(x.c) + ' gestochen.');
+      else s.push(Who(x.p) + ' ' + vb(x.p, 'hattest', 'hatte') + ' kein ' + nd + ' und ' + vb(x.p, 'hast', 'hat') + ' ' + chip(x.c) + ' abgeworfen.');
+    }
+    const wc = cs.find((x) => x.p === t.winner).c;
+    const why = E.isTrump(wc, gt) ? (le === 4 ? 'der höchste Trumpf im Stich' : 'ein Trumpf – und Trumpf schlägt jede andere Farbe') : 'die höchste ' + nd + '-Karte im Stich';
+    s.push('<b>' + (t.winner === 0 ? 'Du bekommst' : NAMES[t.winner] + ' bekommt') + ' den Stich</b>: ' + chip(wc) + ' ist ' + why + '.');
+    const parts = cs.filter((x) => E.pts(x.c)).map((x) => chip(x.c) + ' ' + E.pts(x.c));
+    s.push(parts.length ? 'Augen im Stich: ' + parts.join(' + ') + ' = <b>' + t.pts + '</b>' : 'Im Stich sind keine Augen – nur Luschen.');
+    if (gt !== E.GT_NULL) {
+      const pp = E.pointsSoFar(st);
+      const dp = pp[st.declarer], op = pp[0] + pp[1] + pp[2] - dp;
+      const D = st.declarer;
+      if (D === 0) s.push('Stand: du <b>' + dp + '</b> – ' + NAMES[1] + ' und ' + NAMES[2] + ' ' + op + '. Du brauchst 61' + (st.skatTaken ? ' (dazu kommen ' + E.sumPts(st.discard) + ' gedrückte Augen).' : ' – der Skat zählt am Ende noch für dich.'));
+      else s.push('Stand: ' + (D === 1 ? 'du und ' + NAMES[2] : 'du und ' + NAMES[1]) + ' <b>' + op + '</b> – ' + NAMES[D] + ' ' + dp + '. ' + NAMES[D] + ' braucht 61, euch reichen 60.');
+    } else s.push(t.winner === st.declarer ? 'Der Alleinspieler hat einen Stich bekommen – damit ist das Nullspiel verloren.' : 'Der Alleinspieler darf keinen Stich bekommen.');
+    if (m.lastCoach) s.push('<b>Hinweis:</b> ' + m.lastCoach);
+    return '<div class="eyebrow">Stich ' + st.tricks.length + ' von 10</div>' + rich(stepsHTML(s));
+  }
+
+  function guideBox(st, m) {
+    const g = m.guide;
+    const intro = guideIntro(st, g.n);
+    if (g.i < intro.length) return { solo: '<div class="eyebrow">Erklärung ' + (g.i + 1) + ' von ' + intro.length + '</div><div class="gtext">' + rich(intro[g.i]) + '</div><button class="btn" data-a="gnext">Weiter</button>' };
+    if (m.hold && m.hold.trick) return { solo: '<div class="gtext">' + explainTrick(st, m.hold.trick, m) + '</div><button class="btn" data-a="gtrick">' + (st.phase === 'done' ? 'Zum Ergebnis' : 'Weiter') + '</button>' };
+    if (st.phase === 'bidding') { const t = guideBid(st); return E.biddingActor(st) === 0 ? { inner: t } : { solo: '<div class="eyebrow">Reizen</div><div class="gtext">' + t + '</div>' }; }
+    if (st.phase === 'eingepasst') return { inner: rich('Alle haben gepasst – niemand wollte allein spielen. Dann wird neu gegeben.') };
+    if (st.phase === 'skat') return st.declarer === 0 ? { inner: rich('<b>Du hast das Reizen gewonnen</b> und spielst allein! Zuerst nimmst du den Skat auf: Die zwei Karten aus der Mitte kommen zu deinen. Tippe auf „Skat aufnehmen“.') } : { solo: '<div class="gtext">' + NAMES[st.declarer] + ' hat das Reizen gewonnen und überlegt, was Trumpf wird …</div>' };
+    if (st.phase === 'discard') {
+      if (!m.recD) { m.recD = discardAdvice(st); m.hint = m.recD.discard.slice(); }
+      const why = D.discardReason(st.hands[0], m.recD.discard, m.recD.gt);
+      return { inner: rich('Jetzt hast du 12 Karten und legst 2 davon verdeckt weg – das heißt drücken. Ihre Augen zählen am Ende für dich.<br><b>Vorschlag:</b> ' + m.recD.discard.map(chip).join(' ') + ' (hochgestellt). ' + why + '<br>Tippe beide an (' + m.sel.length + '/2) und dann auf „Diese 2 drücken“.') };
+    }
+    if (st.phase === 'declare') {
+      if (!m.recD || m.recD.gt == null) m.recD = { gt: gameAdvice(st).gt };
+      if (m.decl.gt == null) { m.decl.gt = m.recD.gt; m.decl.nov = false; m.sortGt = m.recD.gt; }
+      const o = declOptsFor(st, m.decl).find((x) => x.gt === m.recD.gt && !x.ov);
+      const tr = m.recD.gt < 4 ? E.SUIT_NAMES[m.recD.gt] + ' (dazu die vier Buben)' : m.recD.gt === 4 ? 'Grand (nur die Buben sind Trumpf)' : 'Null (ohne Trumpf)';
+      return { inner: rich('Jetzt sagst du an, was Trumpf ist. Am besten die Farbe, von der du die meisten Karten hast – zusammen mit deinen Buben.<br><b>Vorschlag: ' + tr + '</b>. Dieses Spiel ist ' + o.v + ' wert' + (o.v >= st.bid ? ' – mindestens so viel wie gereizt (' + st.bid + '). Passt!' : '.') + ' Tippe auf „Ansagen“.') };
+    }
+    if (st.phase === 'play') {
+      if (st.turn === 0) return { solo: guideTurn(st, m) };
+      return { solo: '<div class="gtext">' + (m.guideNote ? rich(m.guideNote) + '<br>' : '') + NAMES[st.turn] + roleOf(st, st.turn) + ' ist dran …</div>' };
+    }
+    if (st.phase === 'done') return { solo: '<div class="gtext">Das Spiel ist vorbei.</div><button class="btn" data-a="result">Zum Ergebnis</button>' };
+    return {};
+  }
+
+  const LEARNED = {
+    1: ['Ein Stich: Jeder legt eine Karte, die stärkste gewinnt.', 'Bedienen: Wer die gefragte Farbe hat, muss sie legen.', 'Trumpf schlägt alle anderen Farben – Buben sind immer Trumpf.', 'Der Alleinspieler braucht 61 Augen.'],
+    2: ['Zu zweit gegen den Alleinspieler – euch reichen 60 Augen.', 'Schmieren: dem Partner Augen geben, wenn sein Stich sicher ist.', 'Dem Alleinspieler möglichst wenig Augen geben.'],
+    3: ['Reizen: Zahlen sagen – nie mehr, als dein Blatt wert ist.', 'Skat aufnehmen und zwei Karten drücken.', 'Trumpf ansagen und das Spiel durchspielen.'],
+  };
+  function showGuideResult() {
+    const { st, m } = GM;
+    const n = m.guide.n, r = st.result;
+    const me = st.declarer === 0;
+    const won = me ? r.won : !r.won;
+    let h = '<div class="eyebrow">Geführtes Spiel ' + n + '</div><h2>' + (won ? (me ? 'Gewonnen!' : 'Ihr habt gewonnen!') : me ? 'Diesmal verloren' : NAMES[st.declarer] + ' hat gewonnen') + '</h2>';
+    let p;
+    if (r.gt === E.GT_NULL) p = r.reason;
+    else if (me) p = 'Du hattest am Ende <b>' + r.declPts + ' Augen</b>' + (E.sumPts(st.discard) ? ' (davon ' + E.sumPts(st.discard) + ' aus dem Skat)' : '') + '. Zum Gewinnen brauchst du 61.';
+    else p = 'Ihr hattet zusammen <b>' + r.oppPts + ' Augen</b>, ' + NAMES[st.declarer] + ' ' + r.declPts + '. ' + NAMES[st.declarer] + ' brauchte 61.';
+    h += '<p>' + rich(p) + '</p>';
+    if (n === 3 && me && r.gt !== E.GT_NULL) h += '<p>' + rich('Spielwert: ' + valueLine(r) + '. Gereizt hattest du ' + st.bid + (r.overbid ? ' – das war zu viel (überreizt).' : ' – das passt.')) + '</p>';
+    h += '<div><div class="eyebrow">Das hast du geübt</div><ul class="coachlist">' + LEARNED[n].map((x) => '<li>' + rich(x) + '</li>').join('') + '</ul></div>';
+    h += '<div class="btns">' + (n < 3 ? '<button class="btn" data-a="gnextguide">Weiter: ' + GUIDES[n].t + '</button>' : '<a class="btn" href="#lernen">Zum Lernpfad</a>') + '<button class="btn soft" data-a="gagain">Noch einmal</button>' + (n < 3 ? '<a class="btn soft" href="#lernen">Zum Lernpfad</a>' : '') + '</div>';
+    openSheet(h, (ev) => {
+      const b = ev.target.closest('button');
+      if (!b) return;
+      if (b.dataset.a === 'gnextguide') { closeSheet(); location.hash = '#gefuehrt-' + (n + 1); }
+      if (b.dataset.a === 'gagain') { closeSheet(); nextGame(); gameStep(); }
     });
   }
 
@@ -713,11 +1011,17 @@
     const myTurn = st.phase === 'play' && st.turn === 0 && !m.hold;
     const legal = myTurn ? E.legalFor(st, 0) : null;
     const pts = E.pointsSoFar(st);
-    const panel = panelHTML(st, m, H);
-    let h = '<div class="table' + (panel ? ' haspanel' : '') + '" id="table">';
+    let panel = panelHTML(st, m, H);
+    if (m.guide) {
+      const gb = guideBox(st, m);
+      if (gb.solo) panel = '<div class="panel guide" id="guide">' + gb.solo + '</div>';
+      else if (gb.inner) panel = panel ? panel.replace('<div class="panel">', '<div class="panel guide" id="guide"><div class="gtext">' + gb.inner + '</div>') : '<div class="panel guide" id="guide">' + gb.inner + '</div>';
+    }
+    let h = '<div class="table' + (panel ? ' haspanel' : '') + (m.guide ? ' guided' : '') + '" id="table">';
     // Kopf
     const nr = P.list.length + (m.recorded ? 0 : 1);
-    h += '<div class="tbar"><a href="#lernen" aria-label="Menü">← Menü</a><div class="ttl">Spiel ' + nr + ' · ' + ({ lern: 'Lernmodus', normal: 'Normal', profi: 'Profi' }[H]) + '</div><a href="#liste">Liste</a></div>';
+    if (m.guide) h += '<div class="tbar"><a href="#lernen" aria-label="Zurück zum Lernpfad">← Lernpfad</a><div class="ttl">Geführtes Spiel ' + m.guide.n + ' · ' + GUIDES[m.guide.n - 1].t + '</div><span style="width:60px"></span></div>';
+    else h += '<div class="tbar"><a href="#lernen" aria-label="Menü">← Menü</a><div class="ttl">Spiel ' + nr + ' · ' + ({ lern: 'Lernmodus', normal: 'Normal', profi: 'Profi' }[H]) + '</div><a href="#liste">Liste</a></div>';
     // Gegner
     h += '<div class="opps">' + [1, 2].map((p) => {
       const isTurn = (st.phase === 'bidding' && E.biddingActor(st) === p) || (st.phase === 'play' && st.turn === p && !m.hold);
@@ -747,7 +1051,7 @@
       info.push('Reizwert ' + st.bid);
       info.push('Stich ' + (m.hold && m.hold.trick ? st.tricks.length : Math.min(st.tricks.length + 1, 10)) + '/10');
       if (H === 'lern' && gt !== E.GT_NULL) {
-        const dp = pts[st.declarer] + (st.declarer === 0 ? E.sumPts(st.discard) : 0);
+        const dp = pts[st.declarer] + (st.declarer === 0 && st.skatTaken ? E.sumPts(st.discard) : 0);
         const op = pts[0] + pts[1] + pts[2] - pts[st.declarer];
         info.push(st.declarer === 0 ? 'Augen: du ' + dp + ' : ' + op + ' Gegner' : 'Augen: Alleinspieler ' + dp + ' : ' + op + ' ihr');
         const v = A.makeView(st, 0);
@@ -760,13 +1064,13 @@
     }
     if (info.length) h += '<div class="infobar">' + info.map((x) => '<span>' + esc(x) + '</span>').join('') + '</div>';
     // Nachricht
-    h += '<div class="msg" id="msg">' + (m.msg || statusText(st, m)) + '</div>';
+    if (!m.guide) h += '<div class="msg" id="msg">' + (m.msg || statusText(st, m)) + '</div>';
     // Panel je Phase
     h += panel;
     // Aktionen
     const acts = [];
-    if (st.phase === 'play' && H !== 'profi' && myTurn) acts.push('<button class="btn small tbtn" data-a="tipp">Tipp</button>');
-    if (st.phase === 'play' && st.tricks.length) acts.push('<button class="btn small tbtn" data-a="last">Letzter Stich</button>');
+    if (st.phase === 'play' && H !== 'profi' && myTurn && !m.guide) acts.push('<button class="btn small tbtn" data-a="tipp">Tipp</button>');
+    if (st.phase === 'play' && st.tricks.length && !m.guide) acts.push('<button class="btn small tbtn" data-a="last">Letzter Stich</button>');
     if (st.phase === 'done' && !m.hold) acts.push('<button class="btn small brass" data-a="result">Abrechnung</button><button class="btn small" data-a="next">Nächstes Spiel</button>');
     if (acts.length) h += '<div class="actions">' + acts.join('') + '</div>';
     // eigene Hand
@@ -830,20 +1134,22 @@
       if (b.waiting === 'say') { const nb = E.nextBid(b.bid); btns = '<button class="btn" data-bid="say" data-v="' + nb + '">Sage ' + nb + '</button><button class="btn soft" data-bid="pass">Passe</button>'; }
       else if (b.waiting === 'hear') btns = '<button class="btn" data-bid="yes">Ja (' + b.bid + ')</button><button class="btn soft" data-bid="pass">Passe</button>';
       else btns = '<button class="btn" data-bid="play18">18 spielen</button><button class="btn soft" data-bid="pass">Passe</button>';
-      const adv = H === 'lern' || m.advice ? bidAdvice(st) : H === 'normal' ? '<button class="btn small soft" data-a="advice">Tipp anzeigen</button>' : '';
+      const adv = m.guide ? '' : H === 'lern' || m.advice ? bidAdvice(st) : H === 'normal' ? '<button class="btn small soft" data-a="advice">Tipp anzeigen</button>' : '';
       const role = b.waiting === 'say' ? 'Du sagst' : b.waiting === 'hear' ? 'Du hörst' : 'Vorhand';
-      return '<div class="panel"><h3>Reizen · ' + role + '</h3>' + adv + '<div class="btns">' + btns + '</div></div>';
+      return '<div class="panel">' + (m.guide ? '' : '<h3>Reizen · ' + role + '</h3>') + adv + '<div class="btns">' + btns + '</div></div>';
     }
     if (st.phase === 'eingepasst') return '<div class="panel"><h3>Eingepasst</h3><p>Niemand wollte spielen. Der nächste Spieler gibt neu.</p><button class="btn" data-a="next">Neu geben</button></div>';
     if (st.phase === 'skat' && st.declarer === 0) {
+      if (m.guide) return '<div class="panel"><div class="btns"><button class="btn" data-a="take">Skat aufnehmen</button></div></div>';
       const adv = H === 'lern' || m.advice ? skatAdvice(st) : H === 'normal' ? '<button class="btn small soft" data-a="advice">Tipp anzeigen</button>' : '';
       return '<div class="panel"><h3>Du spielst! Reizwert ' + st.bid + '</h3><p>Nimmst du den Skat auf oder spielst du Hand?</p>' + adv + '<div class="btns"><button class="btn" data-a="take">Skat aufnehmen</button><button class="btn soft" data-a="hand">Hand spielen</button></div></div>';
     }
     if (st.phase === 'discard') {
       let adv = '';
-      if (m.recD) adv = '<div class="advice"><b>Empfehlung:</b> ' + E.GAME_NAMES[m.recD.gt] + ' spielen, ' + m.recD.discard.map(chip).join(' ') + ' drücken (Chance ca. ' + pct(m.recD.p) + ').</div>';
+      if (m.guide) adv = '';
+      else if (m.recD) adv = '<div class="advice"><b>Empfehlung:</b> ' + E.GAME_NAMES[m.recD.gt] + ' spielen, ' + m.recD.discard.map(chip).join(' ') + ' drücken (Chance ca. ' + pct(m.recD.p) + ').</div>';
       else if (H !== 'profi') adv = '<button class="btn small soft" data-a="dtipp">Tipp anzeigen</button>';
-      return '<div class="panel"><h3>Drücken (' + m.sel.length + '/2)</h3><p class="note">Tippe zwei Karten an. Ihre Augen zählen für dich.</p>' + adv + '<button class="btn" data-a="discard"' + (m.sel.length !== 2 ? ' disabled' : '') + '>Diese 2 drücken</button></div>';
+      return '<div class="panel">' + (m.guide ? '' : '<h3>Drücken (' + m.sel.length + '/2)</h3><p class="note">Tippe zwei Karten an. Ihre Augen zählen für dich.</p>') + adv + '<button class="btn" data-a="discard"' + (m.sel.length !== 2 ? ' disabled' : '') + '>Diese 2 drücken</button></div>';
     }
     if (st.phase === 'declare') {
       const d = m.decl;
@@ -852,16 +1158,17 @@
       const rec = H === 'profi' ? null : m.recD ? m.recD.gt : H === 'lern' ? gameAdvice(st).gt : null;
       let g = '<div class="gamegrid">' + opts.map((o) => {
         if (o.gt === E.GT_NULL && (d.sa || d.sw || d.ov)) return '';
+        if (m.guide && o.ov) return '';
         const sel = d.gt === o.gt && !!d.nov === !!o.ov;
         return '<button class="gopt' + (o.low ? ' low' : '') + (sel ? ' sel' : '') + (rec === o.gt && !o.ov && H !== 'profi' ? ' rec' : '') + '" data-g="' + o.i + '"' + (o.blocked ? ' disabled' : '') + '><span class="gn"><span class="' + o.cls + '">' + o.s + '</span> ' + o.l + '</span><span class="gv">' + (H === 'profi' ? '' : o.txt + (o.low ? ' · unter ' + st.bid : '')) + '</span></button>';
       }).join('') + '</div>';
       let tg = '';
-      if (hand && d.gt !== E.GT_NULL) tg = '<div class="toggles"><button class="toggle' + (d.sa ? ' on' : '') + '" data-t="sa">Schneider angesagt</button><button class="toggle' + (d.sw ? ' on' : '') + '" data-t="sw">Schwarz angesagt</button><button class="toggle' + (d.ov ? ' on' : '') + '" data-t="ov">Ouvert</button></div>';
+      if (hand && d.gt !== E.GT_NULL && !m.guide) tg = '<div class="toggles"><button class="toggle' + (d.sa ? ' on' : '') + '" data-t="sa">Schneider angesagt</button><button class="toggle' + (d.sw ? ' on' : '') + '" data-t="sw">Schwarz angesagt</button><button class="toggle' + (d.ov ? ' on' : '') + '" data-t="ov">Ouvert</button></div>';
       const chosen = opts.find((o) => o.gt === d.gt && !!o.ov === !!d.nov);
       const warn = chosen && chosen.low ? '<div class="advice">Achtung: ' + chosen.l + ' ist nur ' + chosen.v + ' wert, gereizt sind ' + st.bid + '. Damit wärst du überreizt und verlierst.</div>' : '';
       const tip = H === 'normal' && rec == null ? '<button class="btn small soft" data-a="gtipp">Tipp anzeigen</button>' : '';
-      const note = hand ? '<p class="note">Beim Handspiel kennst du den Skat nicht. Die Werte rechnen nur mit deinen Karten – der Skat zählt am Ende bei den Spitzen mit.</p>' : '';
-      return '<div class="panel"><h3>Spiel ansagen' + (hand ? ' (Hand)' : '') + '</h3>' + note + g + tg + tip + warn + '<button class="btn" data-a="declare"' + (chosen ? '' : ' disabled') + '>' + (chosen ? (chosen.low ? 'Trotzdem ' : '') + 'Ansagen: ' + chosen.l + ' (' + chosen.v + ')' : 'Spiel wählen') + '</button></div>';
+      const note = hand && !m.guide ? '<p class="note">Beim Handspiel kennst du den Skat nicht. Die Werte rechnen nur mit deinen Karten – der Skat zählt am Ende bei den Spitzen mit.</p>' : '';
+      return '<div class="panel">' + (m.guide ? '' : '<h3>Spiel ansagen' + (hand ? ' (Hand)' : '') + '</h3>') + note + g + tg + tip + warn + '<button class="btn" data-a="declare"' + (chosen ? '' : ' disabled') + '>' + (chosen ? (chosen.low ? 'Trotzdem ' : '') + 'Ansagen: ' + chosen.l + ' (' + chosen.v + ')' : 'Spiel wählen') + '</button></div>';
     }
     return '';
   }
@@ -880,10 +1187,11 @@
     const root = $('#table');
     root.onclick = (ev) => {
       const t = ev.target;
+      if (t.closest('.term')) return;
       const cardBtn = t.closest('#hand .card');
       if (cardBtn) return onHandCard(Number(cardBtn.dataset.c), cardBtn);
       const b = t.closest('button');
-      if (!b) { if (m.hold && m.hold.trick && t.closest('#center')) releaseTrick(); return; }
+      if (!b) { if (m.hold && m.hold.trick && t.closest('#center') && !m.guide) releaseTrick(); return; }
       if (b.dataset.bid) {
         const k = b.dataset.bid;
         if (k === 'say') humanBid({ type: 'say', value: Number(b.dataset.v) });
@@ -892,7 +1200,9 @@
       }
       const a = b.dataset.a;
       if (a === 'advice') { m.advice = true; m.hints++; renderGame(); }
-      if (a === 'next') { closeSheet(); newDeal(); gameStep(); }
+      if (a === 'next') { closeSheet(); nextGame(); gameStep(); }
+      if (a === 'gnext') { m.guide.i++; gameStep(); }
+      if (a === 'gtrick') releaseTrick();
       if (a === 'result') showResult();
       if (a === 'take') { E.takeSkat(st); m.sel = []; m.recD = null; m.msg = 'Im Skat lagen ' + st.skat.map(chip).join(' ') + '.'; gameStep(); }
       if (a === 'hand') { E.playHand(st); m.recD = null; m.decl = { gt: null, sa: false, sw: false, ov: false }; m.msg = ''; gameStep(); }
@@ -948,6 +1258,7 @@
   }
   function onHandCard(c, el) {
     const { st, m } = GM;
+    if (m.guide && m.guide.i < guideIntro(st, m.guide.n).length) return toast('Lies erst die Erklärung und tippe auf „Weiter“.');
     if (st.phase === 'discard' && st.declarer === 0) {
       if (m.sel.includes(c)) m.sel = m.sel.filter((x) => x !== c);
       else if (m.sel.length < 2) m.sel.push(c);
@@ -1023,7 +1334,7 @@
     $('#reset').onclick = () => {
       openSheet('<h2>Alles zurücksetzen?</h2><p>Lektionen, Übungen, Spiele und die Liste werden gelöscht. Das lässt sich nicht rückgängig machen.</p><div class="btns"><button class="btn soft" data-x="no">Abbrechen</button><button class="btn" data-x="yes" style="background:var(--bad)">Zurücksetzen</button></div>', (ev) => {
         const b = ev.target.closest('button'); if (!b) return;
-        if (b.dataset.x === 'yes') { const s = P.settings; P = defaults(); P.settings = s; save(); GM = null; lsDel(LS_G); }
+        if (b.dataset.x === 'yes') { const s = P.settings; P = defaults(); P.settings = s; save(); GM = GMN = GMG = null; lsDel(LS_G); lsDel(LS_GG); }
         closeSheet(); viewProgress();
       });
     };
@@ -1035,8 +1346,10 @@
     applyDeck();
     document.querySelectorAll('.tabbar a').forEach((a) => { a.insertAdjacentHTML('afterbegin', ICON[a.dataset.tab]); });
     window.addEventListener('hashchange', route);
+    document.addEventListener('click', (ev) => { const t = ev.target.closest && ev.target.closest('.term'); if (t) { ev.stopPropagation(); ev.preventDefault(); showTerm(t.dataset.term); } }, true);
+    document.addEventListener('keydown', (ev) => { if ((ev.key === 'Enter' || ev.key === ' ') && ev.target.classList && ev.target.classList.contains('term')) { ev.preventDefault(); showTerm(ev.target.dataset.term); } });
     let rt;
-    window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { if (view === 'spielen' && GM) renderGame(); }, 150); });
+    window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { if (onTable() && GM) renderGame(); }, 150); });
     route();
     Cloud.init();
   }
