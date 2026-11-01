@@ -453,6 +453,7 @@
         let cls = '';
         if (!ans && DS.sel.includes(c)) cls = 'sel';
         if (q.legal && !q.legal.includes(c) && !ans) cls += ' dim';
+        if (q.mark && E.isTrump(c, q.gt)) cls += ' trumpmark';
         if (ans) { if (q.answer.includes(c)) cls = 'good'; else if (DS.sel.includes(c)) cls = 'badpick'; }
         return cardHTML(c, { button: !ans, cls });
       }).join('') + '</div>';

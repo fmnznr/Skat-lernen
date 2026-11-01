@@ -2101,7 +2101,9 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
       const myJack = E.card(le < 4 ? le : 0, 7);
       if (le < 4 && hand.includes(myJack)) s.push(gt === GT_NULL ? tok(myJack) + ' gehört im Null zu ' + need(le) + ' – dort ist der Bube kein Trumpf.' : tok(myJack) + ' zählt nicht als ' + need(le) + ' – Buben sind Trumpf.');
       if (le === 4 && hand.some((x) => rankOf(x) === 7)) s.push('Auch ' + toks(hand.filter((x) => rankOf(x) === 7)) + ' ist Trumpf.');
-      return { kind: 'pick', multi: true, gt, text: '<span class="game">' + gname(gt) + '</span> Ausgespielt wird ' + tok(lead) + '. Welche deiner Karten darfst du legen?', hand, answer: legal, explain: steps(s) };
+      const mark = c.i < 5 && gt !== GT_NULL;
+      const text = '<span class="game">' + gname(gt) + '</span> Ausgespielt wird ' + tok(lead) + (mark && isTrump(lead, gt) ? ' (ein Trumpf)' : '') + '. Welche deiner Karten darfst du legen?' + (mark ? '<br><span class="note">Hilfe: Deine Trümpfe haben unten einen goldenen Streifen.</span>' : '');
+      return { kind: 'pick', multi: true, gt, mark, text, hand, answer: legal, explain: steps(s) };
     },
   };
 
@@ -2912,6 +2914,7 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
         let cls = '';
         if (!ans && DS.sel.includes(c)) cls = 'sel';
         if (q.legal && !q.legal.includes(c) && !ans) cls += ' dim';
+        if (q.mark && E.isTrump(c, q.gt)) cls += ' trumpmark';
         if (ans) { if (q.answer.includes(c)) cls = 'good'; else if (DS.sel.includes(c)) cls = 'badpick'; }
         return cardHTML(c, { button: !ans, cls });
       }).join('') + '</div>';
