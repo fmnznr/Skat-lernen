@@ -1,0 +1,12 @@
+{
+  "name": "skat-lernen",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Skat lernen vom Einsteiger zum ernstzunehmenden Spieler",
+  "scripts": {
+    "build": "node tools/build.mjs",
+    "train": "node tools/train.mjs && node tools/build.mjs",
+    "icons": "node tools/icons.cjs",
+    "test": "node test/engine.test.mjs && node test/drills.test.mjs && node tools/build.mjs && node test/ui.test.cjs && node test/ui2.test.cjs"
+  }
+}
