@@ -33,8 +33,8 @@
     {
       id: 'karten', stage: 1, title: 'Karten und Augen', min: 4, drill: 'augen',
       pages: [
-        'Es gibt vier Farben. Ihre Rangfolge (wichtig für Buben und Spielwert): <b>Kreuz</b> ♣ vor <b>Pik</b> ♠ vor <b>Herz</b> ♥ vor <b>Karo</b> ♦.<br>Diese App nutzt das Turnierbild mit vier Farben: Kreuz schwarz, Pik grün, Herz rot, Karo orange.',
-        'Jede Farbe hat 8 Karten: Ass, Zehn, König, Dame, Bube, 9, 8 und 7. [[pA p10 pK pD pB p9 p8 p7]]',
+        '{{fr:Es gibt vier Farben. Ihre Rangfolge (wichtig für Buben und Spielwert): <b>Kreuz</b> ♣ vor <b>Pik</b> ♠ vor <b>Herz</b> ♥ vor <b>Karo</b> ♦.<br>Du spielst mit dem französischen Turnierbild: Kreuz schwarz, Pik grün, Herz rot, Karo orange. Unter „Fortschritt“ kannst du auf das deutsche Blatt umstellen.|de:Es gibt vier Farben. Ihre Rangfolge (wichtig für Unter und Spielwert): <b>Eichel</b> ♣ vor <b>Grün</b> ♠ vor <b>Rot</b> ♥ vor <b>Schellen</b> ♦.<br>Du spielst mit dem <b>deutschen Blatt</b>. Im französischen Blatt heißen die Farben Kreuz, Pik, Herz und Karo – umstellen kannst du unter „Fortschritt“.}}',
+        'Jede Farbe hat 8 Karten: Ass, Zehn, König, Dame, Bube, 9, 8 und 7. [[pA p10 pK pD pB p9 p8 p7]]{{fr:|de:Im deutschen Blatt entspricht der <b>Ober</b> der Dame und der <b>Unter</b> dem Buben. Das Ass heißt auch <b>Daus</b>.}}',
         'Die Karten zählen <b>Augen</b>:<table class="pts"><tr><td>Ass</td><td>11</td></tr><tr><td>Zehn</td><td>10</td></tr><tr><td>König</td><td>4</td></tr><tr><td>Dame</td><td>3</td></tr><tr><td>Bube</td><td>2</td></tr><tr><td>9, 8, 7</td><td>0</td></tr></table>Pro Farbe sind das 30 Augen, im ganzen Spiel <b>120 Augen</b>.',
         'Ass und Zehn heißen <b>volle Karten</b> – um sie dreht sich fast alles. Die Karten ohne Augen (9, 8, 7) nennt man <b>Luschen</b>.',
       ],
@@ -98,7 +98,7 @@
       ],
       quiz: [
         { q: 'Wie viele Trümpfe gibt es im Grand?', o: ['4', '11', 'keine'], a: 0, why: 'Nur die vier Buben.' },
-        { q: 'Null: Was ist höher – {h10} oder {hB}?', o: ['{h10}', '{hB}'], a: 1, why: 'Im Null: A K D B 10 9 8 7.' },
+        { q: 'Null: Was ist höher – {h10} oder {hB}?', o: ['{h10}', '{hB}'], a: 1, why: 'Im Null: Ass, König, Dame, Bube, Zehn, 9, 8, 7.' },
         { q: 'Wann gewinnt der Alleinspieler ein Nullspiel?', o: ['Mit 61 Augen', 'Wenn er keinen Stich bekommt', 'Wenn er alle Stiche bekommt'], a: 1, why: 'Ein einziger Stich – und das Nullspiel ist verloren.' },
       ],
     },

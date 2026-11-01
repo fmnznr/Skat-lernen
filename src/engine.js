@@ -19,6 +19,22 @@
   const BASE = [9, 10, 11, 12, 24];
   const JACKS = [31, 23, 15, 7]; // Kreuz-, Pik-, Herz-, Karo-Bube
 
+  // Kartenbild: französisch (Kreuz, Pik, Herz, Karo) oder deutsch (Eichel, Grün, Rot, Schellen)
+  const DECKS = {
+    fr: { suits: ['Karo', 'Herz', 'Pik', 'Kreuz'], ranks: ['Sieben', 'Acht', 'Neun', 'Dame', 'König', 'Zehn', 'Ass', 'Bube'], short: ['7', '8', '9', 'D', 'K', '10', 'A', 'B'] },
+    de: { suits: ['Schellen', 'Rot', 'Grün', 'Eichel'], ranks: ['Sieben', 'Acht', 'Neun', 'Ober', 'König', 'Zehn', 'Ass', 'Unter'], short: ['7', '8', '9', 'O', 'K', '10', 'A', 'U'] },
+  };
+  let DECK = 'fr';
+  function setDeck(id) {
+    const d = DECKS[id] ? id : 'fr';
+    DECK = d;
+    const x = DECKS[d];
+    for (let i = 0; i < 4; i++) { SUIT_NAMES[i] = x.suits[i]; GAME_NAMES[i] = x.suits[i]; }
+    for (let i = 0; i < 8; i++) { RANK_NAMES[i] = x.ranks[i]; RANK_SHORT[i] = x.short[i]; }
+    return d;
+  }
+  const deck = () => DECK;
+
   const suitOf = (c) => c >> 3;
   const rankOf = (c) => c & 7;
   const pts = (c) => POINTS[c & 7];
@@ -470,7 +486,7 @@
   }
 
   G.SE = {
-    SUIT_NAMES, SUIT_SYM, RANK_SHORT, RANK_NAMES, POINTS, NULL_STR, GT_GRAND, GT_NULL, GAME_NAMES, BASE, JACKS, BID_VALUES,
+    DECKS, setDeck, deck, SUIT_NAMES, SUIT_SYM, RANK_SHORT, RANK_NAMES, POINTS, NULL_STR, GT_GRAND, GT_NULL, GAME_NAMES, BASE, JACKS, BID_VALUES,
     suitOf, rankOf, pts, card, sumPts, cardName, cardShort, isTrump, effSuit, strength, beats, trickWinnerIndex, legalCards, sortHand,
     matadorOrder, spitzen, nullValue, levelsFor, announcedValue, nextBid, gameLabel, evaluate,
     shuffled, mulberry32, deal, newGame, biddingActor, bidAction, takeSkat, doDiscard, playHand, canDeclare, declare, legalFor, playCard, pointsSoFar,

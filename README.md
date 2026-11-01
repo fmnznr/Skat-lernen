@@ -8,6 +8,7 @@ Web-App fürs iPhone, mit der du Skat vom ersten Kartenzählen bis zum ernstzune
 - **12 Übungen** mit unbegrenzt neuen Aufgaben (Augen zählen, Trumpf, Bedienen, Stichsieger, Spitzen, Spielwert, Reizwerte, Blatt bewerten, Drücken, Schmieren, Mitzählen, Trümpfe zählen) und **16 Taktik-Aufgaben**.
 - **Übungsspiel** gegen zwei Computergegner: Reizen, Skat aufnehmen oder Hand, Drücken, Farbe/Grand/Null, Schneider/Schwarz angesagt, Ouvert, Überreizen. Tipps mit Begründung, Coach-Hinweise bei Fehlern, Mitzähl-Proben, Spielverlauf und Liste mit Seeger-Fabian-Wertung.
 - **Hilfe-Stufen**: Lernen (alles angezeigt) · Normal · Profi (ohne Hilfen, zählt für Stufe 5).
+- **Kartenblatt**: deutsches Blatt (Eichel, Grün, Rot, Schellen · Ober, Unter) als Standard, französisches Turnierbild umschaltbar unter *Fortschritt*.
 - Fortschritt wird lokal gespeichert, die App läuft offline.
 
 ## Aufs iPhone bringen

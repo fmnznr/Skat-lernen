@@ -12,7 +12,7 @@
   const lsGet = (k) => { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : null; } catch (e) { return null; } };
   const lsSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* kein Speicher */ } };
   const lsDel = (k) => { try { localStorage.removeItem(k); } catch (e) { /* */ } };
-  const defaults = () => ({ v: 1, updatedAt: 0, lessons: {}, drills: {}, tactics: {}, games: [], list: [], countChecks: { ok: 0, total: 0 }, settings: { help: 'lern', tempo: 'normal' }, dealer: null });
+  const defaults = () => ({ v: 1, updatedAt: 0, lessons: {}, drills: {}, tactics: {}, games: [], list: [], countChecks: { ok: 0, total: 0 }, settings: { help: 'lern', tempo: 'normal', deck: 'de' }, dealer: null });
   let P = normalize(lsGet(LS_P));
   function normalize(x) {
     const d = defaults();
@@ -48,6 +48,7 @@
           if (remote && (remote.updatedAt || 0) > (P.updatedAt || 0)) {
             P = normalize(JSON.parse(JSON.stringify(remote)));
             lsSet(LS_P, P);
+            applyDeck();
             route();
             return;
           }
@@ -70,6 +71,34 @@
     },
   };
 
+  // ================= Kartenbild =================
+  // Farbzeichen des deutschen Blatts als SVG (Schellen, Rot, Grün, Eichel)
+  const SPRITE = '<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">'
+    + '<symbol id="gs0" viewBox="0 0 24 24"><circle cx="12" cy="4.2" r="1.7" fill="none" stroke="#a8690c" stroke-width="1.3"/><circle cx="12" cy="13.6" r="8" fill="#f2b62b" stroke="#a8690c" stroke-width=".9"/><path d="M4.3 11.4h15.4v2.8H4.3z" fill="#c4302b"/><path d="M8.6 18h6.8" stroke="#6b430b" stroke-width="1.7" stroke-linecap="round"/><circle cx="9" cy="8.6" r="1.4" fill="#fff3c4" opacity=".8"/></symbol>'
+    + '<symbol id="gs1" viewBox="0 0 24 24"><path d="M12 21.4C5.6 16.5 2.4 13 2.4 8.9c0-3 2.3-5.4 5.2-5.4 1.8 0 3.4.9 4.4 2.4 1-1.5 2.6-2.4 4.4-2.4 2.9 0 5.2 2.4 5.2 5.4 0 4.1-3.2 7.6-9.6 12.5z" fill="#d22b2b"/><path d="M6 7.5c.5-1.2 1.4-1.8 2.4-1.9" stroke="#f6b3b3" stroke-width="1.3" fill="none" stroke-linecap="round"/></symbol>'
+    + '<symbol id="gs2" viewBox="0 0 24 24"><path d="M12 1.6C8 4.9 3.7 8.8 3.7 13.2c0 3.3 2.5 5.5 5.4 5.5 1.3 0 2.2-.4 2.9-1 .7.6 1.6 1 2.9 1 2.9 0 5.4-2.2 5.4-5.5C20.3 8.8 16 4.9 12 1.6z" fill="#3e9a34"/><path d="M12 4.6v18" stroke="#24631d" stroke-width="1.6" stroke-linecap="round"/><path d="M12 9.5l-3.6 2.6M12 9.5l3.6 2.6M12 13.3l-4.6 2.3M12 13.3l4.6 2.3" stroke="#24631d" stroke-width=".9" stroke-linecap="round"/></symbol>'
+    + '<symbol id="gs3" viewBox="0 0 24 24"><path d="M12 1.3v3.2" stroke="#4a2c10" stroke-width="1.6" stroke-linecap="round"/><path d="M6.7 10.6c0 6.3 2.6 11.3 5.3 12 2.7-.7 5.3-5.7 5.3-12z" fill="#b8762f"/><path d="M9.3 13c.3 2.8 1 5 2 6.6" stroke="#e2ae72" stroke-width="1.2" fill="none" stroke-linecap="round"/><path d="M4.9 11.3c0-4.4 3.1-7.4 7.1-7.4s7.1 3 7.1 7.4c0 .6-.4 1-1 1H5.9c-.6 0-1-.4-1-1z" fill="#6b4220"/><path d="M7.3 9.3h9.4M6.4 11h11.2M9 6.8l1.4 4.6M12 5.6v5.8M15 6.8l-1.4 4.6" stroke="#4a2c10" stroke-width=".7" opacity=".7"/></symbol>'
+    + '</svg>';
+  const isDe = () => E.deck() === 'de';
+  const suitMark = (s) => (isDe() ? '<svg class="si" aria-hidden="true"><use href="#gs' + s + '"/></svg>' : SYM[s]);
+  // Begriffe des französischen Blatts in die des deutschen übersetzen
+  const DE_TERMS = [
+    [/\bder ((?:[A-ZÄÖÜ][a-zäöü]+-)?)Dame\b/g, 'dem $1Ober'],
+    [/Buben/g, 'Unter'], [/Bube/g, 'Unter'], [/Dame/g, 'Ober'],
+    [/Kreuz/g, 'Eichel'], [/Pik/g, 'Grün'], [/Herz/g, 'Rot'], [/Karo/g, 'Schellen'],
+  ];
+  function T(text) {
+    let t = String(text);
+    const keep = [];
+    t = t.replace(/\{\{fr:([\s\S]*?)\|de:([\s\S]*?)\}\}/g, (_, fr, de) => { keep.push(isDe() ? de : fr); return '\u0000' + (keep.length - 1) + '\u0000'; });
+    if (isDe()) for (const [re, to] of DE_TERMS) t = t.replace(re, to);
+    return t.replace(/\u0000(\d+)\u0000/g, (_, i) => keep[Number(i)]);
+  }
+  function applyDeck() {
+    E.setDeck(P.settings.deck);
+    document.documentElement.classList.toggle('deck-de', isDe());
+  }
+
   // ================= Bausteine =================
   function cardHTML(c, o) {
     o = o || {};
@@ -78,16 +107,18 @@
     const cls = ['card', 's' + s];
     if (r === 7) cls.push('jack');
     if (o.cls) cls.push(o.cls);
-    const center = face ? '<span class="pip face"><span>' + RS[r] + '<small>' + SYM[s] + '</small></span></span>' : '<span class="pip">' + SYM[s] + '</span>';
+    const center = face ? '<span class="pip face"><span>' + RS[r] + '<small>' + suitMark(s) + '</small></span></span>' : '<span class="pip">' + suitMark(s) + '</span>';
     const tag = o.button ? 'button' : 'div';
-    return '<' + tag + ' class="' + cls.join(' ') + '" data-c="' + c + '"' + (o.button ? ' type="button"' : '') + ' aria-label="' + E.cardName(c) + '"><span class="ix">' + RS[r] + '<i>' + SYM[s] + '</i></span>' + center + '</' + tag + '>';
+    return '<' + tag + ' class="' + cls.join(' ') + '" data-c="' + c + '"' + (o.button ? ' type="button"' : '') + ' aria-label="' + E.cardName(c) + '"><span class="ix">' + RS[r] + '<i>' + suitMark(s) + '</i></span>' + center + '</' + tag + '>';
   }
   const backHTML = () => '<div class="card back" aria-hidden="true"></div>';
-  const chip = (c) => '<span class="chip s' + E.suitOf(c) + '" title="' + E.cardName(c) + '">' + SYM[E.suitOf(c)] + RS[E.rankOf(c)] + '</span>';
+  const chip = (c) => '<span class="chip s' + E.suitOf(c) + '" title="' + E.cardName(c) + '">' + suitMark(E.suitOf(c)) + RS[E.rankOf(c)] + '</span>';
   function rich(t) {
-    return String(t)
+    let h = T(t)
       .replace(/\[\[([^\]]+)\]\]/g, (_, s) => '<span class="crow">' + s.trim().split(/\s+/).map((x) => cardHTML(D.parse(x))).join('') + '</span>')
       .replace(/\{([dhpk])(10|[789DKAB])\}/g, (_, su, rk) => chip(D.parse(su + rk)));
+    if (isDe()) h = h.replace(/[♦♥♠♣]/g, (m) => suitMark('♦♥♠♣'.indexOf(m)));
+    return h;
   }
   function toast(msg, ms) {
     const el = $('#toast');
@@ -213,7 +244,7 @@
       ls.forEach((l, k) => {
         const st = P.lessons[l.id];
         const dr = l.drill ? drillBest(l.drill) : null;
-        h += '<a class="row" href="#lektion-' + l.id + '"><span class="mark' + (st && st.done ? ' done' : '') + '">' + (st && st.done ? '✓' : '') + '</span><span><span class="t">' + esc(l.title) + '</span><br><span class="d">' + l.min + ' Min.' + (l.drill ? ' · Übung: ' + dTitle(l.drill) : '') + '</span></span><span class="score' + (dr >= 80 ? ' good' : '') + '">' + (l.drill ? (dr ? dr + '\u00a0%' : '–') : (st && st.done ? st.quiz + '/' + l.quiz.length : '')) + '</span></a>';
+        h += '<a class="row" href="#lektion-' + l.id + '"><span class="mark' + (st && st.done ? ' done' : '') + '">' + (st && st.done ? '✓' : '') + '</span><span><span class="t">' + esc(T(l.title)) + '</span><br><span class="d">' + l.min + ' Min.' + (l.drill ? ' · Übung: ' + dTitle(l.drill) : '') + '</span></span><span class="score' + (dr >= 80 ? ' good' : '') + '">' + (l.drill ? (dr ? dr + '\u00a0%' : '–') : (st && st.done ? st.quiz + '/' + l.quiz.length : '')) + '</span></a>';
       });
       h += '</section>';
     }
@@ -233,7 +264,7 @@
   }
   function renderLesson(l) {
     const idx = C.LESSONS.indexOf(l);
-    let h = '<div class="page lesson"><a class="back" href="#lernen">← Lernpfad</a><div><div class="eyebrow">Stufe ' + l.stage + ' · Lektion ' + (C.LESSONS.filter((x) => x.stage === l.stage).indexOf(l) + 1) + '</div><h1>' + esc(l.title) + '</h1></div>';
+    let h = '<div class="page lesson"><a class="back" href="#lernen">← Lernpfad</a><div><div class="eyebrow">Stufe ' + l.stage + ' · Lektion ' + (C.LESSONS.filter((x) => x.stage === l.stage).indexOf(l) + 1) + '</div><h1>' + esc(T(l.title)) + '</h1></div>';
     const total = l.pages.length + l.quiz.length;
     const at = LS.q < 0 ? LS.page + 1 : l.pages.length + LS.q + 1;
     h += '<div class="steps">' + Array.from({ length: total }, (_, i) => '<span class="' + (i < at ? 'on' : '') + '"></span>').join('') + '</div>';
@@ -345,7 +376,7 @@
       return;
     }
     const q = DS.q;
-    h += '<div class="qcard" id="qcard">' + (q.title ? '<div class="eyebrow">' + esc(q.title) + '</div>' : '');
+    h += '<div class="qcard" id="qcard">' + (q.title ? '<div class="eyebrow">' + esc(T(q.title)) + '</div>' : '');
     if (q.kind === 'seq' && DS.seqAt < q.steps.length) {
       const s = q.steps[DS.seqAt];
       h += '<div class="qtext">Merke dir die Augen. Stich ' + (DS.seqAt + 1) + ' von ' + q.steps.length + ':</div>';
@@ -650,9 +681,11 @@
 
   // ---------- Ansage ----------
   const GAME_OPTS = [
-    { gt: 3, l: 'Kreuz', s: '♣', cls: 's3' }, { gt: 2, l: 'Pik', s: '♠', cls: 's2' }, { gt: 1, l: 'Herz', s: '♥', cls: 's1' }, { gt: 0, l: 'Karo', s: '♦', cls: 's0' },
-    { gt: 4, l: 'Grand', s: 'B', cls: '' }, { gt: 5, l: 'Null', s: '0', cls: '' }, { gt: 5, ov: true, l: 'Null ouvert', s: '0', cls: '' },
+    { gt: 3, cls: 's3' }, { gt: 2, cls: 's2' }, { gt: 1, cls: 's1' }, { gt: 0, cls: 's0' },
+    { gt: 4, cls: '' }, { gt: 5, cls: '' }, { gt: 5, ov: true, cls: '' },
   ];
+  const optLabel = (o) => E.GAME_NAMES[o.gt] + (o.ov ? ' ouvert' : '');
+  const optSym = (o) => (o.gt < 4 ? suitMark(o.gt) : o.gt === 4 ? RS[7] : '0');
   function declOptsFor(st, d) {
     const hand = !st.skatTaken;
     const cards12 = hand ? st.hands[0].slice() : st.hands[0].concat(st.discard);
@@ -668,7 +701,7 @@
         txt = (sp.mit ? 'mit ' : 'ohne ') + sp.n + ' · ' + lv + ' × ' + E.BASE[o.gt] + ' = ' + v;
       }
       const blocked = o.gt === E.GT_NULL && v < st.bid;
-      return { i, ...o, v, txt, low: v < st.bid, blocked };
+      return { i, ...o, l: optLabel(o), s: optSym(o), v, txt, low: v < st.bid, blocked };
     });
   }
 
@@ -979,12 +1012,14 @@
     h += '<div class="stats"><div class="stat"><div class="v">' + g.length + '</div><div class="l">Spiele</div></div><div class="stat"><div class="v">' + (dg.length ? Math.round(dg.filter((x) => x.won).length / dg.length * 100) + '%' : '–') + '</div><div class="l">als Alleinspieler gewonnen</div></div><div class="stat"><div class="v">' + sfTot + '</div><div class="l">Seeger-Fabian gesamt</div></div></div>';
     h += '<section class="block"><div class="block-h"><h3>Einstellungen</h3></div>';
     h += '<div class="setting"><b>Hilfen im Spiel</b><div class="seg" id="seg-help">' + [['lern', 'Lernen'], ['normal', 'Normal'], ['profi', 'Profi']].map(([k, l]) => '<button data-k="' + k + '" class="' + (P.settings.help === k ? 'on' : '') + '">' + l + '</button>').join('') + '</div><div class="d">' + ({ lern: 'Erlaubte Karten markiert, Augen und Trümpfe werden angezeigt, Empfehlungen beim Reizen, Coach.', normal: 'Tipps auf Knopfdruck, Coach, Mitzähl-Probe im Spiel. Keine Augenanzeige.', profi: 'Keine Tipps, keine Markierungen. Der Coach meldet sich erst in der Abrechnung. Zählt für Stufe 5.' }[P.settings.help]) + ' Gilt ab dem nächsten Spiel.</div></div>';
+    h += '<div class="setting"><b>Kartenblatt</b><div class="seg" id="seg-deck" style="grid-template-columns:1fr 1fr">' + [['de', 'Deutsch'], ['fr', 'Französisch']].map(([k, l]) => '<button data-k="' + k + '" class="' + (P.settings.deck === k ? 'on' : '') + '">' + l + '</button>').join('') + '</div><div class="d">' + (P.settings.deck === 'de' ? 'Eichel, Grün, Rot, Schellen · Ober und Unter' : 'Kreuz, Pik, Herz, Karo · Dame und Bube (Turnierbild)') + '</div><div class="crow" style="--cw:40px">' + [31, 23, 15, 7, 30].map((c) => cardHTML(c)).join('') + '</div></div>';
     h += '<div class="setting"><b>Spieltempo</b><div class="seg" id="seg-tempo">' + [['langsam', 'Langsam'], ['normal', 'Normal'], ['schnell', 'Schnell']].map(([k, l]) => '<button data-k="' + k + '" class="' + (P.settings.tempo === k ? 'on' : '') + '">' + l + '</button>').join('') + '</div></div>';
     h += '<div class="setting"><b>Daten</b><div class="d">Mitzähl-Proben: ' + P.countChecks.ok + ' von ' + P.countChecks.total + ' richtig · Lektionen: ' + C.LESSONS.filter((l) => lessonDone(l.id)).length + '/' + C.LESSONS.length + '</div><button class="btn soft small" id="reset" style="align-self:flex-start">Fortschritt zurücksetzen</button></div></section>';
     h += '<p class="note" style="text-align:center">Skat-Regeln nach der Internationalen Skatordnung (ISkO). Gegner und Gewinnchancen beruhen auf einer regelbasierten Strategie und simulierten Spielen.</p></div>';
     screen(h);
     document.querySelectorAll('#seg-help button').forEach((b) => (b.onclick = () => { P.settings.help = b.dataset.k; save(); viewProgress(); }));
     document.querySelectorAll('#seg-tempo button').forEach((b) => (b.onclick = () => { P.settings.tempo = b.dataset.k; save(); viewProgress(); }));
+    document.querySelectorAll('#seg-deck button').forEach((b) => (b.onclick = () => { P.settings.deck = b.dataset.k; save(); applyDeck(); viewProgress(); }));
     $('#reset').onclick = () => {
       openSheet('<h2>Alles zurücksetzen?</h2><p>Lektionen, Übungen, Spiele und die Liste werden gelöscht. Das lässt sich nicht rückgängig machen.</p><div class="btns"><button class="btn soft" data-x="no">Abbrechen</button><button class="btn" data-x="yes" style="background:var(--bad)">Zurücksetzen</button></div>', (ev) => {
         const b = ev.target.closest('button'); if (!b) return;
@@ -996,6 +1031,8 @@
 
   // ================= Start =================
   function start() {
+    document.body.insertAdjacentHTML('afterbegin', SPRITE);
+    applyDeck();
     document.querySelectorAll('.tabbar a').forEach((a) => { a.insertAdjacentHTML('afterbegin', ICON[a.dataset.tab]); });
     window.addEventListener('hashchange', route);
     let rt;

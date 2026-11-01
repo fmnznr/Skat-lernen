@@ -26,7 +26,7 @@
   }
 
   function trumpOrderText(gt) {
-    if (gt === GT_NULL) return 'Im Null gibt es keine Trümpfe. Reihenfolge je Farbe: A K D B 10 9 8 7.';
+    if (gt === GT_NULL) return 'Im Null gibt es keine Trümpfe. Reihenfolge je Farbe: Ass, König, Dame, Bube, Zehn, 9, 8, 7.';
     if (gt === GT_GRAND) return 'Im Grand sind nur die vier Buben Trumpf.';
     return 'Trümpfe im ' + gname(gt) + ': die vier Buben, dann ' + E.SUIT_NAMES[gt] + ' Ass, Zehn, König, Dame, 9, 8, 7.';
   }
@@ -74,7 +74,7 @@
       const isT = isTrump(a, gt);
       return {
         kind: 'choice', text: '<span class="game">' + gname(gt) + '</span> Welche Karte ist höher?', options: [tok(a), tok(b)], answer: higher,
-        explain: (isT ? 'Beide sind Trumpf. ' : 'Beide sind ' + E.SUIT_NAMES[suitOf(a)] + '. ') + trumpOrderText(gt) + (gt < 5 && !isT ? ' In Fehlfarben: A 10 K D 9 8 7.' : ''),
+        explain: (isT ? 'Beide sind Trumpf. ' : 'Beide sind ' + E.SUIT_NAMES[suitOf(a)] + '. ') + trumpOrderText(gt) + (gt < 5 && !isT ? ' In Fehlfarben: Ass, Zehn, König, Dame, 9, 8, 7.' : ''),
       };
     },
   };
@@ -431,7 +431,7 @@
     const legal = E.legalCards(hand, trick.map((x) => x.c), gt);
     return {
       kind: 'pick', multi: false, gt, hand, legal, trick, title: t.title,
-      text: '<span class="game">' + (gt < 4 ? t.game + 'spiel' : t.game) + '</span> ' + t.role + '. Welche Karte spielst du?',
+      text: '<span class="game">' + gname(gt) + '</span> ' + t.role + '. Welche Karte spielst du?',
       answer: t.ok.map(parse), explain: t.why,
     };
   }

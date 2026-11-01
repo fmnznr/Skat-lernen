@@ -146,6 +146,14 @@ table.pts td:last-child { font-weight: 700; text-align: right; }
 .card.jack .pip.face { color: var(--sc); }
 .card.jack::after { content: ""; position: absolute; inset: 3px; border-radius: calc(var(--w) * .08); border: 1.5px solid color-mix(in srgb, var(--sc) 35%, transparent); pointer-events: none; }
 .s0 { --sc: var(--karo); } .s1 { --sc: var(--herz); } .s2 { --sc: var(--pik); } .s3 { --sc: var(--kreuz); }
+/* deutsches Blatt: Farbzeichen als SVG */
+.deck-de .s0 { --sc: #a86300; } .deck-de .s1 { --sc: #c42229; } .deck-de .s2 { --sc: #2c7a2c; } .deck-de .s3 { --sc: #5b391b; }
+.si { width: 1em; height: 1em; display: inline-block; vertical-align: -0.14em; flex: none; }
+.card .ix i .si { display: block; margin-top: 2px; width: .95em; height: .95em; }
+.card .pip > .si { width: .92em; height: .92em; display: block; }
+.card .pip.face small .si { width: 1.05em; height: 1.05em; display: inline-block; vertical-align: top; }
+.chip .si { width: .95em; height: .95em; margin-right: 1px; align-self: center; }
+.gn .si { width: 1.1em; height: 1.1em; }
 .card.back { background: repeating-linear-gradient(45deg, var(--back-a) 0 6px, var(--back-b) 6px 12px); border: 3px solid var(--card-bg); }
 .card.trumpmark::before { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 5px; border-radius: 0 0 calc(var(--w) * .1) calc(var(--w) * .1); background: var(--brass); opacity: .85; }
 .crow { display: flex; flex-wrap: wrap; gap: 6px; --cw: 42px; margin: 10px 0 4px; }

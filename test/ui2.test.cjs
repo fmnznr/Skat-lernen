@@ -30,7 +30,7 @@ if (Cst.game.gt === 5) { Cst.game.gt = 3; }
 async function run(name, gm, prog, fn) {
   const browser = await chromium.launch();
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
-  await ctx.addInitScript(([g, p]) => { if (!localStorage.getItem('skat.game.v1')) { localStorage.setItem('skat.game.v1', g); if (p) localStorage.setItem('skat.progress.v1', p); } }, [JSON.stringify(gm), prog ? JSON.stringify(prog) : null]);
+  await ctx.addInitScript(([g, p]) => { if (window.name !== 'seeded') { localStorage.setItem('skat.game.v1', g); if (p) localStorage.setItem('skat.progress.v1', p); window.name = 'seeded'; } }, [JSON.stringify(gm), prog ? JSON.stringify(prog) : null]);
   const page = await ctx.newPage();
   const errors = [];
   page.on('pageerror', (e) => errors.push(e.message));
@@ -84,10 +84,12 @@ async function playOut(page, maxSteps) {
     await page.click('.sheet [data-v]');
     await page.screenshot({ path: out + '/c-count.png' });
     await page.click('.sheet [data-go]');
+    const pre = await page.evaluate(() => { const g = JSON.parse(localStorage.getItem('skat.game.v1')); return { t: g.st.tricks.length, p: g.st.phase, h: g.st.hands.map((x) => x.length).join('/') }; });
+    await page.waitForTimeout(1500); // Browser schreibt localStorage verzögert fest
     await page.reload();
     await page.waitForSelector('#table');
     const n = await page.evaluate(() => JSON.parse(localStorage.getItem('skat.game.v1')).st.tricks.length);
-    if (n < 1) throw new Error('Spiel nicht fortgesetzt');
+    if (n < 1) { const post = await page.evaluate(() => { const g = JSON.parse(localStorage.getItem('skat.game.v1')); return { t: g.st.tricks.length, p: g.st.phase, h: g.st.hands.map((x) => x.length).join('/'), d: g.st.dealer }; }); throw new Error('Spiel nicht fortgesetzt ' + JSON.stringify(pre) + ' -> ' + JSON.stringify(post)); }
     await playOut(page);
   });
   process.exit(errs ? 1 : 0);
