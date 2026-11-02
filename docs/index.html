@@ -369,6 +369,8 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
   .table.guided .infobar, .table.guided .meline { display: none; }
 }
 .panel.guide > .btn, .panel.guide .btns { position: sticky; bottom: -12px; box-shadow: 0 -10px 12px var(--paper-2); }
+.block.later .row { opacity: .62; }
+.later-note { font-size: 13px; color: var(--muted); padding: 8px 16px 2px; margin: 0; }
 
 </style>
 </head>
@@ -1001,20 +1003,20 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
     const opps = [0, 1, 2].filter((p) => p !== v.me);
     if (!sides.length) {
       const top = highestStr(v, trumps);
-      if (isMaster(v, top)) return { card: top, reason: 'Du hast nur noch Trümpfe. ' + cardName(top) + ' ist der höchste – er gewinnt sicher.', tag: 'trumpf' };
+      if (isMaster(v, top)) return { card: top, reason: 'Du hast nur noch Trümpfe. ' + cardName(top) + ' ist der höchste Trumpf, den es noch gibt – er gewinnt sicher.', tag: 'trumpf' };
       const c = lowest(v, trumps);
-      return { card: c, reason: 'Nur noch Trümpfe, aber nicht der höchste. Gib den Trumpf mit den wenigsten Augen (' + cardName(c) + ') – die vollen Trümpfe stehen danach.', tag: 'trumpf' };
+      return { card: c, reason: 'Du hast nur noch Trümpfe, aber nicht den höchsten. Spiel den Trumpf mit den wenigsten Augen (' + cardName(c) + '). Danach sind deine wertvollen Trümpfe die höchsten im Spiel.', tag: 'trumpf' };
     }
     if (oppT.length && trumps.length) {
       const top = highestStr(v, trumps);
       if (isMaster(v, top) && (trumps.length >= oppT.length || trumps.length >= 3)) {
-        return { card: top, reason: 'Trumpf ziehen: ' + cardName(top) + ' ist der höchste Trumpf im Spiel. Die Gegner müssen Trumpf bedienen und verlieren ihre Trümpfe.', tag: 'trumpf' };
+        return { card: top, reason: cardName(top) + ' ist der höchste Trumpf, den es noch gibt – er gewinnt sicher. Die anderen müssen Trumpf legen, wenn sie welchen haben. Danach haben sie weniger Trümpfe und können deine übrigen Karten seltener stechen. (Das nennt man Trumpf ziehen.)', tag: 'trumpf' };
       }
       if (trumps.length >= oppT.length + 2) {
         const jacks = trumps.filter((c) => rankOf(c) === 7 && !isMaster(v, c));
         const small = trumps.filter((c) => pts(c) < 10 && rankOf(c) !== 7);
         const c = jacks.length ? lowestStr(v, jacks) : small.length ? lowestStr(v, small) : lowestStr(v, trumps);
-        return { card: c, reason: 'Trumpf ziehen: Du hast ' + trumps.length + ' Trümpfe, die Gegner nur noch ' + oppT.length + '. Mit ' + cardName(c) + ' lockst du ihre hohen Trümpfe heraus.', tag: 'trumpf' };
+        return { card: c, reason: 'Du hast ' + trumps.length + ' Trümpfe, die anderen zusammen nur noch ' + oppT.length + '. Spielst du Trumpf (' + cardName(c) + '), müssen sie ihre Trümpfe abgeben. Danach können sie deine übrigen Karten nicht mehr stechen. (Das nennt man Trumpf ziehen.)', tag: 'trumpf' };
       }
     }
     // stehende Nebenkarten abziehen
@@ -1023,11 +1025,11 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
       const s = suitOf(c);
       const restInSuit = unseenOf(v, s).length;
       const safe = !oppT.length || (opps.every((p) => !knownVoid(v, p, s)) && restInSuit >= 2);
-      if (safe) return { card: c, reason: cardName(c) + ' ist die höchste Karte in ' + SN[s] + (oppT.length ? ' und beide Gegner können wohl noch bedienen' : ' und die Gegner haben keine Trümpfe mehr') + ' – sichere ' + pts(c) + ' Augen.', tag: 'ass' };
+      if (safe) return { card: c, reason: cardName(c) + ' ist die höchste ' + SN[s] + '-Karte, die es noch gibt. ' + (oppT.length ? 'Die anderen haben wohl noch ' + SN[s] + ' und müssen es legen' : 'Die anderen haben keine Trümpfe mehr und können nicht stechen') + ' – so bekommst du sicher ' + pts(c) + ' Augen und mehr.', tag: 'ass' };
     }
     if (!oppT.length) {
       const m = sides.filter((c) => isMaster(v, c));
-      if (m.length) return { card: m[0], reason: 'Die Gegner haben keine Trümpfe mehr. ' + cardName(m[0]) + ' steht – der Stich gehört dir.', tag: 'ass' };
+      if (m.length) return { card: m[0], reason: 'Die anderen haben keine Trümpfe mehr. ' + cardName(m[0]) + ' ist die höchste Karte ihrer Farbe – der Stich gehört dir.', tag: 'ass' };
     }
     // Farbe entwickeln: lange Nebenfarbe, kleine Karte; keine ungeschützte Zehn
     const bySuit = {};
@@ -1038,14 +1040,14 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
       if (cs.length) {
         const c = lowest(v, cs);
         if (pts(c) < 10) {
-          if (bySuit[s].length === 1 && trumps.length) return { card: c, reason: cardName(c) + ' ist deine letzte ' + SN[s] + '-Karte. Danach bist du in ' + SN[s] + ' frei und kannst stechen.', tag: 'farbe' };
-          return { card: c, reason: 'Kleine Karte aus deiner längsten Nebenfarbe (' + SN[s] + '): so spielst du die Farbe frei und verlierst nur wenige Augen.', tag: 'farbe' };
+          if (bySuit[s].length === 1 && trumps.length) return { card: c, reason: cardName(c) + ' ist deine letzte ' + SN[s] + '-Karte. Danach hast du kein ' + SN[s] + ' mehr – wird ' + SN[s] + ' gespielt, darfst du mit Trumpf stechen.', tag: 'farbe' };
+          return { card: c, reason: 'Spiel eine kleine ' + SN[s] + '-Karte – sie kostet kaum Augen. Von ' + SN[s] + ' hast du (außer Trumpf) die meisten Karten. Sind die hohen ' + SN[s] + '-Karten der anderen erst weg, gewinnen deine übrigen ' + SN[s] + '-Karten Stiche.', tag: 'farbe' };
         }
       }
     }
     if (trumps.length) {
       const c = lowest(v, trumps);
-      return { card: c, reason: 'Kein guter Nebenfarbenzug – ein Trumpf mit wenig Augen ist am sichersten.', tag: 'trumpf' };
+      return { card: c, reason: 'Alle anderen Karten wären riskant. Ein Trumpf mit wenig Augen ist am sichersten.', tag: 'trumpf' };
     }
     return { card: lowest(v, sides), reason: 'Die Karte mit den wenigsten Augen.', tag: 'farbe' };
   }
@@ -1064,11 +1066,11 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
         const ruff = !canFollow;
         const total = ts.ptsSoFar + pts(pick);
         if (!ruff || ts.ptsSoFar > 0 || trumps.length > oppT.length) {
-          return { card: pick, reason: (ruff ? 'Stechen: ' : '') + 'Mit ' + cardName(pick) + ' gewinnst du den Stich sicher' + (total ? ' (' + total + ' Augen)' : '') + '. Nimm dafür die kleinste Karte, die reicht.', tag: 'stich' };
+          return { card: pick, reason: (ruff ? 'Du kannst nicht bedienen, also darfst du stechen. ' : '') + 'Mit ' + cardName(pick) + ' gewinnst du den Stich sicher' + (total ? ' (' + total + ' Augen)' : '') + '. Nimm die kleinste Karte, die dafür reicht – die starken brauchst du später.', tag: 'stich' };
         }
       } else if (!canFollow && ts.ptsSoFar >= 10) {
         const pick = highestStr(v, winners);
-        return { card: pick, reason: 'Im Stich liegen ' + ts.ptsSoFar + ' Augen. Stich hoch mit ' + cardName(pick) + ', damit der letzte Gegner nicht überstechen kann.', tag: 'stich' };
+        return { card: pick, reason: 'Im Stich liegen ' + ts.ptsSoFar + ' Augen. Nimm einen hohen Trumpf (' + cardName(pick) + '), damit der Spieler nach dir nicht mit einem noch höheren Trumpf drüber kann.', tag: 'stich' };
       }
     }
     if (canFollow) {
@@ -1076,7 +1078,7 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
       return { card: c, reason: 'Du kannst den Stich nicht sicher gewinnen. Gib die Karte mit den wenigsten Augen.', tag: 'klein' };
     }
     const c = discardChoice(v, legal);
-    return { card: c, reason: 'Abwerfen: ' + cardName(c) + ' kostet am wenigsten' + (isT(v, c) ? '' : ' und macht ' + SN[suitOf(c)] + ' kürzer') + '.', tag: 'abwurf' };
+    return { card: c, reason: 'Du kannst nicht bedienen. Wirf ' + cardName(c) + ' ab – sie kostet am wenigsten Augen.', tag: 'abwurf' };
   }
 
   function defenderLead(v) {
@@ -1085,7 +1087,7 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
     const shortWay = (v.me + 1) % 3 === D; // Alleinspieler sitzt direkt hinter mir
     if (!sides.length) {
       const c = lowestStr(v, v.hand);
-      return { card: c, reason: 'Du hast nur noch Trümpfe. Spiele den kleinsten.', tag: 'trumpf' };
+      return { card: c, reason: 'Du hast nur noch Trümpfe. Spiel den kleinsten.', tag: 'trumpf' };
     }
     const declVoid = (s) => knownVoid(v, D, s);
     const declTrumps = v.unseen.some((c) => isT(v, c) && mayHold(v, D, c));
@@ -1093,7 +1095,7 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
     const masters = sides.filter((c) => isMaster(v, c) && pts(c) >= 10 && !(declVoid(suitOf(c)) && declTrumps)).sort((a, b) => pts(b) - pts(a));
     if (masters.length) {
       const c = masters[0];
-      return { card: c, reason: cardName(c) + ' ist die höchste Karte in ' + SN[suitOf(c)] + '. Hol die Augen, bevor der Alleinspieler frei wird und sticht.', tag: 'ass' };
+      return { card: c, reason: cardName(c) + ' ist die höchste ' + SN[suitOf(c)] + '-Karte, die es noch gibt. Spiel sie jetzt: Später hat der Alleinspieler vielleicht kein ' + SN[suitOf(c)] + ' mehr und sticht sie mit Trumpf.', tag: 'ass' };
     }
     // Partner ist frei, Alleinspieler nicht: Partner kann stechen
     if (v.trickNo > 0) {
@@ -1105,7 +1107,7 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
         const partnerTrumps = v.unseen.some((c) => isT(v, c) && mayHold(v, P, c));
         if (partnerVoid && partnerTrumps && !declVoid(s)) {
           const c = lowest(v, mine);
-          return { card: c, reason: 'Dein Partner hat kein ' + SN[s] + ' mehr und kann stechen. Spiel ihm die Farbe zu.', tag: 'partner' };
+          return { card: c, reason: 'Dein Partner hat kein ' + SN[s] + ' mehr – er hat vorhin nicht bedient. Spielst du ' + SN[s] + ', kann er mit Trumpf stechen und den Stich für euch holen.', tag: 'partner' };
         }
       }
     }
@@ -1121,8 +1123,8 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
     const cands = bySuit[s].filter((c) => !(rankOf(c) === 5 && !isMaster(v, c)));
     const c = lowest(v, cands.length ? cands : bySuit[s]);
     const why = shortWay
-      ? 'Kurzer Weg – lange Farbe: Der Alleinspieler sitzt direkt hinter dir. Spiel deine lange Farbe (' + SN[s] + '), dein Partner sitzt dahinter und kann reagieren.'
-      : 'Langer Weg – kurze Farbe: Der Alleinspieler sitzt am Ende. Spiel eine kurze Farbe (' + SN[s] + '), dann kannst du sie bald selbst stechen.';
+      ? 'Der Alleinspieler kommt direkt nach dir. Spiel von der Farbe, von der du viele Karten hast (' + SN[s] + '): Dein Partner kommt nach dem Alleinspieler und kann reagieren. (Merksatz: kurzer Weg – lange Farbe.)'
+      : 'Der Alleinspieler kommt als Letzter. Spiel von einer Farbe, von der du nur wenige Karten hast (' + SN[s] + '): Bald hast du sie nicht mehr und darfst selbst stechen. (Merksatz: langer Weg – kurze Farbe.)';
     return { card: c, reason: why, tag: 'weg' };
   }
 
@@ -1147,13 +1149,13 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
       }
       const c = pool.slice().sort((a, b) => pts(b) - pts(a) || (isMaster(v, a) ? 1 : 0) - (isMaster(v, b) ? 1 : 0))[0];
       if (pts(c) === 0) return null;
-      return { card: c, reason: why + ' Gib ' + cardName(c) + ' (' + pts(c) + ' Augen).', tag: 'schmieren' };
+      return { card: c, reason: why + ' Am meisten bringt ' + cardName(c) + ' (' + pts(c) + ' Augen).', tag: 'schmieren' };
     };
 
     if (partnerBest) {
       const secure = declPlayed || !threat(v, D, ts.best, ts.leadEff);
       if (secure) {
-        const r = smear('Schmieren: Dein Partner gewinnt den Stich sicher.');
+        const r = smear('Dein Partner gewinnt diesen Stich sicher – gib ihm viele Augen dazu (das heißt schmieren).');
         if (r) return r;
       } else {
         // selbst sicher übernehmen?
@@ -1182,13 +1184,13 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
         }
       } else if (!canFollow && ts.ptsSoFar >= 10) {
         const pick = highestStr(v, winners);
-        return { card: pick, reason: 'Viele Augen im Stich (' + ts.ptsSoFar + '). Stich hoch, damit der Alleinspieler nicht drüber kann.', tag: 'stich' };
+        return { card: pick, reason: 'Im Stich liegen viele Augen (' + ts.ptsSoFar + '). Nimm einen hohen Trumpf, damit der Alleinspieler nicht mit einem höheren drüber kann.', tag: 'stich' };
       }
     }
     if (!last && !declPlayed) {
       // Alleinspieler kommt noch: klein bleiben
       const c = canFollow ? lowest(v, legal) : discardChoice(v, legal);
-      return { card: c, reason: 'Der Alleinspieler kommt nach dir. Gib ihm keine Augen mit.', tag: 'klein' };
+      return { card: c, reason: 'Der Alleinspieler kommt noch nach dir und bekommt den Stich wahrscheinlich. Gib eine Karte mit wenig Augen.', tag: 'klein' };
     }
     const c = canFollow ? lowest(v, legal) : discardChoice(v, legal);
     return { card: c, reason: 'Der Stich geht an den Alleinspieler. Gib ihm so wenig Augen wie möglich.', tag: 'klein' };
@@ -1207,7 +1209,7 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
         const score = (higher > 0 ? 10 : -50) - lower * 3 + higher - strength(c, gt) * 0.1;
         if (score > bestScore) { bestScore = score; best = c; }
       }
-      return { card: best, reason: 'Null: Spiel eine Karte, die die Gegner überbieten müssen – möglichst niedrig in einer Farbe, in der noch höhere Karten draußen sind.', tag: 'null' };
+      return { card: best, reason: 'Null: Spiel eine niedrige Karte, die die anderen wahrscheinlich überbieten müssen – so bekommst du keinen Stich.', tag: 'null' };
     }
     const ts = trickState(v);
     const canFollow = legal.some((c) => suitOf(c) === suitOf(ts.cards[0]));
@@ -1222,7 +1224,7 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
     }
     // Abwerfen: gefährlichste Karte
     const c = nullDanger(v, legal);
-    return { card: c, reason: 'Null: Du bist frei – wirf deine gefährlichste hohe Karte ab (' + cardName(c) + ').', tag: 'null' };
+    return { card: c, reason: 'Null: Du kannst nicht bedienen. Wirf deine gefährlichste hohe Karte ab (' + cardName(c) + ') – mit ihr könntest du sonst später einen Stich bekommen.', tag: 'null' };
   }
   function nullDanger(v, cards) {
     const gt = v.gt;
@@ -1275,7 +1277,7 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
       return { card: c, reason: 'Der Alleinspieler kommt nach dir. Spiel möglichst niedrig, damit er schwer drunter bleiben kann.', tag: 'null' };
     }
     const c = nullHighDiscard(v, legal);
-    return { card: c, reason: 'Du bist frei: Wirf eine hohe Karte ab.', tag: 'null' };
+    return { card: c, reason: 'Du kannst nicht bedienen: Wirf eine hohe Karte ab.', tag: 'null' };
   }
   function nullHighDiscard(v, cards) {
     return cards.slice().sort((a, b) => strength(b, v.gt) - strength(a, v.gt))[0];
@@ -1636,7 +1638,7 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
       id: 'trumpf', stage: 1, title: 'Trumpf', min: 5, drill: 'trumpf',
       pages: [
         'Im Stich gewinnt normalerweise die höchste Karte der Farbe, die zuerst gelegt wurde. Es gibt aber Karten, die <b>stärker sind als alle anderen</b>: die Trümpfe.',
-        'Vor dem Spiel legt der Alleinspieler fest, welche Farbe <b>Trumpf</b> ist, zum Beispiel Herz. Dann schlägt sogar die kleine Herz-7 ein Kreuz-Ass: [[kA h7]]',
+        'Vor dem Spiel legt der Alleinspieler fest, welche Farbe <b>Trumpf</b> ist, zum Beispiel Herz. Man nennt das dann ein <b>Herzspiel</b> (bei Pik ein Pikspiel und so weiter). Im Herzspiel schlägt sogar die kleine Herz-7 ein Kreuz-Ass: [[kA h7]]',
         'Besonderheit beim Skat: Die vier <b>Buben</b> sind <b>immer</b> die höchsten Trümpfe – egal, welche Farbe Trumpf ist. Ihre Reihenfolge: [[kB pB hB dB]]',
         'Alle Trümpfe im Herzspiel, vom stärksten zum schwächsten: [[kB pB hB dB hA h10 hK hD h9 h8 h7]] Das sind <b>11 Trümpfe</b>: 4 Buben und 7 Herzkarten.',
         'Wichtig: Ein Bube gehört <b>nicht mehr zu seiner Farbe</b>. {pB} ist im Herzspiel ein Trumpf – keine Pik-Karte.',
@@ -1934,6 +1936,9 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
 
   /* Begriffe zum Antippen. re: Wortformen, wie sie im (übersetzten) Text stehen */
   const GLOSSARY = {
+    trumpfziehen: { t: 'Trumpf ziehen', re: 'Trumpf ziehen', d: 'Der Alleinspieler spielt früh Trumpf aus. Die anderen müssen dann Trumpf legen und verlieren ihre Trümpfe. Danach können sie seine anderen Karten nicht mehr stechen.' },
+    weg: { t: 'Kurzer Weg, langer Weg', re: 'kurzer Weg|langer Weg', d: 'Ein Merksatz für Gegenspieler, die ausspielen. Kommt der Alleinspieler direkt nach dir (kurzer Weg), spiel eine Farbe, von der du viele Karten hast. Kommt er als Letzter (langer Weg), spiel eine Farbe, von der du wenige hast.' },
+    farbspielname: { t: 'Herzspiel, Pikspiel …', re: 'Kreuzspiel|Pikspiel|Herzspiel|Karospiel|Eichelspiel|Grünspiel|Rotspiel|Schellenspiel', d: 'So heißt ein Farbspiel nach seiner Trumpffarbe: Im Herzspiel ist Herz Trumpf (dazu die vier Buben), im Pikspiel Pik und so weiter.' },
     augen: { t: 'Augen', re: 'Augen', d: 'Die Punkte der Karten: Ass 11, Zehn 10, König 4, Dame 3, Bube 2, 9, 8 und 7 zählen 0. Zusammen gibt es 120 Augen.' },
     stich: { t: 'Stich', re: 'Stich|Stiche|Stichen|Stichs', d: 'Die drei Karten, die reihum in die Mitte gelegt werden – von jedem Spieler eine. Die stärkste Karte gewinnt den Stich mit allen Augen darin.' },
     ausspielen: { t: 'Ausspielen', re: 'ausspielen|ausgespielt|spielt aus|spielst aus|Ausspielen', d: 'Die erste Karte eines Stichs legen. Wer ausspielt, darf jede Karte legen. Die anderen müssen dann bedienen.' },
@@ -1982,6 +1987,8 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
   const pick = (a) => a[ri(a.length)];
   const shuffle = (a) => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = ri(i + 1); [a[i], a[j]] = [a[j], a[i]]; } return a; };
   const deck = () => shuffle([...Array(32).keys()]);
+  // Etikett über der Aufgabe: sagt direkt, was Trumpf ist
+  const gtag = (gt) => '<span class="game">' + (gt < 4 ? 'Trumpf: ' + E.SUIT_NAMES[gt] + ' + Buben' : gt === GT_GRAND ? 'Grand · nur Buben Trumpf' : 'Null · kein Trumpf') + '</span>';
   const gname = (gt) => E.GAME_NAMES[gt] + (gt < 4 ? 'spiel' : '');
   const randGame = (wNull) => { const x = R(); if (x < (wNull || 0.15)) return GT_NULL; if (x < (wNull || 0.15) + 0.25) return GT_GRAND; return ri(4); };
 
@@ -2044,7 +2051,7 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
         else if (rankOf(x) === 7) why = tok(x) + ' ist ein Bube – Buben sind ' + (gt === GT_GRAND ? 'im Grand die einzigen Trümpfe.' : 'immer Trumpf, egal welche Farbe Trumpf ist.');
         else if (gt < 4 && suitOf(x) === gt) why = tok(x) + ' ist eine ' + E.SUIT_NAMES[gt] + '-Karte – also Trumpf.';
         else why = tok(x) + ' ist ' + (gt < 4 ? 'weder Bube noch ' + E.SUIT_NAMES[gt] : 'kein Bube') + ' – also kein Trumpf. Seine Farbe ist eine Fehlfarbe.';
-        return { kind: 'choice', text: '<span class="game">' + gname(gt) + '</span> Ist ' + tok(x) + ' Trumpf?', options: ['Ja, Trumpf', 'Nein'], answer: t ? 0 : 1, explain: steps([trumpDef, why]) };
+        return { kind: 'choice', text: gtag(gt) + ' Ist ' + tok(x) + ' Trumpf?', options: ['Ja, Trumpf', 'Nein'], answer: t ? 0 : 1, explain: steps([trumpDef, why]) };
       }
       let a, b;
       for (;;) {
@@ -2057,7 +2064,7 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
       const both = isTrump(a, gt);
       const order = both ? 'Reihenfolge der Trümpfe: ' + (gt === GT_GRAND ? 'Kreuz-Bube, Pik-Bube, Herz-Bube, Karo-Bube' : TRUMP_ORDER) + '.' : 'Beide sind ' + E.SUIT_NAMES[suitOf(a)] + '-Karten. Reihenfolge: ' + (gt === GT_NULL ? NULL_ORDER : SUIT_ORDER) + '.';
       return {
-        kind: 'choice', text: '<span class="game">' + gname(gt) + '</span> Welche Karte ist stärker?', options: [tok(a), tok(b)], answer: hi,
+        kind: 'choice', text: gtag(gt) + ' Welche Karte ist stärker?', options: [tok(a), tok(b)], answer: hi,
         explain: steps([both ? 'Beide sind Trumpf. ' + order : order, tok(hi ? b : a) + ' ist stärker.']),
       };
     },
@@ -2102,7 +2109,7 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
       if (le < 4 && hand.includes(myJack)) s.push(gt === GT_NULL ? tok(myJack) + ' gehört im Null zu ' + need(le) + ' – dort ist der Bube kein Trumpf.' : tok(myJack) + ' zählt nicht als ' + need(le) + ' – Buben sind Trumpf.');
       if (le === 4 && hand.some((x) => rankOf(x) === 7)) s.push('Auch ' + toks(hand.filter((x) => rankOf(x) === 7)) + ' ist Trumpf.');
       const mark = c.i < 5 && gt !== GT_NULL;
-      const text = '<span class="game">' + gname(gt) + '</span> Ausgespielt wird ' + tok(lead) + (mark && isTrump(lead, gt) ? ' (ein Trumpf)' : '') + '. Welche deiner Karten darfst du legen?' + (mark ? '<br><span class="note">Hilfe: Deine Trümpfe haben unten einen goldenen Streifen.</span>' : '');
+      const text = gtag(gt) + ' Ausgespielt wird ' + tok(lead) + (mark && isTrump(lead, gt) ? ' (ein Trumpf)' : '') + '. Welche deiner Karten darfst du legen?' + (mark ? '<br><span class="note">Hilfe: Deine Trümpfe haben unten einen goldenen Streifen.</span>' : '');
       return { kind: 'pick', multi: true, gt, mark, text, hand, answer: legal, explain: steps(s) };
     },
   };
@@ -2139,7 +2146,7 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
       else s.push('Im Stich liegt kein Trumpf.');
       if (off.length) s.push(toks(off) + ' wurde abgeworfen und kann nicht gewinnen.');
       s.push('→ ' + tok(wc) + ' gewinnt: ' + (isTrump(wc, gt) ? 'der höchste Trumpf im Stich.' : 'die höchste ' + need(le) + '-Karte (' + (gt === GT_NULL ? NULL_ORDER : SUIT_ORDER) + ').'));
-      return { kind: 'trick', gt, text: '<span class="game">' + gname(gt) + '</span> Wer gewinnt den Stich? Die erste Karte wurde ausgespielt.', cards: cs, answer: w, explain: steps(s) };
+      return { kind: 'trick', gt, text: gtag(gt) + ' Wer gewinnt den Stich? Die erste Karte wurde ausgespielt.', cards: cs, answer: w, explain: steps(s) };
     },
   };
 
@@ -2165,7 +2172,7 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
       const opts = shuffle([...set]);
       const order = E.matadorOrder(gt).slice(0, Math.min(sp.n + 1, gt === GT_GRAND ? 4 : 11));
       const ex = 'Von oben: ' + order.map((c) => tok(c) + (hand.includes(c) ? '✓' : '✗')).join(' ') + ' → <b>' + correct + '</b>' + (sp.mit ? ' (Kreuz-Bube vorhanden: zähle die Trümpfe ohne Lücke).' : ' (Kreuz-Bube fehlt: zähle die fehlenden Trümpfe bis zum ersten eigenen).');
-      return { kind: 'choice', text: '<span class="game">' + gname(gt) + '</span> Dein Blatt (der Skat zählt hier nicht):' + row(hand), options: opts, answer: opts.indexOf(correct), explain: ex };
+      return { kind: 'choice', text: gtag(gt) + ' Dein Blatt (der Skat zählt hier nicht):' + row(hand), options: opts, answer: opts.indexOf(correct), explain: ex };
     },
   };
 
@@ -2373,7 +2380,7 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
         return {
           kind: 'pick', multi: false, gt, hand: E.sortHand(st.hands[0], gt), legal,
           trick: st.trick.map((x) => ({ who: whoName(st, x.p), c: x.c })),
-          text: '<span class="game">' + gname(gt) + '</span> Du bist Gegenspieler und spielst als Letzter. Welche Karte legst du?',
+          text: gtag(gt) + ' Du bist Gegenspieler und spielst als Letzter. Welche Karte legst du?',
           answer: ans, explain: ex,
         };
       });
@@ -2433,7 +2440,7 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
       return {
         kind: 'choice', gt, hand: E.sortHand(st.hands[0], gt),
         tricksShown: st.tricks.map((t) => t.cards.map((x) => x.c)),
-        text: '<span class="game">' + gname(gt) + '</span> ' + k + ' Stiche sind gespielt (siehe oben), unten deine Karten' + (st.declarer === 0 ? ' – du bist Alleinspieler, gedrückt: ' + st.discard.map(tok).join(' ') : '') + '. Wie viele Trümpfe haben die anderen noch' + (st.declarer === 0 ? '' : ' (oder liegen im Skat)') + '?',
+        text: gtag(gt) + ' ' + k + ' Stiche sind gespielt (siehe oben), unten deine Karten' + (st.declarer === 0 ? ' – du bist Alleinspieler, gedrückt: ' + st.discard.map(tok).join(' ') : '') + '. Wie viele Trümpfe haben die anderen noch' + (st.declarer === 0 ? '' : ' (oder liegen im Skat)') + '?',
         ...o,
         explain: total + ' Trümpfe insgesamt − ' + mine + ' bei dir − ' + fallen + ' gefallen' + (known ? ' − ' + known + ' gedrückt' : '') + ' = <b>' + rest + '</b>',
       };
@@ -2450,7 +2457,7 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
     return {
       kind: 'pick', multi: false, gt, hand, legal, trick, title: t.title,
       how: 'Wer liegt im Stich vorn? Kommt noch jemand nach dir? Was bringt deiner Seite die meisten Augen?',
-      text: '<span class="game">' + gname(gt) + '</span> ' + t.role + '. Welche Karte spielst du?',
+      text: gtag(gt) + ' ' + t.role + '. Welche Karte spielst du?',
       answer: t.ok.map(parse), explain: t.why,
     };
   }
@@ -2739,10 +2746,11 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
     }
     h += levelCard();
     if (guideDone(1)) h += '<a class="nextup" href="' + nu.href + '"><div><div class="eyebrow">Als Nächstes</div><div class="t">' + esc(nu.t) + '</div><div class="d">' + esc(nu.d) + '</div></div><span class="btn small">Los</span></a>';
+    const lv = levelInfo().level;
     for (const L of LEVELS.slice(0, 4)) {
       const ls = C.LESSONS.filter((l) => l.stage === L.n);
       const done = ls.filter((l) => lessonDone(l.id)).length;
-      h += '<section class="block"><div class="block-h"><h3>Stufe ' + L.n + ' · ' + L.short + '</h3><span class="eyebrow">' + done + '/' + ls.length + '</span></div>';
+      h += '<section class="block' + (L.n > lv ? ' later' : '') + '"><div class="block-h"><h3>Stufe ' + L.n + ' · ' + L.short + '</h3><span class="eyebrow">' + done + '/' + ls.length + '</span></div>' + (L.n > lv ? '<p class="later-note">Kommt später – baut auf Stufe ' + (L.n - 1) + ' auf.</p>' : '');
       for (const g of GUIDES.filter((x) => x.stage === L.n)) {
         h += '<a class="row" href="#gefuehrt-' + g.n + '"><span class="mark' + (guideDone(g.n) ? ' done' : '') + '">' + (guideDone(g.n) ? '✓' : '') + '</span><span><span class="t">Geführtes Spiel: ' + g.t + '</span><br><span class="d">' + g.d + '</span></span><span class="score">' + ICON.spielen + '</span></a>';
       }
@@ -2818,12 +2826,13 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
 
   // ================= Übungen =================
   function viewDrills() {
+    const lv = levelInfo().level;
     let h = '<div class="page"><div class="brand"><h1>Üben</h1><span class="eyebrow">je 10 Aufgaben</span></div>';
     h += '<p class="note">Jede Übung erzeugt neue Aufgaben. Ab 80 % gilt sie als gemeistert.</p>';
     for (const L of LEVELS.slice(0, 4)) {
       const ids = D.ORDER.filter((id) => D.DRILLS[id].stage === L.n);
       if (!ids.length) continue;
-      h += '<section class="block"><div class="block-h"><h3>Stufe ' + L.n + ' · ' + L.short + '</h3></div>';
+      h += '<section class="block' + (L.n > lv ? ' later' : '') + '"><div class="block-h"><h3>Stufe ' + L.n + ' · ' + L.short + '</h3></div>' + (L.n > lv ? '<p class="later-note">Kommt später – passt, wenn du Stufe ' + L.n + ' erreicht hast.</p>' : '');
       for (const id of ids) {
         const d = D.DRILLS[id], b = drillBest(id);
         h += '<a class="row" href="#uebung-' + id + '"><span class="mark' + (b >= 80 ? ' done' : b ? ' part' : '') + '">' + (b >= 80 ? '✓' : '') + '</span><span><span class="t">' + d.title + '</span><br><span class="d">' + d.desc + '</span></span><span class="score' + (b >= 80 ? ' good' : '') + '">' + (b ? b + '\u00a0%' : '–') + '</span></a>';
@@ -3214,7 +3223,13 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
       const me = A.bidLimit(dealt.hands[0], true, 0.5);
       const l1 = A.bidLimit(dealt.hands[1], false, RISK[1]).limit;
       const l2 = A.bidLimit(dealt.hands[2], false, RISK[2]).limit;
-      const ok = me.limit >= 22 && me.choice && me.choice.gt < 4 && !me.choice.hand && Math.max(l1, l2) < me.limit && Math.max(l1, l2) >= 18;
+      let ok = me.limit >= 22 && me.choice && me.choice.gt < 4 && !me.choice.hand && Math.max(l1, l2) < me.limit && Math.max(l1, l2) >= 18;
+      if (ok) {
+        const all12 = dealt.hands[0].concat(dealt.skat);
+        const gt = me.choice.gt;
+        const a = E.spitzen(dealt.hands[0], gt), b = E.spitzen(all12, gt);
+        ok = a.mit === b.mit && a.n === b.n && A.chooseGame({ declarer: 0, vh: 0, bid: me.limit }, all12, false).gt === gt;
+      }
       if (!relax && !ok) continue;
       return E.newGame(dealer, dealt);
     }
@@ -3273,7 +3288,7 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
     const bl = A.bidLimit(st.hands[0], st.vh === 0, 0.5);
     const lim = bl.limit, ch = bl.choice;
     let worth = 'Dein Blatt ist zu schwach für ein eigenes Spiel.';
-    if (lim && ch) worth = 'Dein Blatt ist etwa <b>' + lim + '</b> wert' + (ch.gt < 5 && !ch.hand ? ': ' + E.GAME_NAMES[ch.gt] + ' ' + (ch.sp.mit ? 'mit ' : 'ohne ') + ch.sp.n + ' → (' + ch.sp.n + ' + 1) × ' + E.BASE[ch.gt] + ' = ' + lim : '') + '.';
+    if (lim && ch) worth = 'Dein Blatt ist etwa <b>' + lim + '</b> wert' + (ch.gt < 4 ? ' – mit ' + E.SUIT_NAMES[ch.gt] + ' als Trumpf' : '') + '. (Wie man das ausrechnet, lernst du in Stufe 2.)';
     const last = b.log[b.log.length - 1];
     const lastTxt = last && last.p !== 0 ? bidActText(last) + ' ' : '';
     let t;
@@ -3487,9 +3502,10 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
     // Gegner
     h += '<div class="opps">' + [1, 2].map((p) => {
       const isTurn = (st.phase === 'bidding' && E.biddingActor(st) === p) || (st.phase === 'play' && st.turn === p && !m.hold);
-      let b = '<span class="badge">' + POSK(st, p) + '</span>';
+      let b = m.guide ? '' : '<span class="badge">' + POSK(st, p) + '</span>';
       if (st.declarer === p && st.phase !== 'bidding') b += '<span class="badge decl">Alleinspieler</span>';
-      if (st.dealer === p) b += '<span class="badge">Geber</span>';
+      if (st.dealer === p && !m.guide) b += '<span class="badge">Geber</span>';
+      if (m.guide && st.phase === 'play' && st.declarer !== 0 && p !== st.declarer) b += '<span class="badge">Partner' + (p === 1 ? 'in' : '') + '</span>';
       const n = st.hands[p].length;
       let x = '<div class="opp ' + (p === 1 ? 'l' : 'r') + (isTurn ? ' turn' : '') + '"><div class="who"><div class="avatar">' + NAMES[p][0] + '</div><div><div class="nm">' + NAMES[p] + '</div><div class="badges">' + b + '</div></div></div>';
       if (st.game && st.game.ouvert && st.declarer === p && st.phase === 'play') x += '<div class="openhand">' + E.sortHand(st.hands[p], gt).map(chip).join('') + '</div>';
@@ -3508,7 +3524,15 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
     h += '</div>';
     // Infozeile
     let info = [];
-    if (st.game) {
+    if (st.game && m.guide) {
+      info.push(T(gt < 4 ? 'Trumpf: ' + E.SUIT_NAMES[gt] + ' + Buben' : gt === 4 ? 'Trumpf: nur Buben' : 'Null: kein Trumpf'));
+      info.push('Stich ' + (m.hold && m.hold.trick ? st.tricks.length : Math.min(st.tricks.length + 1, 10)) + '/10');
+      if (gt !== E.GT_NULL) {
+        const dp = pts[st.declarer] + (st.declarer === 0 && st.skatTaken ? E.sumPts(st.discard) : 0);
+        const op = pts[0] + pts[1] + pts[2] - pts[st.declarer];
+        info.push(st.declarer === 0 ? 'Augen: du ' + dp + ' · Lena + Tom ' + op : 'Augen: ihr ' + op + ' · ' + NAMES[st.declarer] + ' ' + dp);
+      }
+    } else if (st.game) {
       info.push(E.gameLabel(st.game) + (st.declarer === 0 ? ' (du)' : ' (' + NAMES[st.declarer] + ')'));
       info.push('Reizwert ' + st.bid);
       info.push('Stich ' + (m.hold && m.hold.trick ? st.tricks.length : Math.min(st.tricks.length + 1, 10)) + '/10');
@@ -3520,6 +3544,8 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
         const outT = v.unseen.filter((c) => E.isTrump(c, gt)).length;
         info.push('Trümpfe draußen: ' + outT);
       }
+    } else if (st.phase === 'bidding' && m.guide) {
+      if (st.bidding.bid) info.push('Höchste Zahl bisher: ' + st.bidding.bid);
     } else if (st.phase === 'bidding') {
       info.push('Du bist ' + POS(st, 0));
       if (st.bidding.bid) info.push('Gereizt: ' + st.bidding.bid);
@@ -3545,7 +3571,7 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
     if (ov > 6) ov = 6;
     if (ov < -cw * 0.62) { cw = Math.max(52, Math.floor(W / (1 + (n - 1) * 0.4))); ov = n > 1 ? Math.floor((W - cw * n) / (n - 1)) : 0; }
     const meTurn = (st.phase === 'bidding' && E.biddingActor(st) === 0) || myTurn;
-    h += '<div class="me' + (meTurn ? ' turn' : '') + '"><div class="meline"><span class="badge">' + POSK(st, 0) + ' · ' + POS(st, 0) + '</span>' + (st.declarer === 0 && st.phase !== 'bidding' ? '<span class="badge decl">Alleinspieler</span>' : '') + (st.dealer === 0 ? '<span class="badge">Geber</span>' : '') + (m.bubbles[0] && st.phase === 'bidding' ? '<span class="bubble" style="padding:1px 8px">' + esc(m.bubbles[0]) + '</span>' : '') + '</div>';
+    h += '<div class="me' + (meTurn ? ' turn' : '') + '"><div class="meline">' + (m.guide ? '' : '<span class="badge">' + POSK(st, 0) + ' · ' + POS(st, 0) + '</span>') + (st.declarer === 0 && st.phase !== 'bidding' ? '<span class="badge decl">Alleinspieler</span>' : '') + (st.dealer === 0 && !m.guide ? '<span class="badge">Geber</span>' : '') + (m.bubbles[0] && st.phase === 'bidding' ? '<span class="bubble" style="padding:1px 8px">' + esc(m.bubbles[0]) + '</span>' : '') + '</div>';
     h += '<div class="hand' + (cw + ov < cw * 0.8 ? ' tight' : '') + '" id="hand" style="--cw:' + cw + 'px;--ov:' + ov + 'px">' + hand.map((c) => {
       let cls = [];
       if (st.phase === 'discard' && m.sel.includes(c)) cls.push('sel');
@@ -3620,9 +3646,9 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
       const rec = H === 'profi' ? null : m.recD ? m.recD.gt : H === 'lern' ? gameAdvice(st).gt : null;
       let g = '<div class="gamegrid">' + opts.map((o) => {
         if (o.gt === E.GT_NULL && (d.sa || d.sw || d.ov)) return '';
-        if (m.guide && o.ov) return '';
+        if (m.guide && o.gt >= 4) return '';
         const sel = d.gt === o.gt && !!d.nov === !!o.ov;
-        return '<button class="gopt' + (o.low ? ' low' : '') + (sel ? ' sel' : '') + (rec === o.gt && !o.ov && H !== 'profi' ? ' rec' : '') + '" data-g="' + o.i + '"' + (o.blocked ? ' disabled' : '') + '><span class="gn"><span class="' + o.cls + '">' + o.s + '</span> ' + o.l + '</span><span class="gv">' + (H === 'profi' ? '' : o.txt + (o.low ? ' · unter ' + st.bid : '')) + '</span></button>';
+        return '<button class="gopt' + (o.low ? ' low' : '') + (sel ? ' sel' : '') + (rec === o.gt && !o.ov && H !== 'profi' ? ' rec' : '') + '" data-g="' + o.i + '"' + (o.blocked ? ' disabled' : '') + '><span class="gn"><span class="' + o.cls + '">' + o.s + '</span> ' + o.l + '</span><span class="gv">' + (m.guide ? 'Wert ' + o.v + (o.low ? ' – zu wenig, gereizt: ' + st.bid : '') : H === 'profi' ? '' : o.txt + (o.low ? ' · unter ' + st.bid : '')) + '</span></button>';
       }).join('') + '</div>';
       let tg = '';
       if (hand && d.gt !== E.GT_NULL && !m.guide) tg = '<div class="toggles"><button class="toggle' + (d.sa ? ' on' : '') + '" data-t="sa">Schneider angesagt</button><button class="toggle' + (d.sw ? ' on' : '') + '" data-t="sw">Schwarz angesagt</button><button class="toggle' + (d.ov ? ' on' : '') + '" data-t="ov">Ouvert</button></div>';

@@ -50,7 +50,7 @@
       id: 'trumpf', stage: 1, title: 'Trumpf', min: 5, drill: 'trumpf',
       pages: [
         'Im Stich gewinnt normalerweise die höchste Karte der Farbe, die zuerst gelegt wurde. Es gibt aber Karten, die <b>stärker sind als alle anderen</b>: die Trümpfe.',
-        'Vor dem Spiel legt der Alleinspieler fest, welche Farbe <b>Trumpf</b> ist, zum Beispiel Herz. Dann schlägt sogar die kleine Herz-7 ein Kreuz-Ass: [[kA h7]]',
+        'Vor dem Spiel legt der Alleinspieler fest, welche Farbe <b>Trumpf</b> ist, zum Beispiel Herz. Man nennt das dann ein <b>Herzspiel</b> (bei Pik ein Pikspiel und so weiter). Im Herzspiel schlägt sogar die kleine Herz-7 ein Kreuz-Ass: [[kA h7]]',
         'Besonderheit beim Skat: Die vier <b>Buben</b> sind <b>immer</b> die höchsten Trümpfe – egal, welche Farbe Trumpf ist. Ihre Reihenfolge: [[kB pB hB dB]]',
         'Alle Trümpfe im Herzspiel, vom stärksten zum schwächsten: [[kB pB hB dB hA h10 hK hD h9 h8 h7]] Das sind <b>11 Trümpfe</b>: 4 Buben und 7 Herzkarten.',
         'Wichtig: Ein Bube gehört <b>nicht mehr zu seiner Farbe</b>. {pB} ist im Herzspiel ein Trumpf – keine Pik-Karte.',
@@ -348,6 +348,9 @@
 
   /* Begriffe zum Antippen. re: Wortformen, wie sie im (übersetzten) Text stehen */
   const GLOSSARY = {
+    trumpfziehen: { t: 'Trumpf ziehen', re: 'Trumpf ziehen', d: 'Der Alleinspieler spielt früh Trumpf aus. Die anderen müssen dann Trumpf legen und verlieren ihre Trümpfe. Danach können sie seine anderen Karten nicht mehr stechen.' },
+    weg: { t: 'Kurzer Weg, langer Weg', re: 'kurzer Weg|langer Weg', d: 'Ein Merksatz für Gegenspieler, die ausspielen. Kommt der Alleinspieler direkt nach dir (kurzer Weg), spiel eine Farbe, von der du viele Karten hast. Kommt er als Letzter (langer Weg), spiel eine Farbe, von der du wenige hast.' },
+    farbspielname: { t: 'Herzspiel, Pikspiel …', re: 'Kreuzspiel|Pikspiel|Herzspiel|Karospiel|Eichelspiel|Grünspiel|Rotspiel|Schellenspiel', d: 'So heißt ein Farbspiel nach seiner Trumpffarbe: Im Herzspiel ist Herz Trumpf (dazu die vier Buben), im Pikspiel Pik und so weiter.' },
     augen: { t: 'Augen', re: 'Augen', d: 'Die Punkte der Karten: Ass 11, Zehn 10, König 4, Dame 3, Bube 2, 9, 8 und 7 zählen 0. Zusammen gibt es 120 Augen.' },
     stich: { t: 'Stich', re: 'Stich|Stiche|Stichen|Stichs', d: 'Die drei Karten, die reihum in die Mitte gelegt werden – von jedem Spieler eine. Die stärkste Karte gewinnt den Stich mit allen Augen darin.' },
     ausspielen: { t: 'Ausspielen', re: 'ausspielen|ausgespielt|spielt aus|spielst aus|Ausspielen', d: 'Die erste Karte eines Stichs legen. Wer ausspielt, darf jede Karte legen. Die anderen müssen dann bedienen.' },

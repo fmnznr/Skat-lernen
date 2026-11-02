@@ -278,10 +278,11 @@
     }
     h += levelCard();
     if (guideDone(1)) h += '<a class="nextup" href="' + nu.href + '"><div><div class="eyebrow">Als Nächstes</div><div class="t">' + esc(nu.t) + '</div><div class="d">' + esc(nu.d) + '</div></div><span class="btn small">Los</span></a>';
+    const lv = levelInfo().level;
     for (const L of LEVELS.slice(0, 4)) {
       const ls = C.LESSONS.filter((l) => l.stage === L.n);
       const done = ls.filter((l) => lessonDone(l.id)).length;
-      h += '<section class="block"><div class="block-h"><h3>Stufe ' + L.n + ' · ' + L.short + '</h3><span class="eyebrow">' + done + '/' + ls.length + '</span></div>';
+      h += '<section class="block' + (L.n > lv ? ' later' : '') + '"><div class="block-h"><h3>Stufe ' + L.n + ' · ' + L.short + '</h3><span class="eyebrow">' + done + '/' + ls.length + '</span></div>' + (L.n > lv ? '<p class="later-note">Kommt später – baut auf Stufe ' + (L.n - 1) + ' auf.</p>' : '');
       for (const g of GUIDES.filter((x) => x.stage === L.n)) {
         h += '<a class="row" href="#gefuehrt-' + g.n + '"><span class="mark' + (guideDone(g.n) ? ' done' : '') + '">' + (guideDone(g.n) ? '✓' : '') + '</span><span><span class="t">Geführtes Spiel: ' + g.t + '</span><br><span class="d">' + g.d + '</span></span><span class="score">' + ICON.spielen + '</span></a>';
       }
@@ -357,12 +358,13 @@
 
   // ================= Übungen =================
   function viewDrills() {
+    const lv = levelInfo().level;
     let h = '<div class="page"><div class="brand"><h1>Üben</h1><span class="eyebrow">je 10 Aufgaben</span></div>';
     h += '<p class="note">Jede Übung erzeugt neue Aufgaben. Ab 80 % gilt sie als gemeistert.</p>';
     for (const L of LEVELS.slice(0, 4)) {
       const ids = D.ORDER.filter((id) => D.DRILLS[id].stage === L.n);
       if (!ids.length) continue;
-      h += '<section class="block"><div class="block-h"><h3>Stufe ' + L.n + ' · ' + L.short + '</h3></div>';
+      h += '<section class="block' + (L.n > lv ? ' later' : '') + '"><div class="block-h"><h3>Stufe ' + L.n + ' · ' + L.short + '</h3></div>' + (L.n > lv ? '<p class="later-note">Kommt später – passt, wenn du Stufe ' + L.n + ' erreicht hast.</p>' : '');
       for (const id of ids) {
         const d = D.DRILLS[id], b = drillBest(id);
         h += '<a class="row" href="#uebung-' + id + '"><span class="mark' + (b >= 80 ? ' done' : b ? ' part' : '') + '">' + (b >= 80 ? '✓' : '') + '</span><span><span class="t">' + d.title + '</span><br><span class="d">' + d.desc + '</span></span><span class="score' + (b >= 80 ? ' good' : '') + '">' + (b ? b + '\u00a0%' : '–') + '</span></a>';
@@ -753,7 +755,13 @@
       const me = A.bidLimit(dealt.hands[0], true, 0.5);
       const l1 = A.bidLimit(dealt.hands[1], false, RISK[1]).limit;
       const l2 = A.bidLimit(dealt.hands[2], false, RISK[2]).limit;
-      const ok = me.limit >= 22 && me.choice && me.choice.gt < 4 && !me.choice.hand && Math.max(l1, l2) < me.limit && Math.max(l1, l2) >= 18;
+      let ok = me.limit >= 22 && me.choice && me.choice.gt < 4 && !me.choice.hand && Math.max(l1, l2) < me.limit && Math.max(l1, l2) >= 18;
+      if (ok) {
+        const all12 = dealt.hands[0].concat(dealt.skat);
+        const gt = me.choice.gt;
+        const a = E.spitzen(dealt.hands[0], gt), b = E.spitzen(all12, gt);
+        ok = a.mit === b.mit && a.n === b.n && A.chooseGame({ declarer: 0, vh: 0, bid: me.limit }, all12, false).gt === gt;
+      }
       if (!relax && !ok) continue;
       return E.newGame(dealer, dealt);
     }
@@ -812,7 +820,7 @@
     const bl = A.bidLimit(st.hands[0], st.vh === 0, 0.5);
     const lim = bl.limit, ch = bl.choice;
     let worth = 'Dein Blatt ist zu schwach für ein eigenes Spiel.';
-    if (lim && ch) worth = 'Dein Blatt ist etwa <b>' + lim + '</b> wert' + (ch.gt < 5 && !ch.hand ? ': ' + E.GAME_NAMES[ch.gt] + ' ' + (ch.sp.mit ? 'mit ' : 'ohne ') + ch.sp.n + ' → (' + ch.sp.n + ' + 1) × ' + E.BASE[ch.gt] + ' = ' + lim : '') + '.';
+    if (lim && ch) worth = 'Dein Blatt ist etwa <b>' + lim + '</b> wert' + (ch.gt < 4 ? ' – mit ' + E.SUIT_NAMES[ch.gt] + ' als Trumpf' : '') + '. (Wie man das ausrechnet, lernst du in Stufe 2.)';
     const last = b.log[b.log.length - 1];
     const lastTxt = last && last.p !== 0 ? bidActText(last) + ' ' : '';
     let t;
@@ -1026,9 +1034,10 @@
     // Gegner
     h += '<div class="opps">' + [1, 2].map((p) => {
       const isTurn = (st.phase === 'bidding' && E.biddingActor(st) === p) || (st.phase === 'play' && st.turn === p && !m.hold);
-      let b = '<span class="badge">' + POSK(st, p) + '</span>';
+      let b = m.guide ? '' : '<span class="badge">' + POSK(st, p) + '</span>';
       if (st.declarer === p && st.phase !== 'bidding') b += '<span class="badge decl">Alleinspieler</span>';
-      if (st.dealer === p) b += '<span class="badge">Geber</span>';
+      if (st.dealer === p && !m.guide) b += '<span class="badge">Geber</span>';
+      if (m.guide && st.phase === 'play' && st.declarer !== 0 && p !== st.declarer) b += '<span class="badge">Partner' + (p === 1 ? 'in' : '') + '</span>';
       const n = st.hands[p].length;
       let x = '<div class="opp ' + (p === 1 ? 'l' : 'r') + (isTurn ? ' turn' : '') + '"><div class="who"><div class="avatar">' + NAMES[p][0] + '</div><div><div class="nm">' + NAMES[p] + '</div><div class="badges">' + b + '</div></div></div>';
       if (st.game && st.game.ouvert && st.declarer === p && st.phase === 'play') x += '<div class="openhand">' + E.sortHand(st.hands[p], gt).map(chip).join('') + '</div>';
@@ -1047,7 +1056,15 @@
     h += '</div>';
     // Infozeile
     let info = [];
-    if (st.game) {
+    if (st.game && m.guide) {
+      info.push(T(gt < 4 ? 'Trumpf: ' + E.SUIT_NAMES[gt] + ' + Buben' : gt === 4 ? 'Trumpf: nur Buben' : 'Null: kein Trumpf'));
+      info.push('Stich ' + (m.hold && m.hold.trick ? st.tricks.length : Math.min(st.tricks.length + 1, 10)) + '/10');
+      if (gt !== E.GT_NULL) {
+        const dp = pts[st.declarer] + (st.declarer === 0 && st.skatTaken ? E.sumPts(st.discard) : 0);
+        const op = pts[0] + pts[1] + pts[2] - pts[st.declarer];
+        info.push(st.declarer === 0 ? 'Augen: du ' + dp + ' · Lena + Tom ' + op : 'Augen: ihr ' + op + ' · ' + NAMES[st.declarer] + ' ' + dp);
+      }
+    } else if (st.game) {
       info.push(E.gameLabel(st.game) + (st.declarer === 0 ? ' (du)' : ' (' + NAMES[st.declarer] + ')'));
       info.push('Reizwert ' + st.bid);
       info.push('Stich ' + (m.hold && m.hold.trick ? st.tricks.length : Math.min(st.tricks.length + 1, 10)) + '/10');
@@ -1059,6 +1076,8 @@
         const outT = v.unseen.filter((c) => E.isTrump(c, gt)).length;
         info.push('Trümpfe draußen: ' + outT);
       }
+    } else if (st.phase === 'bidding' && m.guide) {
+      if (st.bidding.bid) info.push('Höchste Zahl bisher: ' + st.bidding.bid);
     } else if (st.phase === 'bidding') {
       info.push('Du bist ' + POS(st, 0));
       if (st.bidding.bid) info.push('Gereizt: ' + st.bidding.bid);
@@ -1084,7 +1103,7 @@
     if (ov > 6) ov = 6;
     if (ov < -cw * 0.62) { cw = Math.max(52, Math.floor(W / (1 + (n - 1) * 0.4))); ov = n > 1 ? Math.floor((W - cw * n) / (n - 1)) : 0; }
     const meTurn = (st.phase === 'bidding' && E.biddingActor(st) === 0) || myTurn;
-    h += '<div class="me' + (meTurn ? ' turn' : '') + '"><div class="meline"><span class="badge">' + POSK(st, 0) + ' · ' + POS(st, 0) + '</span>' + (st.declarer === 0 && st.phase !== 'bidding' ? '<span class="badge decl">Alleinspieler</span>' : '') + (st.dealer === 0 ? '<span class="badge">Geber</span>' : '') + (m.bubbles[0] && st.phase === 'bidding' ? '<span class="bubble" style="padding:1px 8px">' + esc(m.bubbles[0]) + '</span>' : '') + '</div>';
+    h += '<div class="me' + (meTurn ? ' turn' : '') + '"><div class="meline">' + (m.guide ? '' : '<span class="badge">' + POSK(st, 0) + ' · ' + POS(st, 0) + '</span>') + (st.declarer === 0 && st.phase !== 'bidding' ? '<span class="badge decl">Alleinspieler</span>' : '') + (st.dealer === 0 && !m.guide ? '<span class="badge">Geber</span>' : '') + (m.bubbles[0] && st.phase === 'bidding' ? '<span class="bubble" style="padding:1px 8px">' + esc(m.bubbles[0]) + '</span>' : '') + '</div>';
     h += '<div class="hand' + (cw + ov < cw * 0.8 ? ' tight' : '') + '" id="hand" style="--cw:' + cw + 'px;--ov:' + ov + 'px">' + hand.map((c) => {
       let cls = [];
       if (st.phase === 'discard' && m.sel.includes(c)) cls.push('sel');
@@ -1159,9 +1178,9 @@
       const rec = H === 'profi' ? null : m.recD ? m.recD.gt : H === 'lern' ? gameAdvice(st).gt : null;
       let g = '<div class="gamegrid">' + opts.map((o) => {
         if (o.gt === E.GT_NULL && (d.sa || d.sw || d.ov)) return '';
-        if (m.guide && o.ov) return '';
+        if (m.guide && o.gt >= 4) return '';
         const sel = d.gt === o.gt && !!d.nov === !!o.ov;
-        return '<button class="gopt' + (o.low ? ' low' : '') + (sel ? ' sel' : '') + (rec === o.gt && !o.ov && H !== 'profi' ? ' rec' : '') + '" data-g="' + o.i + '"' + (o.blocked ? ' disabled' : '') + '><span class="gn"><span class="' + o.cls + '">' + o.s + '</span> ' + o.l + '</span><span class="gv">' + (H === 'profi' ? '' : o.txt + (o.low ? ' · unter ' + st.bid : '')) + '</span></button>';
+        return '<button class="gopt' + (o.low ? ' low' : '') + (sel ? ' sel' : '') + (rec === o.gt && !o.ov && H !== 'profi' ? ' rec' : '') + '" data-g="' + o.i + '"' + (o.blocked ? ' disabled' : '') + '><span class="gn"><span class="' + o.cls + '">' + o.s + '</span> ' + o.l + '</span><span class="gv">' + (m.guide ? 'Wert ' + o.v + (o.low ? ' – zu wenig, gereizt: ' + st.bid : '') : H === 'profi' ? '' : o.txt + (o.low ? ' · unter ' + st.bid : '')) + '</span></button>';
       }).join('') + '</div>';
       let tg = '';
       if (hand && d.gt !== E.GT_NULL && !m.guide) tg = '<div class="toggles"><button class="toggle' + (d.sa ? ' on' : '') + '" data-t="sa">Schneider angesagt</button><button class="toggle' + (d.sw ? ' on' : '') + '" data-t="sw">Schwarz angesagt</button><button class="toggle' + (d.ov ? ' on' : '') + '" data-t="ov">Ouvert</button></div>';

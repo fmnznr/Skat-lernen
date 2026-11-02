@@ -13,6 +13,8 @@
   const pick = (a) => a[ri(a.length)];
   const shuffle = (a) => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = ri(i + 1); [a[i], a[j]] = [a[j], a[i]]; } return a; };
   const deck = () => shuffle([...Array(32).keys()]);
+  // Etikett über der Aufgabe: sagt direkt, was Trumpf ist
+  const gtag = (gt) => '<span class="game">' + (gt < 4 ? 'Trumpf: ' + E.SUIT_NAMES[gt] + ' + Buben' : gt === GT_GRAND ? 'Grand · nur Buben Trumpf' : 'Null · kein Trumpf') + '</span>';
   const gname = (gt) => E.GAME_NAMES[gt] + (gt < 4 ? 'spiel' : '');
   const randGame = (wNull) => { const x = R(); if (x < (wNull || 0.15)) return GT_NULL; if (x < (wNull || 0.15) + 0.25) return GT_GRAND; return ri(4); };
 
@@ -75,7 +77,7 @@
         else if (rankOf(x) === 7) why = tok(x) + ' ist ein Bube – Buben sind ' + (gt === GT_GRAND ? 'im Grand die einzigen Trümpfe.' : 'immer Trumpf, egal welche Farbe Trumpf ist.');
         else if (gt < 4 && suitOf(x) === gt) why = tok(x) + ' ist eine ' + E.SUIT_NAMES[gt] + '-Karte – also Trumpf.';
         else why = tok(x) + ' ist ' + (gt < 4 ? 'weder Bube noch ' + E.SUIT_NAMES[gt] : 'kein Bube') + ' – also kein Trumpf. Seine Farbe ist eine Fehlfarbe.';
-        return { kind: 'choice', text: '<span class="game">' + gname(gt) + '</span> Ist ' + tok(x) + ' Trumpf?', options: ['Ja, Trumpf', 'Nein'], answer: t ? 0 : 1, explain: steps([trumpDef, why]) };
+        return { kind: 'choice', text: gtag(gt) + ' Ist ' + tok(x) + ' Trumpf?', options: ['Ja, Trumpf', 'Nein'], answer: t ? 0 : 1, explain: steps([trumpDef, why]) };
       }
       let a, b;
       for (;;) {
@@ -88,7 +90,7 @@
       const both = isTrump(a, gt);
       const order = both ? 'Reihenfolge der Trümpfe: ' + (gt === GT_GRAND ? 'Kreuz-Bube, Pik-Bube, Herz-Bube, Karo-Bube' : TRUMP_ORDER) + '.' : 'Beide sind ' + E.SUIT_NAMES[suitOf(a)] + '-Karten. Reihenfolge: ' + (gt === GT_NULL ? NULL_ORDER : SUIT_ORDER) + '.';
       return {
-        kind: 'choice', text: '<span class="game">' + gname(gt) + '</span> Welche Karte ist stärker?', options: [tok(a), tok(b)], answer: hi,
+        kind: 'choice', text: gtag(gt) + ' Welche Karte ist stärker?', options: [tok(a), tok(b)], answer: hi,
         explain: steps([both ? 'Beide sind Trumpf. ' + order : order, tok(hi ? b : a) + ' ist stärker.']),
       };
     },
@@ -133,7 +135,7 @@
       if (le < 4 && hand.includes(myJack)) s.push(gt === GT_NULL ? tok(myJack) + ' gehört im Null zu ' + need(le) + ' – dort ist der Bube kein Trumpf.' : tok(myJack) + ' zählt nicht als ' + need(le) + ' – Buben sind Trumpf.');
       if (le === 4 && hand.some((x) => rankOf(x) === 7)) s.push('Auch ' + toks(hand.filter((x) => rankOf(x) === 7)) + ' ist Trumpf.');
       const mark = c.i < 5 && gt !== GT_NULL;
-      const text = '<span class="game">' + gname(gt) + '</span> Ausgespielt wird ' + tok(lead) + (mark && isTrump(lead, gt) ? ' (ein Trumpf)' : '') + '. Welche deiner Karten darfst du legen?' + (mark ? '<br><span class="note">Hilfe: Deine Trümpfe haben unten einen goldenen Streifen.</span>' : '');
+      const text = gtag(gt) + ' Ausgespielt wird ' + tok(lead) + (mark && isTrump(lead, gt) ? ' (ein Trumpf)' : '') + '. Welche deiner Karten darfst du legen?' + (mark ? '<br><span class="note">Hilfe: Deine Trümpfe haben unten einen goldenen Streifen.</span>' : '');
       return { kind: 'pick', multi: true, gt, mark, text, hand, answer: legal, explain: steps(s) };
     },
   };
@@ -170,7 +172,7 @@
       else s.push('Im Stich liegt kein Trumpf.');
       if (off.length) s.push(toks(off) + ' wurde abgeworfen und kann nicht gewinnen.');
       s.push('→ ' + tok(wc) + ' gewinnt: ' + (isTrump(wc, gt) ? 'der höchste Trumpf im Stich.' : 'die höchste ' + need(le) + '-Karte (' + (gt === GT_NULL ? NULL_ORDER : SUIT_ORDER) + ').'));
-      return { kind: 'trick', gt, text: '<span class="game">' + gname(gt) + '</span> Wer gewinnt den Stich? Die erste Karte wurde ausgespielt.', cards: cs, answer: w, explain: steps(s) };
+      return { kind: 'trick', gt, text: gtag(gt) + ' Wer gewinnt den Stich? Die erste Karte wurde ausgespielt.', cards: cs, answer: w, explain: steps(s) };
     },
   };
 
@@ -196,7 +198,7 @@
       const opts = shuffle([...set]);
       const order = E.matadorOrder(gt).slice(0, Math.min(sp.n + 1, gt === GT_GRAND ? 4 : 11));
       const ex = 'Von oben: ' + order.map((c) => tok(c) + (hand.includes(c) ? '✓' : '✗')).join(' ') + ' → <b>' + correct + '</b>' + (sp.mit ? ' (Kreuz-Bube vorhanden: zähle die Trümpfe ohne Lücke).' : ' (Kreuz-Bube fehlt: zähle die fehlenden Trümpfe bis zum ersten eigenen).');
-      return { kind: 'choice', text: '<span class="game">' + gname(gt) + '</span> Dein Blatt (der Skat zählt hier nicht):' + row(hand), options: opts, answer: opts.indexOf(correct), explain: ex };
+      return { kind: 'choice', text: gtag(gt) + ' Dein Blatt (der Skat zählt hier nicht):' + row(hand), options: opts, answer: opts.indexOf(correct), explain: ex };
     },
   };
 
@@ -404,7 +406,7 @@
         return {
           kind: 'pick', multi: false, gt, hand: E.sortHand(st.hands[0], gt), legal,
           trick: st.trick.map((x) => ({ who: whoName(st, x.p), c: x.c })),
-          text: '<span class="game">' + gname(gt) + '</span> Du bist Gegenspieler und spielst als Letzter. Welche Karte legst du?',
+          text: gtag(gt) + ' Du bist Gegenspieler und spielst als Letzter. Welche Karte legst du?',
           answer: ans, explain: ex,
         };
       });
@@ -464,7 +466,7 @@
       return {
         kind: 'choice', gt, hand: E.sortHand(st.hands[0], gt),
         tricksShown: st.tricks.map((t) => t.cards.map((x) => x.c)),
-        text: '<span class="game">' + gname(gt) + '</span> ' + k + ' Stiche sind gespielt (siehe oben), unten deine Karten' + (st.declarer === 0 ? ' – du bist Alleinspieler, gedrückt: ' + st.discard.map(tok).join(' ') : '') + '. Wie viele Trümpfe haben die anderen noch' + (st.declarer === 0 ? '' : ' (oder liegen im Skat)') + '?',
+        text: gtag(gt) + ' ' + k + ' Stiche sind gespielt (siehe oben), unten deine Karten' + (st.declarer === 0 ? ' – du bist Alleinspieler, gedrückt: ' + st.discard.map(tok).join(' ') : '') + '. Wie viele Trümpfe haben die anderen noch' + (st.declarer === 0 ? '' : ' (oder liegen im Skat)') + '?',
         ...o,
         explain: total + ' Trümpfe insgesamt − ' + mine + ' bei dir − ' + fallen + ' gefallen' + (known ? ' − ' + known + ' gedrückt' : '') + ' = <b>' + rest + '</b>',
       };
@@ -481,7 +483,7 @@
     return {
       kind: 'pick', multi: false, gt, hand, legal, trick, title: t.title,
       how: 'Wer liegt im Stich vorn? Kommt noch jemand nach dir? Was bringt deiner Seite die meisten Augen?',
-      text: '<span class="game">' + gname(gt) + '</span> ' + t.role + '. Welche Karte spielst du?',
+      text: gtag(gt) + ' ' + t.role + '. Welche Karte spielst du?',
       answer: t.ok.map(parse), explain: t.why,
     };
   }

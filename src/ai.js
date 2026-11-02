@@ -115,20 +115,20 @@
     const opps = [0, 1, 2].filter((p) => p !== v.me);
     if (!sides.length) {
       const top = highestStr(v, trumps);
-      if (isMaster(v, top)) return { card: top, reason: 'Du hast nur noch Trümpfe. ' + cardName(top) + ' ist der höchste – er gewinnt sicher.', tag: 'trumpf' };
+      if (isMaster(v, top)) return { card: top, reason: 'Du hast nur noch Trümpfe. ' + cardName(top) + ' ist der höchste Trumpf, den es noch gibt – er gewinnt sicher.', tag: 'trumpf' };
       const c = lowest(v, trumps);
-      return { card: c, reason: 'Nur noch Trümpfe, aber nicht der höchste. Gib den Trumpf mit den wenigsten Augen (' + cardName(c) + ') – die vollen Trümpfe stehen danach.', tag: 'trumpf' };
+      return { card: c, reason: 'Du hast nur noch Trümpfe, aber nicht den höchsten. Spiel den Trumpf mit den wenigsten Augen (' + cardName(c) + '). Danach sind deine wertvollen Trümpfe die höchsten im Spiel.', tag: 'trumpf' };
     }
     if (oppT.length && trumps.length) {
       const top = highestStr(v, trumps);
       if (isMaster(v, top) && (trumps.length >= oppT.length || trumps.length >= 3)) {
-        return { card: top, reason: 'Trumpf ziehen: ' + cardName(top) + ' ist der höchste Trumpf im Spiel. Die Gegner müssen Trumpf bedienen und verlieren ihre Trümpfe.', tag: 'trumpf' };
+        return { card: top, reason: cardName(top) + ' ist der höchste Trumpf, den es noch gibt – er gewinnt sicher. Die anderen müssen Trumpf legen, wenn sie welchen haben. Danach haben sie weniger Trümpfe und können deine übrigen Karten seltener stechen. (Das nennt man Trumpf ziehen.)', tag: 'trumpf' };
       }
       if (trumps.length >= oppT.length + 2) {
         const jacks = trumps.filter((c) => rankOf(c) === 7 && !isMaster(v, c));
         const small = trumps.filter((c) => pts(c) < 10 && rankOf(c) !== 7);
         const c = jacks.length ? lowestStr(v, jacks) : small.length ? lowestStr(v, small) : lowestStr(v, trumps);
-        return { card: c, reason: 'Trumpf ziehen: Du hast ' + trumps.length + ' Trümpfe, die Gegner nur noch ' + oppT.length + '. Mit ' + cardName(c) + ' lockst du ihre hohen Trümpfe heraus.', tag: 'trumpf' };
+        return { card: c, reason: 'Du hast ' + trumps.length + ' Trümpfe, die anderen zusammen nur noch ' + oppT.length + '. Spielst du Trumpf (' + cardName(c) + '), müssen sie ihre Trümpfe abgeben. Danach können sie deine übrigen Karten nicht mehr stechen. (Das nennt man Trumpf ziehen.)', tag: 'trumpf' };
       }
     }
     // stehende Nebenkarten abziehen
@@ -137,11 +137,11 @@
       const s = suitOf(c);
       const restInSuit = unseenOf(v, s).length;
       const safe = !oppT.length || (opps.every((p) => !knownVoid(v, p, s)) && restInSuit >= 2);
-      if (safe) return { card: c, reason: cardName(c) + ' ist die höchste Karte in ' + SN[s] + (oppT.length ? ' und beide Gegner können wohl noch bedienen' : ' und die Gegner haben keine Trümpfe mehr') + ' – sichere ' + pts(c) + ' Augen.', tag: 'ass' };
+      if (safe) return { card: c, reason: cardName(c) + ' ist die höchste ' + SN[s] + '-Karte, die es noch gibt. ' + (oppT.length ? 'Die anderen haben wohl noch ' + SN[s] + ' und müssen es legen' : 'Die anderen haben keine Trümpfe mehr und können nicht stechen') + ' – so bekommst du sicher ' + pts(c) + ' Augen und mehr.', tag: 'ass' };
     }
     if (!oppT.length) {
       const m = sides.filter((c) => isMaster(v, c));
-      if (m.length) return { card: m[0], reason: 'Die Gegner haben keine Trümpfe mehr. ' + cardName(m[0]) + ' steht – der Stich gehört dir.', tag: 'ass' };
+      if (m.length) return { card: m[0], reason: 'Die anderen haben keine Trümpfe mehr. ' + cardName(m[0]) + ' ist die höchste Karte ihrer Farbe – der Stich gehört dir.', tag: 'ass' };
     }
     // Farbe entwickeln: lange Nebenfarbe, kleine Karte; keine ungeschützte Zehn
     const bySuit = {};
@@ -152,14 +152,14 @@
       if (cs.length) {
         const c = lowest(v, cs);
         if (pts(c) < 10) {
-          if (bySuit[s].length === 1 && trumps.length) return { card: c, reason: cardName(c) + ' ist deine letzte ' + SN[s] + '-Karte. Danach bist du in ' + SN[s] + ' frei und kannst stechen.', tag: 'farbe' };
-          return { card: c, reason: 'Kleine Karte aus deiner längsten Nebenfarbe (' + SN[s] + '): so spielst du die Farbe frei und verlierst nur wenige Augen.', tag: 'farbe' };
+          if (bySuit[s].length === 1 && trumps.length) return { card: c, reason: cardName(c) + ' ist deine letzte ' + SN[s] + '-Karte. Danach hast du kein ' + SN[s] + ' mehr – wird ' + SN[s] + ' gespielt, darfst du mit Trumpf stechen.', tag: 'farbe' };
+          return { card: c, reason: 'Spiel eine kleine ' + SN[s] + '-Karte – sie kostet kaum Augen. Von ' + SN[s] + ' hast du (außer Trumpf) die meisten Karten. Sind die hohen ' + SN[s] + '-Karten der anderen erst weg, gewinnen deine übrigen ' + SN[s] + '-Karten Stiche.', tag: 'farbe' };
         }
       }
     }
     if (trumps.length) {
       const c = lowest(v, trumps);
-      return { card: c, reason: 'Kein guter Nebenfarbenzug – ein Trumpf mit wenig Augen ist am sichersten.', tag: 'trumpf' };
+      return { card: c, reason: 'Alle anderen Karten wären riskant. Ein Trumpf mit wenig Augen ist am sichersten.', tag: 'trumpf' };
     }
     return { card: lowest(v, sides), reason: 'Die Karte mit den wenigsten Augen.', tag: 'farbe' };
   }
@@ -178,11 +178,11 @@
         const ruff = !canFollow;
         const total = ts.ptsSoFar + pts(pick);
         if (!ruff || ts.ptsSoFar > 0 || trumps.length > oppT.length) {
-          return { card: pick, reason: (ruff ? 'Stechen: ' : '') + 'Mit ' + cardName(pick) + ' gewinnst du den Stich sicher' + (total ? ' (' + total + ' Augen)' : '') + '. Nimm dafür die kleinste Karte, die reicht.', tag: 'stich' };
+          return { card: pick, reason: (ruff ? 'Du kannst nicht bedienen, also darfst du stechen. ' : '') + 'Mit ' + cardName(pick) + ' gewinnst du den Stich sicher' + (total ? ' (' + total + ' Augen)' : '') + '. Nimm die kleinste Karte, die dafür reicht – die starken brauchst du später.', tag: 'stich' };
         }
       } else if (!canFollow && ts.ptsSoFar >= 10) {
         const pick = highestStr(v, winners);
-        return { card: pick, reason: 'Im Stich liegen ' + ts.ptsSoFar + ' Augen. Stich hoch mit ' + cardName(pick) + ', damit der letzte Gegner nicht überstechen kann.', tag: 'stich' };
+        return { card: pick, reason: 'Im Stich liegen ' + ts.ptsSoFar + ' Augen. Nimm einen hohen Trumpf (' + cardName(pick) + '), damit der Spieler nach dir nicht mit einem noch höheren Trumpf drüber kann.', tag: 'stich' };
       }
     }
     if (canFollow) {
@@ -190,7 +190,7 @@
       return { card: c, reason: 'Du kannst den Stich nicht sicher gewinnen. Gib die Karte mit den wenigsten Augen.', tag: 'klein' };
     }
     const c = discardChoice(v, legal);
-    return { card: c, reason: 'Abwerfen: ' + cardName(c) + ' kostet am wenigsten' + (isT(v, c) ? '' : ' und macht ' + SN[suitOf(c)] + ' kürzer') + '.', tag: 'abwurf' };
+    return { card: c, reason: 'Du kannst nicht bedienen. Wirf ' + cardName(c) + ' ab – sie kostet am wenigsten Augen.', tag: 'abwurf' };
   }
 
   function defenderLead(v) {
@@ -199,7 +199,7 @@
     const shortWay = (v.me + 1) % 3 === D; // Alleinspieler sitzt direkt hinter mir
     if (!sides.length) {
       const c = lowestStr(v, v.hand);
-      return { card: c, reason: 'Du hast nur noch Trümpfe. Spiele den kleinsten.', tag: 'trumpf' };
+      return { card: c, reason: 'Du hast nur noch Trümpfe. Spiel den kleinsten.', tag: 'trumpf' };
     }
     const declVoid = (s) => knownVoid(v, D, s);
     const declTrumps = v.unseen.some((c) => isT(v, c) && mayHold(v, D, c));
@@ -207,7 +207,7 @@
     const masters = sides.filter((c) => isMaster(v, c) && pts(c) >= 10 && !(declVoid(suitOf(c)) && declTrumps)).sort((a, b) => pts(b) - pts(a));
     if (masters.length) {
       const c = masters[0];
-      return { card: c, reason: cardName(c) + ' ist die höchste Karte in ' + SN[suitOf(c)] + '. Hol die Augen, bevor der Alleinspieler frei wird und sticht.', tag: 'ass' };
+      return { card: c, reason: cardName(c) + ' ist die höchste ' + SN[suitOf(c)] + '-Karte, die es noch gibt. Spiel sie jetzt: Später hat der Alleinspieler vielleicht kein ' + SN[suitOf(c)] + ' mehr und sticht sie mit Trumpf.', tag: 'ass' };
     }
     // Partner ist frei, Alleinspieler nicht: Partner kann stechen
     if (v.trickNo > 0) {
@@ -219,7 +219,7 @@
         const partnerTrumps = v.unseen.some((c) => isT(v, c) && mayHold(v, P, c));
         if (partnerVoid && partnerTrumps && !declVoid(s)) {
           const c = lowest(v, mine);
-          return { card: c, reason: 'Dein Partner hat kein ' + SN[s] + ' mehr und kann stechen. Spiel ihm die Farbe zu.', tag: 'partner' };
+          return { card: c, reason: 'Dein Partner hat kein ' + SN[s] + ' mehr – er hat vorhin nicht bedient. Spielst du ' + SN[s] + ', kann er mit Trumpf stechen und den Stich für euch holen.', tag: 'partner' };
         }
       }
     }
@@ -235,8 +235,8 @@
     const cands = bySuit[s].filter((c) => !(rankOf(c) === 5 && !isMaster(v, c)));
     const c = lowest(v, cands.length ? cands : bySuit[s]);
     const why = shortWay
-      ? 'Kurzer Weg – lange Farbe: Der Alleinspieler sitzt direkt hinter dir. Spiel deine lange Farbe (' + SN[s] + '), dein Partner sitzt dahinter und kann reagieren.'
-      : 'Langer Weg – kurze Farbe: Der Alleinspieler sitzt am Ende. Spiel eine kurze Farbe (' + SN[s] + '), dann kannst du sie bald selbst stechen.';
+      ? 'Der Alleinspieler kommt direkt nach dir. Spiel von der Farbe, von der du viele Karten hast (' + SN[s] + '): Dein Partner kommt nach dem Alleinspieler und kann reagieren. (Merksatz: kurzer Weg – lange Farbe.)'
+      : 'Der Alleinspieler kommt als Letzter. Spiel von einer Farbe, von der du nur wenige Karten hast (' + SN[s] + '): Bald hast du sie nicht mehr und darfst selbst stechen. (Merksatz: langer Weg – kurze Farbe.)';
     return { card: c, reason: why, tag: 'weg' };
   }
 
@@ -261,13 +261,13 @@
       }
       const c = pool.slice().sort((a, b) => pts(b) - pts(a) || (isMaster(v, a) ? 1 : 0) - (isMaster(v, b) ? 1 : 0))[0];
       if (pts(c) === 0) return null;
-      return { card: c, reason: why + ' Gib ' + cardName(c) + ' (' + pts(c) + ' Augen).', tag: 'schmieren' };
+      return { card: c, reason: why + ' Am meisten bringt ' + cardName(c) + ' (' + pts(c) + ' Augen).', tag: 'schmieren' };
     };
 
     if (partnerBest) {
       const secure = declPlayed || !threat(v, D, ts.best, ts.leadEff);
       if (secure) {
-        const r = smear('Schmieren: Dein Partner gewinnt den Stich sicher.');
+        const r = smear('Dein Partner gewinnt diesen Stich sicher – gib ihm viele Augen dazu (das heißt schmieren).');
         if (r) return r;
       } else {
         // selbst sicher übernehmen?
@@ -296,13 +296,13 @@
         }
       } else if (!canFollow && ts.ptsSoFar >= 10) {
         const pick = highestStr(v, winners);
-        return { card: pick, reason: 'Viele Augen im Stich (' + ts.ptsSoFar + '). Stich hoch, damit der Alleinspieler nicht drüber kann.', tag: 'stich' };
+        return { card: pick, reason: 'Im Stich liegen viele Augen (' + ts.ptsSoFar + '). Nimm einen hohen Trumpf, damit der Alleinspieler nicht mit einem höheren drüber kann.', tag: 'stich' };
       }
     }
     if (!last && !declPlayed) {
       // Alleinspieler kommt noch: klein bleiben
       const c = canFollow ? lowest(v, legal) : discardChoice(v, legal);
-      return { card: c, reason: 'Der Alleinspieler kommt nach dir. Gib ihm keine Augen mit.', tag: 'klein' };
+      return { card: c, reason: 'Der Alleinspieler kommt noch nach dir und bekommt den Stich wahrscheinlich. Gib eine Karte mit wenig Augen.', tag: 'klein' };
     }
     const c = canFollow ? lowest(v, legal) : discardChoice(v, legal);
     return { card: c, reason: 'Der Stich geht an den Alleinspieler. Gib ihm so wenig Augen wie möglich.', tag: 'klein' };
@@ -321,7 +321,7 @@
         const score = (higher > 0 ? 10 : -50) - lower * 3 + higher - strength(c, gt) * 0.1;
         if (score > bestScore) { bestScore = score; best = c; }
       }
-      return { card: best, reason: 'Null: Spiel eine Karte, die die Gegner überbieten müssen – möglichst niedrig in einer Farbe, in der noch höhere Karten draußen sind.', tag: 'null' };
+      return { card: best, reason: 'Null: Spiel eine niedrige Karte, die die anderen wahrscheinlich überbieten müssen – so bekommst du keinen Stich.', tag: 'null' };
     }
     const ts = trickState(v);
     const canFollow = legal.some((c) => suitOf(c) === suitOf(ts.cards[0]));
@@ -336,7 +336,7 @@
     }
     // Abwerfen: gefährlichste Karte
     const c = nullDanger(v, legal);
-    return { card: c, reason: 'Null: Du bist frei – wirf deine gefährlichste hohe Karte ab (' + cardName(c) + ').', tag: 'null' };
+    return { card: c, reason: 'Null: Du kannst nicht bedienen. Wirf deine gefährlichste hohe Karte ab (' + cardName(c) + ') – mit ihr könntest du sonst später einen Stich bekommen.', tag: 'null' };
   }
   function nullDanger(v, cards) {
     const gt = v.gt;
@@ -389,7 +389,7 @@
       return { card: c, reason: 'Der Alleinspieler kommt nach dir. Spiel möglichst niedrig, damit er schwer drunter bleiben kann.', tag: 'null' };
     }
     const c = nullHighDiscard(v, legal);
-    return { card: c, reason: 'Du bist frei: Wirf eine hohe Karte ab.', tag: 'null' };
+    return { card: c, reason: 'Du kannst nicht bedienen: Wirf eine hohe Karte ab.', tag: 'null' };
   }
   function nullHighDiscard(v, cards) {
     return cards.slice().sort((a, b) => strength(b, v.gt) - strength(a, v.gt))[0];

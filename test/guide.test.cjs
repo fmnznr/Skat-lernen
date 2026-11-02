@@ -2,6 +2,8 @@
 const { chromium } = require('playwright');
 const path = require('path');
 const out = process.argv[2] || require('os').tmpdir();
+const LATER = /Nebenfarbe|blank|freispiel|\bfrei\b(?! wählen)|\bsteht\b|Spitzen|\b(?:mit|ohne) [1-9](?!\d)|Spielwert|Reizwert|Handspiel|\bHand\b|Schneider|Schwarz|Ouvert|Grand|\bNull\b|überreizt|Mittelhand|Hinterhand|\bVH\b|\bMH\b|\bHH\b|Geber/;
+const vocab = new Set();
 (async () => {
   const browser = await chromium.launch();
   const page = await (await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true })).newPage();
@@ -19,6 +21,11 @@ const out = process.argv[2] || require('os').tmpdir();
     for (let i = 0; i < 1500 && !done; i++) {
       await page.waitForTimeout(60);
       try {
+        if (n < 3 && await page.$('#table')) {
+          const txt = await page.$eval('#table', (e) => e.innerText);
+          const m = txt.match(LATER);
+          if (m) vocab.add('Spiel ' + n + ': „' + m[0] + '“ in „' + txt.slice(Math.max(0, txt.indexOf(m[0]) - 60), txt.indexOf(m[0]) + 40).replace(/\s+/g, ' ') + '“');
+        }
         if (await page.$('.sheet:not([hidden]) [data-a="gagain"]')) { await page.screenshot({ path: out + '/g' + n + '-ergebnis.png' }); done = true; break; }
         if (await page.$('[data-a="gnext"]')) { if (n === 1 && shots === 0) { await page.screenshot({ path: out + '/g1-intro.png' }); shots++; } await page.click('[data-a="gnext"]'); continue; }
         if (await page.$('[data-a="gtrick"]')) { if (shots < 3) { await page.screenshot({ path: out + '/g' + n + '-stich.png' }); shots = 3; } await page.click('[data-a="gtrick"]'); continue; }
@@ -59,6 +66,7 @@ const out = process.argv[2] || require('os').tmpdir();
   await page.evaluate(() => { location.hash = '#uebung-bedienen'; });
   await page.waitForSelector('.how');
   await page.screenshot({ path: out + '/g-uebung.png' });
+  if (vocab.size) { console.log([...vocab].slice(0, 15).join('\n')); errors.push(vocab.size + ' Wortschatz-Probleme in geführten Spielen'); }
   console.log(errors.length ? 'FEHLER: ' + errors.join(' | ') : 'Keine Fehler');
   await browser.close();
   process.exit(errors.length ? 1 : 0);
