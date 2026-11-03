@@ -3,6 +3,7 @@ const { chromium } = require('playwright');
 const path = require('path');
 const out = process.argv[2] || require('os').tmpdir();
 const LATER = /Nebenfarbe|blank|freispiel|\bfrei\b(?! wählen)|\bsteht\b|Spitzen|\b(?:mit|ohne) [1-9](?!\d)|Spielwert|Reizwert|Handspiel|\bHand\b|Schneider|Schwarz|Ouvert|Grand|\bNull\b|überreizt|Mittelhand|Hinterhand|\bVH\b|\bMH\b|\bHH\b|Geber/;
+const DEFER = /(kommt|lernst du|erfährst du)( das| es)? (erst |noch )?später|[Mm]ehr dazu später|lernst du (noch|in)|kommt noch|brauchst du erst|erst in Stufe|weißt du noch nicht/;
 const vocab = new Set();
 (async () => {
   const browser = await chromium.launch();
@@ -17,7 +18,7 @@ const vocab = new Set();
   page.setDefaultTimeout(4000);
   for (const n of [1, 2, 3]) {
     await page.waitForSelector('#guide');
-    let shots = 0, done = false;
+    let shots = 0, done = false, intro = 0;
     for (let i = 0; i < 1500 && !done; i++) {
       await page.waitForTimeout(60);
       try {
@@ -27,7 +28,12 @@ const vocab = new Set();
           if (m) vocab.add('Spiel ' + n + ': „' + m[0] + '“ in „' + txt.slice(Math.max(0, txt.indexOf(m[0]) - 60), txt.indexOf(m[0]) + 40).replace(/\s+/g, ' ') + '“');
         }
         if (await page.$('.sheet:not([hidden]) [data-a="gagain"]')) { await page.screenshot({ path: out + '/g' + n + '-ergebnis.png' }); done = true; break; }
-        if (await page.$('[data-a="gnext"]')) { if (n === 1 && shots === 0) { await page.screenshot({ path: out + '/g1-intro.png' }); shots++; } await page.click('[data-a="gnext"]'); continue; }
+        if (await page.$('#guide')) {
+          const gt = await page.$eval('#guide', (e) => e.innerText);
+          const d = gt.match(DEFER);
+          if (d) vocab.add('Spiel ' + n + ': Vertröstung „' + d[0] + '“');
+        }
+        if (await page.$('[data-a="gnext"]')) { intro++; if (n === 1 && shots === 0) { await page.screenshot({ path: out + '/g1-intro.png' }); shots++; } await page.click('[data-a="gnext"]'); continue; }
         if (await page.$('[data-a="gtrick"]')) { if (shots < 3) { await page.screenshot({ path: out + '/g' + n + '-stich.png' }); shots = 3; } await page.click('[data-a="gtrick"]'); continue; }
         if (await page.$('[data-bid]')) {
           if (n === 3) await page.screenshot({ path: out + '/g3-reizen.png' });
@@ -53,7 +59,9 @@ const vocab = new Set();
     }
     console.log('Geführtes Spiel', n, done ? 'beendet' : 'NICHT beendet');
     if (!done) errors.push('Spiel ' + n + ' nicht beendet');
-    if (n < 3) { await page.click('[data-a="gnextguide"]'); }
+    if (intro > 3) errors.push('Spiel ' + n + ': ' + intro + ' Einführungsschritte (zu viel „Weiter“)');
+    if (n === 1) await page.click('[data-a="gnextguide"]');
+    if (n === 2) { await page.click('.sheet a[href="#lernen"]'); await page.evaluate(() => { location.hash = '#gefuehrt-3'; }); }
   }
   // Begriff antippen
   await page.evaluate(() => { location.hash = '#lektion-bedienen'; });

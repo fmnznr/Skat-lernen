@@ -191,7 +191,7 @@
   const GUIDES = [
     { n: 1, stage: 1, t: 'Dein erstes Spiel', d: 'Karten, Stiche, Trumpf – jeder Zug wird erklärt' },
     { n: 2, stage: 1, t: 'Zu zweit gegen einen', d: 'Als Partnerin von Lena: gemeinsam gegen Tom' },
-    { n: 3, stage: 2, t: 'Reizen und Skat', d: 'Ein ganzes Spiel, vom Reizen bis zur Abrechnung' },
+    { n: 3, stage: 2, after: true, t: 'Reizen und Skat', d: 'Abschluss von Stufe 2: ein ganzes Spiel, vom Reizen bis zur Abrechnung' },
   ];
   const guideDone = (n) => !!(P.guides[n] && P.guides[n].done);
   const reqGuide = (n) => { const g = GUIDES[n - 1]; return { t: 'Geführtes Spiel „' + g.t + '“', ok: guideDone(n), pv: guideDone(n) ? '✓' : '–', href: '#gefuehrt-' + n, label: 'Geführtes Spiel „' + g.t + '“' }; };
@@ -214,7 +214,7 @@
   }
   const REQ = {
     2: () => [reqGuide(1), reqGuide(2), reqLessons(1), reqDrill('augen'), reqDrill('trumpf'), reqDrill('bedienen'), reqDrill('stich')],
-    3: () => [reqGuide(3), reqLessons(2), reqDrill('spitzen'), reqDrill('spielwert'), reqDrill('reizwerte'), reqGames(3)],
+    3: () => [reqLessons(2), reqGuide(3), reqDrill('spitzen'), reqDrill('spielwert'), reqDrill('reizwerte'), reqGames(3)],
     4: () => [reqLessons(3), reqDrill('reizen'), reqDrill('druecken'), reqDrill('schmieren'), reqTactics(3, 9), reqGames(10)],
     5: () => [reqLessons(4), reqDrill('mitzaehlen'), reqDrill('truempfe'), reqTactics(4, 13), reqProfi(15), reqCount(5), reqDecl(), reqCoach()],
   };
@@ -283,14 +283,14 @@
       const ls = C.LESSONS.filter((l) => l.stage === L.n);
       const done = ls.filter((l) => lessonDone(l.id)).length;
       h += '<section class="block' + (L.n > lv ? ' later' : '') + '"><div class="block-h"><h3>Stufe ' + L.n + ' · ' + L.short + '</h3><span class="eyebrow">' + done + '/' + ls.length + '</span></div>' + (L.n > lv ? '<p class="later-note">Kommt später – baut auf Stufe ' + (L.n - 1) + ' auf.</p>' : '');
-      for (const g of GUIDES.filter((x) => x.stage === L.n)) {
-        h += '<a class="row" href="#gefuehrt-' + g.n + '"><span class="mark' + (guideDone(g.n) ? ' done' : '') + '">' + (guideDone(g.n) ? '✓' : '') + '</span><span><span class="t">Geführtes Spiel: ' + g.t + '</span><br><span class="d">' + g.d + '</span></span><span class="score">' + ICON.spielen + '</span></a>';
-      }
+      const guideRow = (g) => '<a class="row" href="#gefuehrt-' + g.n + '"><span class="mark' + (guideDone(g.n) ? ' done' : '') + '">' + (guideDone(g.n) ? '✓' : '') + '</span><span><span class="t">Geführtes Spiel: ' + g.t + '</span><br><span class="d">' + g.d + '</span></span><span class="score">' + ICON.spielen + '</span></a>';
+      for (const g of GUIDES.filter((x) => x.stage === L.n && !x.after)) h += guideRow(g);
       ls.forEach((l, k) => {
         const st = P.lessons[l.id];
         const dr = l.drill ? drillBest(l.drill) : null;
         h += '<a class="row" href="#lektion-' + l.id + '"><span class="mark' + (st && st.done ? ' done' : '') + '">' + (st && st.done ? '✓' : '') + '</span><span><span class="t">' + esc(T(l.title)) + '</span><br><span class="d">' + l.min + ' Min.' + (l.drill ? ' · Übung: ' + dTitle(l.drill) : '') + '</span></span><span class="score' + (dr >= 80 ? ' good' : '') + '">' + (l.drill ? (dr ? dr + '\u00a0%' : '–') : (st && st.done ? st.quiz + '/' + l.quiz.length : '')) + '</span></a>';
       });
+      for (const g of GUIDES.filter((x) => x.stage === L.n && x.after)) h += guideRow(g);
       h += '</section>';
     }
     const r5 = REQ[5]();
@@ -782,37 +782,29 @@
     if (n === 1) {
       const nT = st.hands[0].filter((c) => E.isTrump(c, gt)).length + st.tricks.reduce((a, t) => a + t.cards.filter((x) => x.p === 0 && E.isTrump(x.c, gt)).length, 0);
       return [
-        '<b>Willkommen am Skattisch!</b> Ihr seid zu dritt: du, Lena (oben links) und Tom (oben rechts). Jeder hat 10 Karten. Deine liegen unten.',
-        '<b>Worum geht es?</b> Jede Karte zählt Punkte. Beim Skat heißen sie Augen:' + PTS_TABLE + 'Zusammen gibt es 120 Augen.',
-        '<b>Du spielst allein</b> gegen Lena und Tom. Du gewinnst, wenn du am Ende <b>mindestens 61 Augen</b> hast. Lena und Tom halten zusammen.',
-        '<b>Trumpf</b> sind die stärksten Karten. In diesem Spiel ist <b>' + tn + '</b> Trumpf – und dazu immer die vier Buben. Deine Trümpfe haben unten einen goldenen Streifen. Du hast ' + nT + ' davon – ein starkes Blatt!',
-        '<b>So läuft ein Stich:</b> Einer legt die erste Karte – er spielt aus. Dann legt reihum jeder eine Karte dazu. Die stärkste Karte gewinnt alle drei Karten. Diese drei Karten heißen Stich.',
-        'Zwei Karten liegen verdeckt beiseite. Sie heißen Skat, gehören in diesem Spiel dir und zählen am Ende mit. Mehr dazu später.<br><b>Los geht’s: Du spielst aus.</b> Bei jedem Zug erkläre ich dir hier unten, was du darfst.',
+        '<b>Willkommen am Skattisch!</b> Ihr seid zu dritt: du, Lena (oben links) und Tom (oben rechts). Jeder hat 10 Karten. In diesem Spiel spielst <b>du allein gegen Lena und Tom</b>.',
+        '<b>Dein Ziel:</b> Jede Karte zählt Punkte, sie heißen Augen – Ass 11, Zehn 10, König 4, Dame 3, Bube 2, die 9, 8 und 7 zählen nichts. Du brauchst am Ende <b>61 der 120 Augen</b>.',
+        '<b>Trumpf</b> sind die stärksten Karten: hier <b>' + tn + '</b> und dazu immer die vier Buben. Deine Trümpfe haben unten einen goldenen Streifen – du hast ' + nT + ' davon.<br>Gespielt wird reihum: Jeder legt eine Karte, die stärkste gewinnt alle drei. Das ist ein <b>Stich</b>. <b>Du fängst an</b> – ich erkläre dir jeden Zug.',
       ];
     }
     if (n === 2) {
       const D = st.declarer, Pn = 3 - D;
       return [
-        '<b>Diesmal spielt ' + NAMES[D] + ' allein.</b> ' + (D === 2 ? 'Er' : 'Sie') + ' spielt <b>' + E.gameLabel(st.game) + '</b>. Du und ' + NAMES[Pn] + ' seid Partner – ihr spielt zusammen.',
-        gt === E.GT_GRAND ? '<b>Trumpf</b> sind in diesem Spiel nur die vier Buben (das ist ein Grand). Deine Trümpfe sind gold markiert.' : '<b>Trumpf</b> ist ' + tn + ' – und die vier Buben. Deine Trümpfe sind gold markiert.',
-        '<b>Euer Ziel:</b> ' + NAMES[D] + ' braucht 61 Augen. Holt ihr zwei zusammen 60 Augen, verliert ' + (D === 2 ? 'er' : 'sie') + '. Eure Stiche zählen gemeinsam.',
-        '<b>Der wichtigste Trick zu zweit:</b> Gewinnt ' + NAMES[Pn] + ' einen Stich sicher, gib eine Karte mit vielen Augen dazu – ein Ass oder eine Zehn. Das heißt schmieren. Gewinnt ' + NAMES[D] + ' den Stich, gib möglichst wenig.',
-        (st.vh === 0 ? '<b>Du spielst aus.</b>' : '<b>' + NAMES[st.vh] + ' spielt aus.</b>') + ' Ich erkläre dir wieder jeden Zug.',
+        '<b>Diesmal spielt ' + NAMES[D] + ' allein</b>, mit <b>' + tn + '</b> als Trumpf (dazu die vier Buben – deine sind gold markiert). Du und ' + NAMES[Pn] + ' seid Partner: Eure Augen zählen zusammen, euch reichen <b>60</b>.',
+        '<b>Der wichtigste Trick zu zweit:</b> Gewinnt ' + NAMES[Pn] + ' einen Stich sicher, gib eine Karte mit vielen Augen dazu – ein Ass oder eine Zehn. Das heißt schmieren. Gewinnt ' + NAMES[D] + ' den Stich, gib ' + (D === 2 ? 'ihm' : 'ihr') + ' möglichst wenig.<br>' + (st.vh === 0 ? '<b>Du spielst aus.</b>' : '<b>' + NAMES[st.vh] + ' spielt aus.</b>'),
       ];
     }
     return [
-      '<b>Jetzt ein ganzes Spiel.</b> Vor jedem Spiel wird entschieden, wer allein spielt. Das heißt Reizen.',
-      'Beim Reizen sagt man Zahlen: 18, 20, 22, 23, 24, 27, 30 … Jede Zahl ist ein möglicher Spielwert. Wer sich das wertvollste Spiel zutraut, spielt allein.',
-      'Wie viel dein Blatt wert ist, rechne ich dir aus. Die wichtigste Regel: <b>Sag nie mehr, als dein Blatt wert ist.</b>',
-      'Zuerst sagt ' + NAMES[st.mh] + ' Zahlen zu ' + (st.vh === 0 ? 'dir' : NAMES[st.vh]) + '. ' + (st.vh === 0 ? 'Du antwortest' : NAMES[st.vh] + ' antwortet') + ' mit „Ja“ (ich kann mithalten) oder „Passe“ (ich steige aus).',
+      '<b>Jetzt spielst du ein ganzes Spiel</b> – vom Reizen über Skat und Drücken bis zur Abrechnung. Alles dafür kennst du aus den Lektionen. Ich rechne mit dir zusammen.',
+      '<b>So beginnt es:</b> ' + NAMES[st.mh] + ' nennt dir Zahlen. Du sagst „Ja“, solange dein bestes Spiel mindestens so viel wert ist – sonst „Passe“.',
     ];
   }
 
   function bidActText(x) {
     const pr = x.p === 1 ? 'sie' : 'er';
     if (x.txt === 'Passe') return NAMES[x.p] + ' passt – ' + pr + ' steigt aus.';
-    if (x.txt === 'Ja') return NAMES[x.p] + ' sagt „Ja“ – ' + pr + ' kann auch so viel.';
-    return NAMES[x.p] + ' sagt <b>' + x.txt + '</b> – ' + pr + ' traut sich ein Spiel im Wert von ' + x.txt + ' zu.';
+    if (x.txt === 'Ja') return NAMES[x.p] + ' sagt „Ja“ – ' + pr + ' hat auch ein Spiel, das so viel wert ist.';
+    return NAMES[x.p] + ' sagt <b>' + x.txt + '</b> – ' + pr + ' hat ein Spiel, das mindestens ' + x.txt + ' wert ist.';
   }
   function guideBid(st) {
     const b = st.bidding;
@@ -820,14 +812,14 @@
     const bl = A.bidLimit(st.hands[0], st.vh === 0, 0.5);
     const lim = bl.limit, ch = bl.choice;
     let worth = 'Dein Blatt ist zu schwach für ein eigenes Spiel.';
-    if (lim && ch) worth = 'Dein Blatt ist etwa <b>' + lim + '</b> wert' + (ch.gt < 4 ? ' – mit ' + E.SUIT_NAMES[ch.gt] + ' als Trumpf' : '') + '. (Wie man das ausrechnet, lernst du in Stufe 2.)';
+    if (lim && ch) worth = 'Dein bestes Spiel: <b>' + E.GAME_NAMES[ch.gt] + (ch.gt < 5 && !ch.hand ? ' ' + (ch.sp.mit ? 'mit ' : 'ohne ') + ch.sp.n + '</b> – ' + ch.sp.n + ' Spitzen + 1 = ' + (ch.sp.n + 1) + ' Stufen × ' + E.BASE[ch.gt] + ' = <b>' + lim + '</b>.' : '</b>, Wert <b>' + lim + '</b>.');
     const last = b.log[b.log.length - 1];
     const lastTxt = last && last.p !== 0 ? bidActText(last) + ' ' : '';
     let t;
     if (a === 0) {
-      if (b.waiting === 'hear') t = lastTxt + worth + ' ' + (b.bid <= lim ? 'Du kannst mithalten – tippe auf <b>„Ja“</b>.' : 'Das ist mehr, als dein Blatt wert ist – tippe auf <b>„Passe“</b>.');
-      else if (b.waiting === 'say') { const nb = E.nextBid(b.bid); t = lastTxt + 'Jetzt sagst du eine Zahl. Die nächste wäre <b>' + nb + '</b>. ' + worth + ' ' + (nb <= lim ? 'Tippe auf <b>„Sage ' + nb + '“</b>.' : 'Mehr geht nicht – tippe auf <b>„Passe“</b>.'); }
-      else t = 'Alle anderen haben gepasst. Du darfst für 18 spielen. ' + worth + ' ' + (lim >= 18 ? 'Tippe auf „18 spielen“.' : 'Tippe auf „Passe“.');
+      if (b.waiting === 'hear') t = lastTxt + 'Ist dein bestes Spiel mindestens ' + b.bid + ' wert? ' + worth + ' ' + (b.bid <= lim ? lim + ' reicht für ' + b.bid + ' → sag <b>„Ja“</b>.' : lim + ' ist weniger als ' + b.bid + ' → sag <b>„Passe“</b>, sonst überreizt du dich.');
+      else if (b.waiting === 'say') { const nb = E.nextBid(b.bid); t = lastTxt + 'Jetzt nennst du die nächste Zahl: <b>' + nb + '</b>. ' + worth + ' ' + (nb <= lim ? lim + ' reicht für ' + nb + ' → sag <b>„' + nb + '“</b>.' : lim + ' reicht nicht für ' + nb + ' → sag <b>„Passe“</b>.'); }
+      else t = 'Alle anderen haben gepasst. Du darfst für 18 spielen. ' + worth + ' ' + (lim >= 18 ? 'Das reicht → tippe auf „18 spielen“.' : 'Das reicht nicht → tippe auf „Passe“.');
     } else t = lastTxt + (b.waiting === 'hear' ? NAMES[b.hearer] + ' überlegt …' : b.sayer === 0 ? '' : NAMES[b.sayer] + ' überlegt …');
     return rich(t);
   }
@@ -910,7 +902,9 @@
       if (m.decl.gt == null) { m.decl.gt = m.recD.gt; m.decl.nov = false; m.sortGt = m.recD.gt; }
       const o = declOptsFor(st, m.decl).find((x) => x.gt === m.recD.gt && !x.ov);
       const tr = m.recD.gt < 4 ? E.SUIT_NAMES[m.recD.gt] + ' (dazu die vier Buben)' : m.recD.gt === 4 ? 'Grand (nur die Buben sind Trumpf)' : 'Null (ohne Trumpf)';
-      return { inner: rich('Jetzt sagst du an, was Trumpf ist. Am besten die Farbe, von der du die meisten Karten hast – zusammen mit deinen Buben.<br><b>Vorschlag: ' + tr + '</b>. Dieses Spiel ist ' + o.v + ' wert' + (o.v >= st.bid ? ' – mindestens so viel wie gereizt (' + st.bid + '). Passt!' : '.') + ' Tippe auf „Ansagen“.') };
+      const sp = E.spitzen(st.hands[0].concat(st.discard), m.recD.gt);
+      const calc = m.recD.gt < 5 ? ' (' + (sp.mit ? 'mit ' : 'ohne ') + sp.n + ': ' + (sp.n + 1) + ' Stufen × ' + E.BASE[m.recD.gt] + ')' : '';
+      return { inner: rich('Jetzt sagst du an, was Trumpf ist. Am besten die Farbe, von der du die meisten Karten hast – zusammen mit deinen Buben.<br><b>Vorschlag: ' + tr + '</b>. Dieses Spiel ist ' + o.v + ' wert' + calc + (o.v >= st.bid ? ' – mindestens so viel wie gereizt (' + st.bid + '). Passt!' : '.') + ' Tippe auf „Ansagen“.') };
     }
     if (st.phase === 'play') {
       if (st.turn === 0) return { solo: guideTurn(st, m) };
@@ -933,12 +927,12 @@
     let h = '<div class="eyebrow">Geführtes Spiel ' + n + '</div><h2>' + (won ? (me ? 'Gewonnen!' : 'Ihr habt gewonnen!') : me ? 'Diesmal verloren' : NAMES[st.declarer] + ' hat gewonnen') + '</h2>';
     let p;
     if (r.gt === E.GT_NULL) p = r.reason;
-    else if (me) p = 'Du hattest am Ende <b>' + r.declPts + ' Augen</b>' + (E.sumPts(st.discard) ? ' (davon ' + E.sumPts(st.discard) + ' aus dem Skat)' : '') + '. Zum Gewinnen brauchst du 61.';
+    else if (me) p = 'Du hattest am Ende <b>' + r.declPts + ' Augen</b>' + (E.sumPts(st.discard) ? ' – davon ' + E.sumPts(st.discard) + ' aus dem Skat, den zwei verdeckten Karten, die dem Alleinspieler gehören' : '') + '. Zum Gewinnen brauchst du 61.';
     else p = 'Ihr hattet zusammen <b>' + r.oppPts + ' Augen</b>, ' + NAMES[st.declarer] + ' ' + r.declPts + '. ' + NAMES[st.declarer] + ' brauchte 61.';
     h += '<p>' + rich(p) + '</p>';
     if (n === 3 && me && r.gt !== E.GT_NULL) h += '<p>' + rich('Spielwert: ' + valueLine(r) + '. Gereizt hattest du ' + st.bid + (r.overbid ? ' – das war zu viel (überreizt).' : ' – das passt.')) + '</p>';
     h += '<div><div class="eyebrow">Das hast du geübt</div><ul class="coachlist">' + LEARNED[n].map((x) => '<li>' + rich(x) + '</li>').join('') + '</ul></div>';
-    h += '<div class="btns">' + (n < 3 ? '<button class="btn" data-a="gnextguide">Weiter: ' + GUIDES[n].t + '</button>' : '<a class="btn" href="#lernen">Zum Lernpfad</a>') + '<button class="btn soft" data-a="gagain">Noch einmal</button>' + (n < 3 ? '<a class="btn soft" href="#lernen">Zum Lernpfad</a>' : '') + '</div>';
+    h += '<div class="btns">' + (n === 1 ? '<button class="btn" data-a="gnextguide">Weiter: ' + GUIDES[1].t + '</button>' : '<a class="btn" href="#lernen">Weiter im Lernpfad</a>') + '<button class="btn soft" data-a="gagain">Noch einmal</button>' + (n === 1 ? '<a class="btn soft" href="#lernen">Zum Lernpfad</a>' : '') + '</div>';
     openSheet(h, (ev) => {
       const b = ev.target.closest('button');
       if (!b) return;
