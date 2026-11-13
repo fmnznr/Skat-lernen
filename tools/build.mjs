@@ -5,7 +5,7 @@ import fs from 'fs';
 import crypto from 'crypto';
 const root = new URL('../', import.meta.url);
 const rd = (p) => fs.readFileSync(new URL(p, root), 'utf8');
-const JS = ['engine', 'model', 'ai', 'bot', 'content', 'drills', 'app'].map((f) => rd('src/' + f + '.js')).join('\n');
+const JS = ['engine', 'model', 'ai', 'bot', 'content', 'drills', 'plan', 'app'].map((f) => rd('src/' + f + '.js')).join('\n');
 const CSS = rd('src/styles.css');
 const SHELL = rd('src/shell.html');
 if (/<\/script/i.test(JS)) throw new Error('</script> im JS');

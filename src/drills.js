@@ -473,6 +473,124 @@
     },
   };
 
+  // Ein Spiel der Computergegner bis zu k gespielten Stichen (ohne Null)
+  function simTricks(kMin, kMax) {
+    for (;;) {
+      const dealer = ri(3);
+      const st = E.newGame(dealer, E.deal(dealer, R));
+      while (st.phase === 'bidding') { const p = E.biddingActor(st); E.bidAction(st, p, B.bidAction(st, p)); }
+      if (st.phase === 'eingepasst') continue;
+      B.declare(st);
+      if (st.game.gt === GT_NULL) continue;
+      const k = kMin + ri(kMax - kMin + 1);
+      while (st.phase === 'play' && st.tricks.length < k) E.playCard(st, st.turn, B.play(st, st.turn));
+      if (st.trick.length === 0 && st.phase === 'play') return st;
+    }
+  }
+  const PN = ['Du', 'Lena', 'Tom'];
+  const shown = (st) => ({ tricksShown: st.tricks.map((t) => t.cards.map((x) => x.c)), tricksBy: st.tricks.map((t) => t.cards.map((x) => PN[x.p])) });
+
+  DRILLS.abrechnen = {
+    title: 'Abrechnen', stage: 2, desc: 'Gewonnen, verloren oder überreizt – wie viele Punkte?',
+    how: '1. Stufen zählen: Spitzen + 1, dazu Hand und Schneider. 2. Mal Grundwert = Spielwert. 3. Spielwert kleiner als der Reizwert? Dann überreizt. 4. Gewonnen: plus Spielwert. Verloren: minus das Doppelte.',
+    gen(ctx) {
+      const c = ctxOf(ctx);
+      const gt = R() < 0.2 ? GT_GRAND : ri(4);
+      const base = E.BASE[gt];
+      const n = gt === GT_GRAND ? 1 + ri(2) : 1 + ri(3);
+      const mit = R() < 0.6;
+      const hand = c.i >= 3 && R() < 0.2;
+      const x = R();
+      const augen = c.i < 2 ? 61 + ri(29) : x < 0.45 ? 61 + ri(29) : x < 0.6 ? 90 + ri(20) : x < 0.9 ? 31 + ri(30) : 12 + ri(19);
+      const sch = augen >= 90 || augen <= 30;
+      const lv = n + 1 + (hand ? 1 : 0) + (sch ? 1 : 0);
+      const value = lv * base;
+      const plain = (n + 1 + (hand ? 1 : 0)) * base;
+      const over = c.i >= 4 && R() < 0.25;
+      const bids = E.BID_VALUES.filter((b) => (over ? b > value && b <= value + 2 * base : b <= plain));
+      const bid = bids.length ? (over ? bids[0] : bids[Math.max(0, bids.length - 1 - ri(3))]) : 18;
+      const isOver = value < bid;
+      const lostValue = isOver ? Math.ceil(bid / base) * base : value;
+      const won = !isOver && augen >= 61;
+      const res = won ? value : -2 * lostValue;
+      const fmt = (v) => (v > 0 ? '+' : '−') + Math.abs(v);
+      const set = new Set([res]);
+      for (const v of shuffle([value, -value, -2 * value, plain, -2 * plain, -lostValue, 2 * value, value + base, -2 * (value + base), bid, -2 * bid])) { if (set.size >= 4) break; if (v !== 0) set.add(v); }
+      const opts = [...set].sort((a, b) => b - a);
+      const parts = [(mit ? 'mit ' : 'ohne ') + n + ' → ' + n, 'Spiel 1'].concat(hand ? ['Hand 1'] : [], sch ? ['Schneider 1'] : []);
+      const ex = [parts.join(' + ') + ' = ' + lv + ' Stufen. ' + lv + ' × ' + base + ' = Spielwert <b>' + value + '</b>.'];
+      if (sch) ex.push(augen >= 90 ? augen + ' Augen: Die Gegner haben nur ' + (120 - augen) + ' – Schneider.' : 'Nur ' + augen + ' Augen: Der Alleinspieler ist selbst Schneider – auch das zählt eine Stufe.');
+      if (isOver) ex.push('Gereizt wurde ' + bid + ', das Spiel ist nur ' + value + ' wert: <b>überreizt</b>. Abgerechnet wird das nächste Vielfache von ' + base + ' ab ' + bid + ' = ' + lostValue + ', doppelt abgezogen: <b>' + fmt(res) + '</b>.');
+      else if (won) ex.push(augen + ' Augen reichen (61 nötig): gewonnen, <b>' + fmt(res) + '</b>.');
+      else ex.push(augen + ' Augen reichen nicht (61 nötig): verloren, doppelt abgezogen: <b>' + fmt(res) + '</b>.');
+      return {
+        kind: 'choice',
+        text: gtag(gt) + ' Der Alleinspieler spielt <b>' + E.GAME_NAMES[gt] + ' ' + (mit ? 'mit ' : 'ohne ') + n + (hand ? ', Hand' : '') + '</b>. Gereizt: <b>' + bid + '</b>. Er holt <b>' + augen + ' Augen</b>. Was wird ihm aufgeschrieben?',
+        options: opts.map(fmt), answer: opts.indexOf(res), explain: steps(ex),
+      };
+    },
+  };
+
+  DRILLS.frei = {
+    title: 'Wer ist frei?', stage: 4, desc: 'Erkenne, wem welche Farbe fehlt.',
+    how: 'Geh die Stiche durch: Die erste Karte bestimmt die Farbe. Wer eine andere Farbe legt, hat die gefragte nicht mehr.',
+    gen() {
+      for (;;) {
+        const st = simTricks(4, 6);
+        const gt = st.game.gt;
+        const led = new Set(), voids = { 1: {}, 2: {} };
+        st.tricks.forEach((t, i) => {
+          const e = effSuit(t.cards[0].c, gt);
+          led.add(e);
+          for (const x of t.cards.slice(1)) if (x.p !== 0 && effSuit(x.c, gt) !== e) (voids[x.p][e] = voids[x.p][e] || []).push(i + 1);
+        });
+        const cands = [...led];
+        const withVoid = cands.filter((e) => voids[1][e] || voids[2][e]);
+        if (!withVoid.length && R() < 0.85) continue;
+        const e = withVoid.length && R() < 0.8 ? pick(withVoid) : pick(cands);
+        const a = !!voids[1][e], b = !!voids[2][e];
+        const answer = a && b ? 2 : a ? 0 : b ? 1 : 3;
+        const nm = need(e);
+        const why = [1, 2].filter((p) => voids[p][e]).map((p) => PN[p] + ' hat im ' + voids[p][e][0] + '. Stich nicht ' + nm + ' gelegt, obwohl ' + nm + ' gefragt war.');
+        return {
+          kind: 'choice', gt, ...shown(st), hand: E.sortHand(st.hands[0], gt),
+          text: gtag(gt) + ' ' + st.tricks.length + ' Stiche sind gespielt, ' + PN[st.declarer] + (st.declarer === 0 ? ' bist' : ' ist') + ' Alleinspieler. Wer kann <b>' + nm + '</b> sicher nicht mehr bedienen?',
+          options: ['Lena', 'Tom', 'Beide', 'Das ist noch nicht zu erkennen'], answer,
+          explain: why.length ? why.join(' ') + ' Wer nicht bedient, ist in der Farbe frei.' : 'Immer wenn ' + nm + ' gefragt war, haben Lena und Tom ' + nm + ' gelegt. Sicher frei ist noch niemand.',
+        };
+      }
+    },
+  };
+
+  DRILLS.hoechste = {
+    title: 'Was steht?', stage: 5, desc: 'Welche Karte einer Farbe ist jetzt die höchste?',
+    how: 'Reihenfolge in den Fehlfarben: ' + SUIT_ORDER + '. Streiche, was schon gefallen ist – die höchste übrige Karte „steht“.',
+    gen() {
+      for (;;) {
+        const st = simTricks(4, 7);
+        const gt = st.game.gt;
+        const gone = new Set(st.tricks.flatMap((t) => t.cards.map((x) => x.c)));
+        const suits = [0, 1, 2, 3].filter((s) => s !== gt);
+        const info = suits.map((s) => {
+          const all = [6, 5, 4, 3, 2, 1, 0].map((r) => E.card(s, r));
+          return { s, all, left: all.filter((c) => !gone.has(c)), played: all.filter((c) => gone.has(c)) };
+        }).filter((x) => x.left.length >= 2 && x.played.length >= 2 && gone.has(x.all[0]));
+        if (!info.length) continue;
+        const x = pick(info);
+        const top = x.left[0];
+        const opts = [top];
+        for (const c of x.played.concat(x.left.slice(1))) { if (opts.length >= 4) break; if (!opts.includes(c)) opts.push(c); }
+        opts.sort((a, b) => x.all.indexOf(a) - x.all.indexOf(b));
+        return {
+          kind: 'choice', gt, ...shown(st), hand: E.sortHand(st.hands[0], gt),
+          text: gtag(gt) + ' ' + st.tricks.length + ' Stiche sind gespielt. Welche ist die höchste <b>' + E.SUIT_NAMES[x.s] + '</b>-Karte, die noch nicht gefallen ist?',
+          options: opts.map(tok), answer: opts.indexOf(top),
+          explain: 'Gefallen sind in ' + E.SUIT_NAMES[x.s] + ': ' + x.played.map(tok).join(' ') + '. Die höchste übrige Karte ist ' + tok(top) + ' – sie steht.',
+        };
+      }
+    },
+  };
+
   // Taktik-Aufgaben aus content.js
   function tacticQuestion(t) {
     const gtMap = { Karo: 0, Herz: 1, Pik: 2, Kreuz: 3, Grand: 4, Null: 5 };
@@ -483,11 +601,11 @@
     return {
       kind: 'pick', multi: false, gt, hand, legal, trick, title: t.title,
       how: 'Wer liegt im Stich vorn? Kommt noch jemand nach dir? Was bringt deiner Seite die meisten Augen?',
-      text: gtag(gt) + ' ' + t.role + '. Welche Karte spielst du?',
+      text: gtag(gt) + ' ' + t.role.replace(/\.$/, '') + '. Welche Karte spielst du?',
       answer: t.ok.map(parse), explain: t.why,
     };
   }
 
-  const ORDER = ['augen', 'trumpf', 'bedienen', 'stich', 'spitzen', 'spielwert', 'reizwerte', 'reizen', 'druecken', 'schmieren', 'mitzaehlen', 'truempfe'];
+  const ORDER = ['augen', 'trumpf', 'bedienen', 'stich', 'spitzen', 'spielwert', 'reizwerte', 'abrechnen', 'reizen', 'druecken', 'schmieren', 'mitzaehlen', 'truempfe', 'frei', 'hoechste'];
   G.SDRILLS = { DRILLS, ORDER, tacticQuestion, tok, row, parse, discardReason };
 })(typeof globalThis !== 'undefined' ? globalThis : window);

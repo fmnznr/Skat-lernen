@@ -6,8 +6,9 @@ for (const f of ['engine', 'content']) require('../src/' + f + '.js');
 const C = globalThis.SCONTENT;
 
 // Lernpfad-Reihenfolge (geführte Spiele: g1, g2, g3)
-export const PATH = ['g1', 'g2', 'ueberblick', 'karten', 'trumpf', 'bedienen', 'stich', 'grandnull', 'skat', 'spitzen', 'spielwert', 'reizen', 'abrechnung', 'g3',
-  'bewerten', 'druecken', 'alleinspieler', 'gegenspieler', 'nullspiel', 'mitzaehlen', 'zaehlen', 'grand', 'risiko'];
+export const PATH = ['g1', 'ueberblick', 'karten', 'trumpf', 'bedienen', 'stich', 'g2', 'grandnull', 'skat', 'spitzen', 'spielwert', 'reizen', 'abrechnung', 'g3',
+  'bewerten', 'reizpraxis', 'druecken', 'alleinspieler', 'gegenspieler', 'nullspiel', 'mitzaehlen', 'zaehlen', 'lesen', 'grand', 'chancen', 'partner', 'risiko',
+  'endspiel', 'tisch', 'kneipe'];
 // Begriff → Einheit, in der er erklärt wird
 export const TERMS = [
   [/\bGrand\b/, 'grandnull'], [/\bNull(spiel)?\b/, 'grandnull'],

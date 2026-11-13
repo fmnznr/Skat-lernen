@@ -12,9 +12,9 @@ const vocab = new Set();
   page.on('pageerror', (e) => errors.push(e.message));
   await page.route(/fonts\.(googleapis|gstatic)/, (r) => r.abort());
   await page.goto('file://' + path.resolve(__dirname, '../docs/index.html'));
-  await page.waitForSelector('.startcard');
+  await page.waitForSelector('#go');
   await page.screenshot({ path: out + '/g0-start.png' });
-  await page.click('.startcard');
+  await page.click('#go');
   page.setDefaultTimeout(4000);
   for (const n of [1, 2, 3]) {
     await page.waitForSelector('#guide');
@@ -60,12 +60,12 @@ const vocab = new Set();
     console.log('Geführtes Spiel', n, done ? 'beendet' : 'NICHT beendet');
     if (!done) errors.push('Spiel ' + n + ' nicht beendet');
     if (intro > 3) errors.push('Spiel ' + n + ': ' + intro + ' Einführungsschritte (zu viel „Weiter“)');
-    if (n === 1) await page.click('[data-a="gnextguide"]');
-    if (n === 2) { await page.click('.sheet a[href="#lernen"]'); await page.evaluate(() => { location.hash = '#gefuehrt-3'; }); }
+    if (!(await page.$('.sheet .gain .g-xp'))) errors.push('Spiel ' + n + ': keine XP in der Auswertung');
+    if (n < 3) await page.evaluate((n) => { location.hash = '#gefuehrt-' + (n + 1); }, n);
   }
   // Begriff antippen
   await page.evaluate(() => { location.hash = '#lektion-bedienen'; });
-  await page.waitForSelector('#lnext');
+  await page.waitForSelector('#snext');
   await page.click('.lpage .term');
   await page.waitForSelector('#gloss:not([hidden])');
   await page.screenshot({ path: out + '/g-begriff.png' });

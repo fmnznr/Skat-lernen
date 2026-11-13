@@ -1,6 +1,7 @@
 // Browser-Smoketest: node test/ui.test.cjs [ausgabeordner]
 const { chromium } = require('playwright');
 const path = require('path');
+const { runSession } = require('./drive.cjs');
 const out = process.argv[2] || require('os').tmpdir();
 (async () => {
   const browser = await chromium.launch();
@@ -11,37 +12,27 @@ const out = process.argv[2] || require('os').tmpdir();
   page.on('console', (m) => { if (m.type() === 'error' && !/fonts\.g|ERR_FAILED/.test(m.text())) errors.push('console: ' + m.text()); });
   await page.route(/fonts\.(googleapis|gstatic)/, (r) => r.abort());
   await page.goto('file://' + path.resolve(__dirname, '../docs/index.html'));
-  await page.waitForSelector('.levelcard');
+  await page.waitForSelector('.today');
   await page.screenshot({ path: out + '/01-lernen.png' });
+  await page.click('.node.locked');
+  await page.waitForSelector('.sheet:not([hidden]) .tasks');
+  await page.click('.sheet [data-x]');
   // Lektion durchklicken
-  await page.click('a[href="#lektion-ueberblick"]');
-  await page.waitForSelector('#lnext');
-  for (let i = 0; i < 6; i++) { const b = await page.$('#lnext'); if (!b) break; await b.click(); }
-  await page.click('#lquiz');
-  for (let i = 0; i < 3; i++) { await page.click('.opt[data-i="1"]'); await page.click('#qnext'); }
+  await page.evaluate(() => { location.hash = '#lektion-ueberblick'; });
+  if (!(await runSession(page))) errors.push('Lektion nicht beendet');
   await page.screenshot({ path: out + '/02-lektion.png' });
-  // Übungen: je eine Runde jeder Übung anklicken
-  const drills = ['augen', 'trumpf', 'bedienen', 'stich', 'spitzen', 'spielwert', 'reizwerte', 'reizen', 'druecken', 'schmieren', 'mitzaehlen', 'truempfe', 'taktik'];
-  for (const d of drills) {
-    await page.evaluate((d) => { location.hash = d === 'taktik' ? '#taktik' : '#uebung-' + d; }, d);
-    await page.waitForSelector('#qcard');
-    for (let k = 0; k < 10; k++) {
-      // Sequenz weiterklicken
-      while (await page.$('#seqnext')) await page.click('#seqnext');
-      if (await page.$('#again')) break;
-      if (await page.$('.opt:not([disabled])')) await page.click('.opt:not([disabled])');
-      else if (await page.$('.minitrick button.card')) await page.click('.minitrick button.card');
-      else if (await page.$('.pickhand button.card')) {
-        const cards = await page.$$('.pickhand button.card:not(.dim)');
-        const ck = await page.$('#check');
-        if (ck) { await cards[0].click(); const c2 = await page.$$('.pickhand button.card:not(.dim):not(.sel)'); const btn = await page.$('#check'); if (await btn.isDisabled()) await c2[0].click(); await page.click('#check'); }
-        else await cards[0].click();
-      }
-      if (k === 0 && (d === 'druecken' || d === 'schmieren' || d === 'taktik')) await page.screenshot({ path: out + '/03-uebung-' + d + '.png' });
-      await page.click('#dnext');
-    }
+  // Übungen, Wiederholung und Tests: je eine Runde
+  const units = ['uebung-augen', 'uebung-trumpf', 'uebung-bedienen', 'uebung-stich', 'uebung-spitzen', 'uebung-spielwert', 'uebung-reizwerte', 'uebung-abrechnen', 'uebung-reizen', 'uebung-druecken', 'uebung-schmieren', 'uebung-mitzaehlen', 'uebung-truempfe', 'uebung-frei', 'uebung-hoechste', 'taktik', 'wiederholen', 'test-1', 'test-2', 'test-3', 'test-4', 'test-5'];
+  for (const d of units) {
+    await page.evaluate((d) => { location.hash = '#' + d; }, d);
+    let shot = false;
+    const ok = await runSession(page, async (k, what) => { if (!shot && what === 'antwort' && /druecken|schmieren|taktik|frei|test-3/.test(d)) { shot = true; await page.screenshot({ path: out + '/03-' + d + '.png' }); } });
+    if (!ok) errors.push(d + ' nicht beendet');
   }
   await page.screenshot({ path: out + '/04-ergebnis.png' });
+  await page.evaluate(() => { location.hash = '#ueben'; });
+  await page.waitForSelector('.reviewcard');
+  await page.screenshot({ path: out + '/04b-ueben.png' });
   // Spiel: mehrere Spiele mit Tipp-Zügen
   await page.evaluate(() => { location.hash = '#spielen'; });
   await page.waitForSelector('#table');

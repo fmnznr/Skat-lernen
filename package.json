@@ -7,6 +7,6 @@
     "build": "node tools/build.mjs",
     "train": "node tools/train.mjs && node tools/build.mjs",
     "icons": "node tools/icons.cjs",
-    "test": "node test/engine.test.mjs && node test/drills.test.mjs && node test/vocab.test.mjs && node test/course.test.mjs && node tools/build.mjs && node test/ui.test.cjs && node test/ui2.test.cjs && node test/deck.test.cjs && node test/guide.test.cjs"
+    "test": "node test/engine.test.mjs && node test/drills.test.mjs && node test/vocab.test.mjs && node test/course.test.mjs && node test/plan.test.mjs && node tools/build.mjs && node test/plan-ui.test.cjs && node test/ui.test.cjs && node test/ui2.test.cjs && node test/deck.test.cjs && node test/guide.test.cjs"
   }
 }

@@ -372,6 +372,168 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
 .block.later .row { opacity: .62; }
 .later-note { font-size: 13px; color: var(--muted); padding: 8px 16px 2px; margin: 0; }
 
+/* ===== Lernpfad, Tagesplan, Serie ===== */
+:root { --fire: #d9540b; --joker: #3f86bd; --u1: #23755a; --u1d: #154a39; --u2: #bf8a1a; --u2d: #8a6210; --u3: #bd3b31; --u3d: #86241d; --u4: #8a5a2b; --u4d: #5c3a18; --u5: #2f4673; --u5d: #1b2b4b; }
+.ic { width: 1.15em; height: 1.15em; flex: none; }
+.home .brand, .page > .brand { align-items: center; }
+.home .brand h1 { font-size: 26px; }
+.hud { display: flex; gap: 6px; align-items: center; }
+.hud-i { display: inline-flex; align-items: center; gap: 3px; min-height: 34px; padding: 0 10px; border-radius: 999px; background: var(--paper-2); box-shadow: var(--shadow); font-weight: 800; font-size: 15px; text-decoration: none; font-variant-numeric: tabular-nums; }
+.hud-i small { font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing: .04em; }
+.hud-i.fire { color: var(--muted); } .hud-i.fire.lit { color: var(--fire); }
+.hud-i.bolt .ic { color: var(--brass); }
+.intro { background: var(--brass-soft); border-radius: 14px; padding: 12px 14px; font-size: 15px; }
+.week { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; font-size: 12px; font-weight: 700; color: var(--muted); }
+.week i { display: grid; place-items: center; width: 30px; height: 30px; margin: 0 auto 3px; border-radius: 50%; background: var(--rule); color: #fff; font-style: normal; }
+.week i .ic { width: 16px; height: 16px; }
+.week .on i { background: var(--fire); }
+.week .joker i { background: var(--joker); }
+.week .now { color: var(--ink); } .week .now i { outline: 2px solid var(--brass); outline-offset: 2px; }
+.week .future { opacity: .55; }
+.goalhit { display: flex; gap: 12px; align-items: center; background: var(--ok-soft); border-radius: 14px; padding: 12px 14px; font-size: 15px; }
+.goalhit > .ic { width: 30px; height: 30px; color: var(--ok); }
+.today { background: var(--felt); color: var(--felt-ink); border-radius: 18px; padding: 16px; display: flex; flex-direction: column; gap: 12px; box-shadow: var(--shadow); }
+.today .eyebrow { color: inherit; opacity: .75; }
+.today-h { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
+.today h2 { font-size: 25px; margin-top: 2px; }
+.today .pace { font-size: 13px; opacity: .85; margin-top: 4px; }
+.today.fin p { font-size: 15px; opacity: .92; }
+.ring { width: 58px; height: 58px; flex: none; }
+.ring .rt { fill: none; stroke: rgba(255, 255, 255, .2); stroke-width: 5; }
+.ring .rv { fill: none; stroke: var(--brass); stroke-width: 5; stroke-linecap: round; }
+.ring text { fill: currentColor; font-size: 12px; font-weight: 800; }
+.tasks { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.tasks li > a, .tasks li > .a { display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 8px 10px; border-radius: 12px; background: rgba(255, 255, 255, .08); text-decoration: none; color: inherit; min-height: 52px; }
+.tasks .tk { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: rgba(255, 255, 255, .14); }
+.tasks .tk svg { width: 18px; height: 18px; }
+.tasks .t { display: block; font-weight: 700; line-height: 1.25; }
+.tasks .d { display: block; font-size: 13px; opacity: .8; line-height: 1.3; }
+.tasks .pv { font-weight: 800; font-size: 13px; font-variant-numeric: tabular-nums; }
+.tasks li.done .tk { background: var(--brass); color: #1c1405; }
+.tasks li.done .tx { opacity: .65; }
+.tasks li.next > a { background: rgba(255, 255, 255, .16); box-shadow: inset 0 0 0 2px var(--brass); }
+.tasks.plain li > a, .tasks.plain li > .a { background: var(--paper); }
+.tasks.plain .tk { background: var(--rule); }
+.tasks.plain li.done .tk { background: var(--ok); color: #fff; }
+.btn.big { min-height: 54px; font-size: 17px; border-radius: 14px; box-shadow: 0 4px 0 rgba(0, 0, 0, .22); width: 100%; }
+.btn.big:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 1px 0 rgba(0, 0, 0, .22); }
+.btn.ghostw { background: transparent; color: inherit; box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .5); }
+.path { display: flex; flex-direction: column; }
+.unit { display: flex; justify-content: space-between; align-items: center; gap: 12px; background: var(--uc); color: #fff; border-radius: 16px; padding: 14px 16px; box-shadow: 0 5px 0 var(--ud); margin-top: 14px; }
+.unit h3 { font-size: 21px; } .unit p { font-size: 13px; opacity: .92; margin-top: 2px; } .unit .eyebrow { color: inherit; opacity: .8; }
+.ucount { font-weight: 800; background: rgba(0, 0, 0, .2); padding: 4px 10px; border-radius: 999px; font-size: 13px; white-space: nowrap; }
+.u1 { --uc: var(--u1); --ud: var(--u1d); } .u2 { --uc: var(--u2); --ud: var(--u2d); } .u3 { --uc: var(--u3); --ud: var(--u3d); } .u4 { --uc: var(--u4); --ud: var(--u4d); } .u5 { --uc: var(--u5); --ud: var(--u5d); }
+.jump { display: flex; gap: 8px; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: var(--muted); text-decoration: none; padding: 10px; border: 2px dashed var(--rule); border-radius: 12px; margin-top: 14px; }
+.nodes { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 20px 0 6px; }
+.node { transform: translateX(var(--x)); display: flex; flex-direction: column; align-items: center; gap: 8px; background: none; border: 0; padding: 0; cursor: pointer; position: relative; }
+.node .disc { width: 68px; height: 62px; border-radius: 50%; display: grid; place-items: center; background: var(--uc); color: #fff; box-shadow: 0 6px 0 var(--ud); font-family: var(--font-display); font-size: 25px; }
+.node .disc .ic { width: 30px; height: 30px; }
+.node .nl { font-size: 12px; color: var(--muted); max-width: 150px; line-height: 1.25; text-align: center; }
+.node .nl b { color: var(--ink); display: block; }
+.node.locked .disc { background: var(--rule); color: var(--muted); box-shadow: 0 6px 0 color-mix(in srgb, var(--rule) 70%, #000); }
+.node.locked .disc .ic { width: 24px; height: 24px; }
+.node.cur .disc { outline: 4px solid color-mix(in srgb, var(--uc) 35%, transparent); outline-offset: 5px; }
+.node:active .disc { transform: translateY(4px); box-shadow: 0 2px 0 var(--ud); }
+.startb { background: var(--paper-2); color: var(--uc); font-weight: 800; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; padding: 6px 12px; border-radius: 10px; box-shadow: var(--shadow), inset 0 0 0 2px var(--rule); position: relative; margin-bottom: 4px; animation: bob 1.6s ease-in-out infinite; }
+.startb::after { content: ""; position: absolute; left: 50%; bottom: -7px; width: 12px; height: 12px; background: var(--paper-2); transform: translateX(-50%) rotate(45deg); box-shadow: inset -2px -2px 0 var(--rule); }
+@keyframes bob { 50% { transform: translateY(-5px); } }
+@keyframes pop { from { transform: scale(.4); opacity: 0; } 70% { transform: scale(1.08); } to { transform: none; opacity: 1; } }
+
+/* ===== Einheit (Lektion, Übung, Test) ===== */
+.sess { height: 100%; display: flex; flex-direction: column; background: var(--paper); }
+.sbar { flex: none; display: flex; align-items: center; gap: 12px; width: 100%; max-width: 640px; margin: 0 auto; padding: 12px max(16px, env(safe-area-inset-right, 0px)) 8px max(12px, env(safe-area-inset-left, 0px)); }
+.sx { width: 40px; height: 40px; display: grid; place-items: center; color: var(--muted); border-radius: 50%; }
+.sx .ic { width: 24px; height: 24px; }
+.sprog { flex: 1; height: 16px; border-radius: 8px; background: var(--rule); overflow: hidden; }
+.sprog i { display: block; height: 100%; border-radius: 8px; background: var(--ok); background-image: linear-gradient(rgba(255, 255, 255, .35), rgba(255, 255, 255, 0) 55%); transition: width .35s ease; }
+.scombo { display: inline-flex; align-items: center; gap: 2px; color: var(--fire); font-weight: 800; font-variant-numeric: tabular-nums; animation: pop .3s ease both; }
+.sbody { flex: 1; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.sin { max-width: 640px; margin: 0 auto; padding: 8px max(16px, env(safe-area-inset-right, 0px)) 24px max(16px, env(safe-area-inset-left, 0px)); display: flex; flex-direction: column; gap: 14px; }
+.sess .ltitle { font-size: 28px; }
+.sess .lpage { font-size: 18px; }
+.sess .qtext { font-size: 19px; font-weight: 600; line-height: 1.4; }
+.sess .opt { background: var(--paper-2); box-shadow: inset 0 0 0 2px var(--rule), 0 3px 0 var(--rule); }
+.sess .opt:active:not(:disabled) { transform: translateY(2px); box-shadow: inset 0 0 0 2px var(--rule), 0 1px 0 var(--rule); }
+.sess .opt.right { box-shadow: inset 0 0 0 2px var(--ok); background: var(--ok-soft); }
+.sess .opt.wrong { box-shadow: inset 0 0 0 2px var(--bad); background: var(--bad-soft); }
+.qhead .again { display: inline-flex; gap: 6px; align-items: center; color: var(--fire); font-weight: 800; font-size: 12px; text-transform: uppercase; letter-spacing: .08em; }
+details.how > summary { cursor: pointer; font-weight: 700; color: var(--ink); }
+details.how[open] > summary { margin-bottom: 4px; }
+.tricklist .tn { width: 18px; }
+.tricklist.named .tc { display: flex; flex-direction: column; align-items: center; gap: 1px; }
+.tricklist.named .tc small { font-size: 10px; line-height: 1; }
+.ghostcard { opacity: .25; background: transparent; border: 2px dashed currentColor; box-shadow: none; }
+.sfoot { flex: none; border-top: 2px solid var(--rule); background: var(--paper-2); padding: 12px max(16px, env(safe-area-inset-right, 0px)) calc(12px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); display: flex; flex-direction: column; gap: 10px; }
+.sfoot > * { width: 100%; max-width: 608px; margin-inline: auto; }
+.sfoot.fb { border-color: transparent; animation: rise .2s ease both; }
+.sfoot.fb.ok { background: var(--ok-soft); } .sfoot.fb.no { background: var(--bad-soft); } .sfoot.fb.mid { background: var(--brass-soft); }
+.fbh { display: flex; align-items: center; gap: 8px; font-size: 20px; color: var(--ok); }
+.fbh .ic { width: 28px; height: 28px; padding: 5px; border-radius: 50%; background: var(--ok); color: #fff; }
+.sfoot.no .fbh { color: var(--bad); } .sfoot.no .fbh .ic { background: var(--bad); }
+.sfoot.mid .fbh { color: var(--ink); } .sfoot.mid .fbh .ic { background: var(--brass); }
+.fbt { font-size: 15px; line-height: 1.45; max-height: 32vh; overflow-y: auto; }
+.fbt .note { margin-top: 6px; }
+.sfoot.ok .btn.big { background: var(--ok); color: var(--accent-ink); }
+.sfoot.no .btn.big { background: var(--bad); color: var(--accent-ink); }
+.sumin { align-items: center; text-align: center; padding-top: 32px; }
+.burst { width: 96px; height: 96px; border-radius: 50%; background: var(--ok); color: #fff; display: grid; place-items: center; animation: pop .45s ease both; box-shadow: 0 6px 0 color-mix(in srgb, var(--ok) 70%, #000); }
+.burst .ic { width: 52px; height: 52px; }
+.sess.fail .burst { background: var(--brass); box-shadow: 0 6px 0 color-mix(in srgb, var(--brass) 70%, #000); }
+.sumin h1 { font-size: 30px; }
+.sumsub { color: var(--muted); max-width: 40ch; }
+.tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; width: 100%; }
+.tile { border-radius: 14px; background: var(--tc); padding: 2px; display: flex; flex-direction: column; animation: rise .4s ease both; }
+.tile span { color: #fff; font-size: 11px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; padding: 4px 2px; }
+.tile b { background: var(--paper-2); border-radius: 12px; padding: 12px 2px; font-size: 19px; font-variant-numeric: tabular-nums; }
+.tile.xp { --tc: var(--brass); } .tile.acc { --tc: var(--ok); animation-delay: .1s; } .tile.time { --tc: var(--joker); animation-delay: .2s; }
+.sline { display: flex; gap: 12px; align-items: center; text-align: left; width: 100%; background: var(--paper-2); border-radius: 14px; padding: 10px 14px; box-shadow: var(--shadow); font-size: 14px; animation: rise .4s ease both; animation-delay: .3s; }
+.sline b { display: block; font-size: 16px; }
+.sline > .ic { width: 30px; height: 30px; }
+.sline.fire > .ic { color: var(--fire); } .sline.day > .ic { color: var(--ok); } .sline.ach > .ic { color: var(--brass); }
+
+/* ===== Üben, Fortschritt ===== */
+.reviewcard { display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; gap: 12px; align-items: center; background: var(--felt); color: var(--felt-ink); border-radius: 16px; padding: 14px 16px; text-decoration: none; box-shadow: var(--shadow); }
+.reviewcard.off { opacity: .6; }
+.rc-i { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: rgba(255, 255, 255, .14); }
+.rc-i .ic { width: 24px; height: 24px; }
+.reviewcard .t { display: block; font-family: var(--font-display); font-size: 21px; }
+.reviewcard .d { display: block; font-size: 13px; opacity: .88; }
+.badge-n { background: var(--fire); color: #fff; font-weight: 800; min-width: 30px; height: 30px; border-radius: 15px; display: grid; place-items: center; padding: 0 8px; }
+.duetag { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: var(--fire); border: 1.5px solid; border-radius: 6px; padding: 0 5px; vertical-align: 1px; }
+.streakcard { background: var(--paper-2); border-radius: var(--r); box-shadow: var(--shadow); padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+.sc-top { display: flex; gap: 14px; align-items: center; }
+.sc-top h2 { font-size: 22px; } .sc-top p { font-size: 13px; color: var(--muted); margin-top: 2px; }
+.sc-n { display: flex; align-items: center; font-family: var(--font-display); font-size: 40px; color: var(--muted); flex: none; }
+.sc-n.lit { color: var(--fire); } .sc-n .ic { width: 40px; height: 40px; }
+.cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+.cal .ch { font-size: 11px; text-align: center; color: var(--muted); font-weight: 700; }
+.cal .cd { height: 20px; border-radius: 6px; background: var(--paper); box-shadow: inset 0 0 0 1px var(--rule); }
+.cal .cd.on { background: var(--fire); box-shadow: none; } .cal .cd.joker { background: var(--joker); box-shadow: none; }
+.cal .cd.now { outline: 2px solid var(--ink); outline-offset: 1px; } .cal .cd.future { opacity: .4; }
+.xpbars { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; height: 96px; }
+.xpbars span { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 2px; min-height: 0; }
+.xpbars i { width: 100%; max-width: 30px; background: var(--brass); border-radius: 5px 5px 2px 2px; min-height: 3px; }
+.xpbars em { font-size: 11px; font-style: normal; font-weight: 700; color: var(--muted); }
+.xpbars small { font-size: 11px; color: var(--muted); }
+.planbar { padding: 12px 16px 14px; display: flex; flex-direction: column; gap: 6px; font-size: 14px; }
+.pb { height: 12px; border-radius: 6px; background: var(--rule); overflow: hidden; }
+.pb i { display: block; height: 100%; background: var(--brass); border-radius: 6px; }
+.achs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; padding: 12px; }
+.ach { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 3px; padding: 10px 4px; border-radius: 12px; background: var(--paper); }
+.ach:not(.on) { color: var(--muted); }
+.ach.on { background: var(--brass-soft); }
+.ach .ai { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: var(--rule); color: var(--muted); }
+.ach.on .ai { background: var(--brass); color: #1c1405; }
+.ach b { font-size: 13px; line-height: 1.2; } .ach small { font-size: 11px; line-height: 1.25; color: var(--muted); }
+.gain { display: flex; flex-wrap: wrap; gap: 6px; }
+.gain span { display: inline-flex; align-items: center; gap: 5px; background: var(--paper); border-radius: 999px; padding: 4px 10px; font-size: 13px; font-weight: 700; }
+.gain .g-xp { background: var(--brass-soft); } .gain .g-xp .ic { color: var(--brass); }
+.gain .g-fire .ic { color: var(--fire); } .gain .g-day { background: var(--ok-soft); } .gain .g-ach { background: var(--brass-soft); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --fire: #ff8a3d; --joker: #5aa2d8; } }
+:root[data-theme="dark"] { --fire: #ff8a3d; --joker: #5aa2d8; }
+.remind { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.remind input { font: inherit; color: inherit; min-height: 38px; padding: 0 10px; border-radius: 10px; border: 0; background: var(--paper); box-shadow: inset 0 0 0 1px var(--rule); }
+
 </style>
 </head>
 <body>
@@ -1765,7 +1927,7 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
       ],
     },
     {
-      id: 'abrechnung', stage: 2, title: 'Gewinnen, Verlieren, Überreizen', min: 5,
+      id: 'abrechnung', stage: 2, title: 'Gewinnen, Verlieren, Überreizen', min: 5, drill: 'abrechnen',
       pages: [
         'Gewinnt der Alleinspieler, bekommt er den Spielwert gutgeschrieben. Verliert er, werden ihm <b>doppelt</b> so viele Punkte abgezogen.',
         '<b>Überreizt</b>: Ist das Spiel weniger wert als gereizt, ist es verloren – auch mit 61 Augen. Abgezogen wird das nächste Vielfache des Grundwerts, das den Reizwert erreicht. Beispiel: gereizt 33, Herz ohne 2 (Wert 30) → verloren mit 40, also −80.',
@@ -1791,6 +1953,23 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
       quiz: [
         { q: 'Was ist am gefährlichsten für ein Farbspiel?', o: ['Eine Fehlfarbe, die man nicht hat', 'Eine blanke Zehn', 'Ein Ass mit Zehn'], a: 1, why: 'Die blanke Zehn fällt meist unter das Ass der Gegner.' },
         { q: 'Du hast [[kB hB dB pA p10 p9 p7 h9 dK d8]] Welches Spiel passt am besten?', o: ['Pik', 'Grand', 'Null'], a: 0, why: '7 Trümpfe in Pik (3 Buben, Ass, Zehn, 9, 7). Für einen Grand fehlen die Asse, für Null die niedrigen Karten.' },
+      ],
+    },
+    {
+      id: 'reizpraxis', stage: 3, title: 'Reizen mit Köpfchen', min: 6,
+      pages: [
+        'Dein <b>Reizlimit</b> legst du fest, bevor die erste Zahl fällt: Welches Spiel will ich spielen, und was ist es wert? Im Eifer weiterzubieten ist der teuerste Anfängerfehler.',
+        '<b>Rechne nicht mit dem Skat.</b> Eine bestimmte Karte, die dir fehlt, liegt nur in <b>etwa einem von elf Fällen</b> im Skat – 2 von 22 Karten, die du nicht kennst. Der Skat hilft im Schnitt ein wenig, aber selten genau so, wie du es brauchst.',
+        'Vorsicht bei Spielen <b>„ohne“</b>: Du reizt Herz ohne 2 bis 30 und findest im Skat den Kreuz-Buben. Jetzt spielst du „mit 1“ – dein Herzspiel ist nur noch 2 × 10 = <b>20</b> wert. Du bist überreizt, obwohl du eine starke Karte gefunden hast.',
+        'Auswege, wenn das passiert: ein Spiel mit höherem Grundwert ansagen (ein Grand mit 1 ist 48 wert) oder Schneider schaffen – jede Stufe zählt. Besser ist es, bei „ohne“-Spielen von vornherein eine Stufe Reserve zu lassen.',
+        'Die <b>Position</b> zählt: In Vorhand spielst du selbst aus und kannst sofort deine Trümpfe spielen – dasselbe Blatt ist dort stärker. In Mittelhand und Hinterhand spielt zuerst ein Gegner aus. Reize dort etwas vorsichtiger.',
+        '<b>Hör beim Reizen zu.</b> Wer bei 18 sofort passt, hat selten zwei Buben. Wer bis 23 mitgeht und dann aussteigt, wollte oft Null spielen. Wer hoch reizt, hat Buben oder eine lange Farbe. Dieses Wissen brauchst du später im Spiel.',
+      ],
+      quiz: [
+        { q: 'Du hast Herz ohne 2 bis 30 gereizt. Im Skat liegen {kB} und {d7}. Was ist dein Herzspiel jetzt wert?', o: ['30', '20', '40'], a: 1, why: 'Mit dem Kreuz-Buben spielst du „mit 1“: 2 × 10 = 20. Gereizt sind 30 – du bist überreizt, wenn du nicht Schneider schaffst oder ein höheres Spiel ansagst.' },
+        { q: 'Dir fehlt genau eine Karte zum sicheren Spiel. Wie oft liegt sie im Skat?', o: ['Etwa jedes zweite Mal', 'Etwa jedes elfte Mal', 'So gut wie nie'], a: 1, why: '2 von 22 unbekannten Karten liegen im Skat: rund 9 %.' },
+        { q: 'In welcher Position ist dasselbe Blatt am stärksten?', o: ['Vorhand', 'Mittelhand', 'Hinterhand'], a: 0, why: 'Vorhand spielt aus und bestimmt, wie das Spiel beginnt.' },
+        { q: 'Lena hat bei 18 sofort gepasst. Was ist wahrscheinlich?', o: ['Sie hat mehrere Buben', 'Sie hat ein schwaches Blatt mit wenigen Buben', 'Sie will Grand spielen'], a: 1, why: 'Mit zwei Buben und einer Farbe dazu hätte sie wenigstens 18 gehalten.' },
       ],
     },
     {
@@ -1877,6 +2056,22 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
       ],
     },
     {
+      id: 'lesen', stage: 4, title: 'Karten lesen', min: 6, drill: 'frei',
+      pages: [
+        'Gute Spieler <b>raten nicht, sie schließen</b>. Jede gelegte Karte und jedes Gebot verrät etwas. Sammle diese Hinweise – nach ein paar Stichen weißt du oft, wo die wichtigen Karten sitzen.',
+        '<b>Wer nicht bedient, ist frei.</b> Das ist dein sicherstes Wissen. Wirft Tom auf Pik eine Herz-Karte ab, hat er kein Pik mehr. Merk dir für jeden Mitspieler, welche Farbe ihm fehlt.',
+        '<b>Das Reizen verrät das Blatt.</b> Wer bis 24 oder höher reizt, hat meist mindestens zwei Buben oder sehr viele Trümpfe. Wer sofort passt, hat wenig. Der Alleinspieler hat fast immer die meisten Trümpfe – rechne bei ihm mit fünf oder sechs.',
+        '<b>Was hat der Alleinspieler gedrückt?</b> Meist volle Karten aus einer kurzen Farbe. Fehlen am Ende Augen in deiner Rechnung, liegen sie im Skat. Und bedient der Alleinspieler eine Farbe schon beim ersten Mal nicht, hat er sie vermutlich blank gedrückt.',
+        '<b>Was spielt er nicht?</b> Zieht der Alleinspieler keinen Trumpf, obwohl er am Zug ist, sind seine Trümpfe oft schwach oder lückenhaft. Spielt er ein Ass nicht aus, hat er es vielleicht gar nicht.',
+        '<b>Die Karte deines Partners spricht.</b> Spielt er eine Farbe aus, hat er einen Grund: Entweder ist er dort stark, oder er hat dort nur eine Karte und will bald stechen. Merk dir die Farbe und spiel sie ihm bei Gelegenheit zurück.',
+      ],
+      quiz: [
+        { q: 'Kreuzspiel. Auf {hA} legt der Alleinspieler {d8}. Was weißt du sicher?', o: ['Er hat kein Herz mehr', 'Er hat keine Trümpfe mehr', 'Er hat kein Karo mehr'], a: 0, why: 'Wer nicht bedient, hat die Farbe nicht. Dass er nicht gestochen hat, war seine Entscheidung – Trümpfe kann er trotzdem haben.' },
+        { q: 'Der Alleinspieler hat bis 36 gereizt und spielt Kreuz. Womit rechnest du?', o: ['Mit den zwei höchsten Buben – oder mit sehr vielen Trümpfen ohne sie', 'Mit einem schwachen Blatt', 'Mit einem Nullspiel'], a: 0, why: '36 = 3 × 12, also Kreuz mit 2 oder ohne 2. Entweder hat er Kreuz- und Pik-Bube, oder ihm fehlen beide und er hat dafür viele Trümpfe.' },
+        { q: 'Am Ende zählst du 52 Augen bei euch und 58 in den Stichen des Alleinspielers. Wo sind die restlichen 10?', o: ['Du hast dich verzählt', 'Im Skat – sie zählen für den Alleinspieler', 'Sie verfallen'], a: 1, why: 'Es gibt immer 120 Augen. Was in den Stichen fehlt, liegt im Skat und gehört dem Alleinspieler: Er hat 68.' },
+      ],
+    },
+    {
       id: 'grand', stage: 4, title: 'Grand spielen', min: 5,
       pages: [
         'Im Grand gibt es nur 4 Trümpfe. Die Stiche werden vor allem über <b>Asse, Zehnen und lange Farben</b> gewonnen.',
@@ -1889,6 +2084,38 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
       ],
     },
     {
+      id: 'chancen', stage: 4, title: 'Wie die Karten sitzen', min: 6,
+      pages: [
+        'Als Alleinspieler kennst du 12 Karten: deine zehn und die zwei gedrückten. Die anderen 20 sind auf die beiden Gegner verteilt, zehn und zehn. Wie genau, weißt du nicht – aber du kannst mit <b>Wahrscheinlichkeiten</b> rechnen.',
+        'Du hast <b>6 Trümpfe</b>, die Gegner also 5. So sind sie verteilt:<table class="pts"><tr><td>3 und 2</td><td>70 %</td></tr><tr><td>4 und 1</td><td>27 %</td></tr><tr><td>5 und 0</td><td>3 %</td></tr></table>Meistens reichen also drei Trumpfrunden.',
+        'Du hast <b>5 Trümpfe</b>, die Gegner 6:<table class="pts"><tr><td>3 und 3</td><td>37 %</td></tr><tr><td>4 und 2</td><td>49 %</td></tr><tr><td>5 und 1</td><td>13 %</td></tr><tr><td>6 und 0</td><td>1 %</td></tr></table>In sechs von zehn Spielen hat ein Gegner vier Trümpfe oder mehr – fast so viele wie du. Darum ist ein Farbspiel mit fünf Trümpfen ohne Asse wacklig.',
+        'Du hast <b>7 Trümpfe</b>, die Gegner 4:<table class="pts"><tr><td>2 und 2</td><td>42 %</td></tr><tr><td>3 und 1</td><td>49 %</td></tr><tr><td>4 und 0</td><td>9 %</td></tr></table>Zwei Trumpfrunden räumen nur in vier von zehn Spielen alles ab.',
+        '<b>Geht mein Ass durch?</b> Je länger eine Fehlfarbe bei dir ist, desto eher ist ein Gegner dort frei und sticht. Mit Ass und Zehn zu zweit läuft das Ass in 97 % der Fälle, die Zehn danach noch in 70 %. Hast du vier Karten der Farbe, wird schon das Ass in jedem fünften Spiel gestochen.',
+        'Sitzt eine bestimmte Karte – etwa das Ass über deiner Zehn – bei einem bestimmten Gegner? Das ist immer <b>50 zu 50</b>. Ein Plan, der nur bei einem bestimmten Sitz der Karten klappt, ist ein Münzwurf. Wähle den Plan, der bei den meisten Verteilungen gewinnt.',
+      ],
+      quiz: [
+        { q: 'Du hast 6 Trümpfe. Wie sind die 5 Trümpfe der Gegner am häufigsten verteilt?', o: ['3 und 2', '4 und 1', '5 und 0'], a: 0, why: 'In 70 % der Spiele. 4 und 1 kommt in 27 % vor.' },
+        { q: 'Du hast 5 Trümpfe. Wie oft hat ein Gegner vier oder mehr?', o: ['Fast nie', 'In etwa 6 von 10 Spielen', 'Immer'], a: 1, why: '4 und 2 in 49 %, 5 und 1 in 13 %, 6 und 0 in 1 % – zusammen 63 %.' },
+        { q: 'In welcher Farbe geht dein Ass am sichersten durch?', o: ['Ass und Zehn zu zweit', 'Ass mit drei weiteren Karten der Farbe', 'Das ist egal'], a: 0, why: 'Je kürzer die Farbe bei dir, desto mehr Karten haben die Gegner davon – und desto seltener ist einer frei.' },
+      ],
+    },
+    {
+      id: 'partner', stage: 4, title: 'Zusammenspiel zu zweit', min: 6,
+      pages: [
+        'Als Gegenspieler gewinnt ihr nur, wenn ihr <b>wie ein Spieler</b> denkt. Reden dürft ihr nicht – also redet ihr mit Karten.',
+        '<b>Der Alleinspieler gehört in die Mitte.</b> Am schwersten hat er es in Mittelhand: Dann kommt einer von euch nach ihm und kann auf seine Karte reagieren – übernehmen, schmieren oder klein bleiben. Sitzt du vor dem Alleinspieler, ist es deshalb gut, wenn du ausspielst.',
+        '<b>Hoch vor dem Alleinspieler.</b> Kommt er nach dir und du willst den Stich, nimm eine hohe Karte – sonst übernimmt er billig. Kommt er nicht mehr, reicht die kleinste Karte, die gewinnt.',
+        '<b>Volle Karten retten.</b> Hat dein Partner das Ass einer Farbe, gehört deine Zehn in seinen Stich. Eine Zehn, die du bis zum Schluss festhältst, landet oft beim Alleinspieler.',
+        '<b>Nicht den Partner stechen.</b> Liegt dein Partner vorn und der Alleinspieler hat schon gelegt, brauchst du keinen Trumpf: Schmier lieber. Dein Trumpf holt später einen eigenen Stich.',
+        '<b>Zähle für zwei.</b> Ihr braucht zusammen 60. Fehlen euch noch 11 Augen und dein Partner bekommt den Stich, dann schmier das Ass jetzt – nicht erst im nächsten Stich, den es vielleicht nicht mehr gibt.',
+      ],
+      quiz: [
+        { q: 'Kreuzspiel. Der Alleinspieler hat {h9} ausgespielt, dein Partner {hA} gelegt. Du bist Letzter und hast kein Herz: [[k7 p10 d8]] Was legst du?', o: ['{k7} – stechen', '{p10} – schmieren', '{d8} – abwerfen'], a: 1, why: 'Dein Partner gewinnt schon. Stichst du, nimmst du ihm nur den Stich weg. Die Zehn bringt 10 Augen mehr.' },
+        { q: 'Wo sitzt der Alleinspieler für euch am günstigsten?', o: ['In Vorhand', 'In Mittelhand – zwischen euch', 'In Hinterhand'], a: 1, why: 'Dann kommt einer von euch nach ihm und kann auf seine Karte reagieren.' },
+        { q: 'Euch fehlen noch 11 Augen zum Sieg. Dein Partner gewinnt den Stich sicher. Du darfst abwerfen und hast {dA} und {d7}. Was legst du?', o: ['{dA}', '{d7}'], a: 0, why: 'Mit dem Ass habt ihr die 60 Augen – gewonnen. Wer wartet, verschenkt den Sieg.' },
+      ],
+    },
+    {
       id: 'risiko', stage: 4, title: 'Risiko und Ansagen', min: 5,
       pages: [
         'Ein verlorenes Spiel kostet doppelt – nach Seeger-Fabian noch 50 Punkte mehr, und die Gegner bekommen je 40. Ein sicheres Spiel ist deshalb oft besser als ein riskantes hohes.',
@@ -1898,6 +2125,59 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
       ],
       quiz: [
         { q: 'Was bedeutet Seeger-Fabian für deine Entscheidungen?', o: ['Verlieren ist noch teurer – lieber sicher spielen', 'Hohe Spiele lohnen sich immer', 'Hand spielen ist Pflicht'], a: 0, why: 'Ein Verlust kostet doppelt plus 50, die Gegner bekommen zusätzlich Punkte.' },
+      ],
+    },
+    // ---------------- Stufe 5 ----------------
+    {
+      id: 'endspiel', stage: 5, title: 'Die letzten Stiche', min: 6, drill: 'hoechste',
+      pages: [
+        'Knappe Spiele entscheiden sich in den <b>letzten drei Stichen</b>. Wer bis dahin mitgezählt hat, spielt sie fast mit offenen Karten – wer nicht, rät.',
+        '<b>Rechne rückwärts.</b> Vor jedem der letzten Stiche: Wie viele Augen habe ich? Wie viele brauche ich noch? Welche vollen Karten sind noch im Spiel? Als Alleinspieler mit 55 Augen brauchst du nur noch einen Stich mit 6 Augen – nicht alle.',
+        '<b>Behalte einen Trumpf für den Schluss.</b> Mit ihm kommst du wieder ans Spiel, wenn die Gegner ihre Farbe spielen. Wer seinen letzten Trumpf zu früh hergibt, schaut am Ende zu.',
+        '<b>Lass die Gegner ausspielen.</b> Du hast am Ende eine Zehn mit einer kleinen Karte, das Ass ist noch draußen? Dann spiel diese Farbe nicht selbst an. Gib vorher lieber einen wertlosen Stich ab: Müssen die Gegner die Farbe anspielen, macht deine Zehn oft noch ihren Stich.',
+        '<b>Als Gegenspieler:</b> Steht der Alleinspieler bei 50, zählt nur noch eines – ihm keine 11 Augen mehr zu geben. Volle Karten kommen jetzt nur noch in Stiche, die euch sicher gehören.',
+        '<b>Schneider im Blick.</b> Steht der Sieger fest, geht es um die nächste Stufe: als Alleinspieler um die 90, als Gegenspieler um eure 31. Wer sich aus dem Schneider rettet, nimmt dem Alleinspieler eine ganze Stufe.',
+      ],
+      quiz: [
+        { q: 'Du bist Alleinspieler und hast 54 Augen. Wie viele brauchst du noch?', o: ['7', '6', '11'], a: 0, why: '61 − 54 = 7. Ein Stich mit einer Zehn oder einem Ass reicht.' },
+        { q: 'Du hast am Ende {p10} und {p8}. Das Pik-Ass ist noch bei einem Gegner. Was ist meist besser?', o: ['Pik selbst ausspielen', 'Warten, bis ein Gegner Pik ausspielen muss'], a: 1, why: 'Spielst du die Zehn selbst aus, fällt sie unter das Ass. Spielen die Gegner Pik an, kannst du auf das Ass die 8 geben – danach ist deine Zehn die höchste Pik-Karte.' },
+        { q: 'Ihr Gegenspieler habt 28 Augen, der Alleinspieler hat schon 70. Worum geht es jetzt noch?', o: ['Um nichts mehr', 'Um 3 Augen – dann seid ihr aus dem Schneider', 'Um 61 Augen'], a: 1, why: 'Mit 31 Augen seid ihr aus dem Schneider. Das Spiel des Alleinspielers ist dann eine Stufe weniger wert.' },
+      ],
+    },
+    {
+      id: 'tisch', stage: 5, title: 'Am echten Tisch', min: 7,
+      pages: [
+        'Mit erfahrenen Spielern zählt neben den Karten auch der <b>Ablauf</b>. Wer ihn kennt, wirkt sicher – und macht keine teuren Formfehler.',
+        '<b>Geben:</b> Der Geber mischt, der Spieler rechts von ihm hebt ab. Gegeben wird im Uhrzeigersinn, beginnend links vom Geber: <b>3 Karten</b> an jeden, dann <b>2 in den Skat</b>, dann <b>4</b> an jeden, dann <b>3</b>. Merke: 3 – Skat – 4 – 3. Das nächste Spiel gibt der linke Nachbar.',
+        '<b>Reizen in echt</b> geht schnell und knapp: „18?“ – „Ja.“ – „20?“ – „Ja.“ – „Zwo?“ – „Weg.“ Viele sagen nur Kurzformen: „Zwo“ für 22, „Null“ für 23, „Vier“ für 24, „Sieben“ für 27. „Weg“ oder „Passe“ heißt: Ich steige aus.',
+        '<b>Ansagen:</b> Der Alleinspieler nimmt den Skat auf oder sagt „Hand“. Dann drückt er und sagt sein Spiel an: „Herz“, „Grand“, „Null ouvert“. Erst danach spielt Vorhand aus. Die Ansage gilt – ändern geht nicht mehr.',
+        '<b>Gelegt ist gelegt.</b> Eine Karte, die sichtbar auf dem Tisch liegt, ist gespielt. Die Stiche liegen verdeckt vor dir. Ansehen darfst du nur den letzten – und nur, solange zum nächsten Stich noch nicht ausgespielt ist. Darum zählt man im Kopf mit.',
+        '<b>Regelverstöße kosten das Spiel.</b> Wer nicht bedient, obwohl er kann, wer falsch ausspielt oder Karten zeigt, verliert das Spiel in der Regel sofort – für seine ganze Seite. Lieber eine Sekunde länger hinschauen. Über das laufende Spiel wird nicht gesprochen, auch nicht mit Gesten.',
+        '<b>Aufgeschrieben</b> wird nach jedem Spiel: Nur der Alleinspieler bekommt Punkte gutgeschrieben oder doppelt abgezogen. Eine Runde hat drei Spiele – jeder gibt einmal. Wie viele Runden gespielt werden, verabredet man vorher.',
+      ],
+      quiz: [
+        { q: 'In welcher Folge wird gegeben?', o: ['3 – Skat – 4 – 3', '5 – 5 – Skat', '4 – 3 – 3 – Skat'], a: 0, why: 'Drei Karten an jeden, zwei in den Skat, dann vier, dann drei.' },
+        { q: 'Am Tisch sagt jemand „Vier?“. Was meint er?', o: ['24', 'Vier Buben', '40'], a: 0, why: 'Kurzformen beim Reizen: Zwo = 22, Null = 23, Vier = 24, Sieben = 27.' },
+        { q: 'Dir fällt auf, dass du zwei Stiche vorher nicht bedient hast, obwohl du konntest. Was gilt?', o: ['Der Stich wird wiederholt', 'Das Spiel ist für deine Seite verloren', 'Du gibst zur Strafe eine Karte ab'], a: 1, why: 'Falsches Bedienen beendet das Spiel – zugunsten der anderen Seite.' },
+        { q: 'Welche Stiche darfst du dir noch einmal ansehen?', o: ['Alle eigenen', 'Nur den letzten, solange nicht neu ausgespielt ist', 'Gar keine'], a: 1, why: 'Ältere Stiche bleiben verdeckt. Wer nachzählen will, muss mitzählen.' },
+      ],
+    },
+    {
+      id: 'kneipe', stage: 5, title: 'Kontra, Ramsch und Bock', min: 7,
+      pages: [
+        'In privaten Runden wird selten streng nach Turnierregeln gespielt. Drei Zusätze triffst du fast überall: <b>Kontra</b>, <b>Ramsch</b> und <b>Bockrunden</b>. Frag vor dem ersten Spiel, was gilt – jede Runde hat ihre eigenen Sitten.',
+        '<b>Kontra:</b> Glaubt ein Gegenspieler, dass der Alleinspieler verliert, sagt er „Kontra“. Das Spiel zählt dann <b>doppelt</b>. Der Alleinspieler kann mit „Re“ antworten – dann zählt es <b>vierfach</b>. Üblich ist: Kontra darf nur sagen, wer beim Reizen nicht sofort gepasst hat, und nur vor der ersten ausgespielten Karte.',
+        '<b>Wann Kontra?</b> Wenn du als Gegenspieler selbst viele Trümpfe hast – vier oder mehr, darunter Buben – oder mehrere Asse neben einem sicheren Trumpfstich. Ein Kontra auf Verdacht ist teuer: Gewinnt der Alleinspieler, bekommt er das Doppelte.',
+        '<b>Ramsch:</b> Passen alle drei, wird nicht neu gegeben, sondern Ramsch gespielt. Jeder spielt <b>für sich</b>. Trumpf sind nur die vier Buben, wie im Grand. Es <b>verliert, wer die meisten Augen</b> hat – sie werden ihm als Minus aufgeschrieben.',
+        'Im Ramsch drehst du alles um: Stiche vermeiden, volle Karten in fremde Stiche geben, hohe Karten früh spielen, solange noch jemand drüber muss. Der Skat geht meist an den, der den letzten Stich macht. Wer <b>keinen Stich</b> bekommt, bleibt „Jungfrau“ – das verdoppelt das Minus des Verlierers. Wer <b>alle Stiche</b> holt, schafft einen „Durchmarsch“ und gewinnt.',
+        '<b>Bockrunde:</b> Nach besonderen Ereignissen – etwa einem verlorenen Kontra-Spiel, einem Spiel mit 60 zu 60 Augen oder einem Grand Hand – zählt eine ganze Runde lang jedes Spiel doppelt. Oft folgt darauf eine Runde Ramsch.',
+        'Dein Vorteil: Wer die Turnierregeln sicher beherrscht, lernt diese Zusätze in fünf Minuten. In dieser App spielst du nach Turnierregeln, ohne Kontra und Ramsch.',
+      ],
+      quiz: [
+        { q: 'Ein Spiel mit Wert 24 wird mit Kontra gespielt und vom Alleinspieler gewonnen. Wie viel bekommt er?', o: ['24', '48', '96'], a: 1, why: 'Kontra verdoppelt. Mit Re wären es 96.' },
+        { q: 'Wer verliert im Ramsch?', o: ['Wer die meisten Augen hat', 'Wer die wenigsten Augen hat', 'Wer den letzten Stich macht'], a: 0, why: 'Im Ramsch will niemand Augen haben.' },
+        { q: 'Welche Karten sind im Ramsch Trumpf?', o: ['Keine', 'Nur die vier Buben', 'Kreuz und die Buben'], a: 1, why: 'Wie im Grand.' },
+        { q: 'Was tust du vor dem ersten Spiel in einer neuen Runde?', o: ['Nichts – die Regeln sind überall gleich', 'Fragen, ob mit Kontra, Ramsch und Bock gespielt wird'], a: 1, why: 'Hausregeln unterscheiden sich von Runde zu Runde.' },
       ],
     },
   ];
@@ -1937,6 +2217,20 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
       why: 'Mit drei Buben ziehst du zuerst Trumpf. Danach laufen Kreuz- und Herz-Ass mit den Zehnen.' },
     { id: 't16', stage: 4, title: 'Übernehmen', game: 'Kreuz', role: 'Gegenspieler. Dein Partner spielt aus, der Alleinspieler kommt nach dir und hat noch Herz.', trick: [['Partner', 'hK']], hand: ['hA', 'h7', 'p9', 'd8'], ok: ['hA'],
       why: 'Der Alleinspieler muss Herz bedienen und kann das Ass nicht schlagen. Mit dem Ass sicherst du 15 Augen – sonst könnte er den König mit der Zehn holen.' },
+    { id: 't17', stage: 4, title: 'Letzten Trumpf ziehen', game: 'Kreuz', role: 'Alleinspieler, du spielst aus. Die Gegner haben noch genau einen Trumpf: die Kreuz-9', trick: [], hand: ['kB', 'hA', 'h10', 'd7'], ok: ['kB'],
+      why: 'Erst der Bube: Er holt den letzten Trumpf. Danach kann niemand mehr dein Herz-Ass und deine Zehn stechen.' },
+    { id: 't18', stage: 4, title: 'Ass nehmen', game: 'Kreuz', role: 'Gegenspieler in Mittelhand. Der Alleinspieler hat ausgespielt, dein Partner kommt nach dir', trick: [['Alleinspieler', 'h8']], hand: ['hA', 'h9', 'p8', 'd9'], ok: ['hA'],
+      why: 'Dein Ass gewinnt sicher: Der Alleinspieler hat schon gelegt, und dein Partner nimmt dir den Stich nicht weg. Er kann sogar noch eine volle Karte dazugeben.' },
+    { id: 't19', stage: 4, title: 'Null: Stich überlassen', game: 'Null', role: 'Gegenspieler, du spielst als Letzter', trick: [['Partner', 'h8'], ['Alleinspieler', 'h9']], hand: ['h7', 'hK', 'p9', 'kD'], ok: ['h7'],
+      why: 'Der Alleinspieler liegt mit der 9 vorn. Bleibst du mit der 7 drunter, muss er den Stich nehmen – und hat sein Nullspiel verloren.' },
+    { id: 't20', stage: 4, title: 'Fehlkarte abwerfen', game: 'Herz', role: 'Alleinspieler, du spielst als Letzter. Du hast kein Pik', trick: [['Gegner', 'p8'], ['Gegner', 'p9']], hand: ['kB', 'hA', 'kA', 'd8'], ok: ['d8'],
+      why: 'Im Stich liegen keine Augen. Statt einen wertvollen Trumpf zu opfern, wirfst du die Karo-8 ab – sie ginge sowieso verloren. Danach bist du in Karo frei und kannst dort stechen.' },
+    { id: 't21', stage: 4, title: 'Nicht den Partner stechen', game: 'Kreuz', role: 'Gegenspieler, du spielst als Letzter. Du hast kein Herz', trick: [['Alleinspieler', 'h9'], ['Partner', 'hA']], hand: ['k7', 'p10', 'pK', 'd8'], ok: ['p10'],
+      why: 'Dein Partner gewinnt den Stich schon mit dem Ass. Ein Trumpf wäre verschwendet. Schmier die Pik-Zehn: 10 Augen mehr für euch.' },
+    { id: 't22', stage: 4, title: 'Schneiden', game: 'Kreuz', role: 'Alleinspieler, du spielst als Letzter. Die Herz-Zehn ist noch nicht gefallen', trick: [['Gegner', 'h7'], ['Gegner', 'h8']], hand: ['hA', 'hK', 'k9', 'd7'], ok: ['hK'],
+      why: 'Der König reicht für diesen Stich. Dein Ass bleibt über der Zehn: Kommt Herz noch einmal, fängst du sie.' },
+    { id: 't23', stage: 4, title: 'Gegen Grand: Ass zuerst', game: 'Grand', role: 'Gegenspieler in Vorhand, erster Stich', trick: [], hand: ['hA', 'h9', 'h8', 'p10', 'pD', 'p8', 'd9', 'd7', 'kK', 'k8'], ok: ['hA'],
+      why: 'Im Grand entscheiden Asse und Zehnen. Hol dein Ass, solange der Alleinspieler Herz noch bedienen muss – dein Partner kann eine Zehn dazugeben.' },
   ];
 
   /* Begriffe zum Antippen. re: Wortformen, wie sie im (übersetzten) Text stehen */
@@ -1971,6 +2265,10 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
     farbspiel: { t: 'Farbspiel', re: 'Farbspiel|Farbspiele|Farbspielen', d: 'Ein Spiel mit einer Trumpffarbe (Kreuz, Pik, Herz oder Karo). Dazu sind die vier Buben Trumpf.' },
     grand: { t: 'Grand', re: 'Grand', d: 'Ein Spiel, in dem nur die vier Buben Trumpf sind. Es ist das wertvollste Spiel.' },
     null: { t: 'Null', re: 'Null|Nullspiel|Nullspiele', d: 'Ein Spiel ohne Trumpf. Der Alleinspieler gewinnt nur, wenn er keinen einzigen Stich bekommt.' },
+    frei: { t: 'Frei', re: 'frei ist|ist frei|in Karo frei|in Pik frei|in Herz frei|in Kreuz frei|in Schellen frei|in Grün frei|in Rot frei|in Eichel frei', d: 'Wer von einer Farbe keine Karte (mehr) hat, ist in dieser Farbe frei. Er muss nicht bedienen und darf stechen oder abwerfen.' },
+    blank: { t: 'Blank', re: 'blank|blanke|blanken', d: 'Eine Karte ist blank, wenn sie die einzige ihrer Farbe in deinem Blatt ist. „Blank drücken“ heißt: alle Karten einer Farbe in den Skat legen.' },
+    kontra: { t: 'Kontra und Re', re: 'Kontra', d: 'Hausregel: Ein Gegenspieler verdoppelt mit „Kontra“ den Spielwert. Der Alleinspieler kann mit „Re“ noch einmal verdoppeln.' },
+    ramsch: { t: 'Ramsch', re: 'Ramsch', d: 'Hausregel: Passen alle, spielt jeder für sich. Nur die Buben sind Trumpf, und es verliert, wer die meisten Augen bekommt.' },
     ueberreizt: { t: 'Überreizt', re: 'überreizt|Überreizt|überreizen', d: 'Das Spiel ist am Ende weniger wert als der Reizwert. Dann ist es verloren – auch mit 61 Augen.' },
   };
 
@@ -2452,6 +2750,124 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
     },
   };
 
+  // Ein Spiel der Computergegner bis zu k gespielten Stichen (ohne Null)
+  function simTricks(kMin, kMax) {
+    for (;;) {
+      const dealer = ri(3);
+      const st = E.newGame(dealer, E.deal(dealer, R));
+      while (st.phase === 'bidding') { const p = E.biddingActor(st); E.bidAction(st, p, B.bidAction(st, p)); }
+      if (st.phase === 'eingepasst') continue;
+      B.declare(st);
+      if (st.game.gt === GT_NULL) continue;
+      const k = kMin + ri(kMax - kMin + 1);
+      while (st.phase === 'play' && st.tricks.length < k) E.playCard(st, st.turn, B.play(st, st.turn));
+      if (st.trick.length === 0 && st.phase === 'play') return st;
+    }
+  }
+  const PN = ['Du', 'Lena', 'Tom'];
+  const shown = (st) => ({ tricksShown: st.tricks.map((t) => t.cards.map((x) => x.c)), tricksBy: st.tricks.map((t) => t.cards.map((x) => PN[x.p])) });
+
+  DRILLS.abrechnen = {
+    title: 'Abrechnen', stage: 2, desc: 'Gewonnen, verloren oder überreizt – wie viele Punkte?',
+    how: '1. Stufen zählen: Spitzen + 1, dazu Hand und Schneider. 2. Mal Grundwert = Spielwert. 3. Spielwert kleiner als der Reizwert? Dann überreizt. 4. Gewonnen: plus Spielwert. Verloren: minus das Doppelte.',
+    gen(ctx) {
+      const c = ctxOf(ctx);
+      const gt = R() < 0.2 ? GT_GRAND : ri(4);
+      const base = E.BASE[gt];
+      const n = gt === GT_GRAND ? 1 + ri(2) : 1 + ri(3);
+      const mit = R() < 0.6;
+      const hand = c.i >= 3 && R() < 0.2;
+      const x = R();
+      const augen = c.i < 2 ? 61 + ri(29) : x < 0.45 ? 61 + ri(29) : x < 0.6 ? 90 + ri(20) : x < 0.9 ? 31 + ri(30) : 12 + ri(19);
+      const sch = augen >= 90 || augen <= 30;
+      const lv = n + 1 + (hand ? 1 : 0) + (sch ? 1 : 0);
+      const value = lv * base;
+      const plain = (n + 1 + (hand ? 1 : 0)) * base;
+      const over = c.i >= 4 && R() < 0.25;
+      const bids = E.BID_VALUES.filter((b) => (over ? b > value && b <= value + 2 * base : b <= plain));
+      const bid = bids.length ? (over ? bids[0] : bids[Math.max(0, bids.length - 1 - ri(3))]) : 18;
+      const isOver = value < bid;
+      const lostValue = isOver ? Math.ceil(bid / base) * base : value;
+      const won = !isOver && augen >= 61;
+      const res = won ? value : -2 * lostValue;
+      const fmt = (v) => (v > 0 ? '+' : '−') + Math.abs(v);
+      const set = new Set([res]);
+      for (const v of shuffle([value, -value, -2 * value, plain, -2 * plain, -lostValue, 2 * value, value + base, -2 * (value + base), bid, -2 * bid])) { if (set.size >= 4) break; if (v !== 0) set.add(v); }
+      const opts = [...set].sort((a, b) => b - a);
+      const parts = [(mit ? 'mit ' : 'ohne ') + n + ' → ' + n, 'Spiel 1'].concat(hand ? ['Hand 1'] : [], sch ? ['Schneider 1'] : []);
+      const ex = [parts.join(' + ') + ' = ' + lv + ' Stufen. ' + lv + ' × ' + base + ' = Spielwert <b>' + value + '</b>.'];
+      if (sch) ex.push(augen >= 90 ? augen + ' Augen: Die Gegner haben nur ' + (120 - augen) + ' – Schneider.' : 'Nur ' + augen + ' Augen: Der Alleinspieler ist selbst Schneider – auch das zählt eine Stufe.');
+      if (isOver) ex.push('Gereizt wurde ' + bid + ', das Spiel ist nur ' + value + ' wert: <b>überreizt</b>. Abgerechnet wird das nächste Vielfache von ' + base + ' ab ' + bid + ' = ' + lostValue + ', doppelt abgezogen: <b>' + fmt(res) + '</b>.');
+      else if (won) ex.push(augen + ' Augen reichen (61 nötig): gewonnen, <b>' + fmt(res) + '</b>.');
+      else ex.push(augen + ' Augen reichen nicht (61 nötig): verloren, doppelt abgezogen: <b>' + fmt(res) + '</b>.');
+      return {
+        kind: 'choice',
+        text: gtag(gt) + ' Der Alleinspieler spielt <b>' + E.GAME_NAMES[gt] + ' ' + (mit ? 'mit ' : 'ohne ') + n + (hand ? ', Hand' : '') + '</b>. Gereizt: <b>' + bid + '</b>. Er holt <b>' + augen + ' Augen</b>. Was wird ihm aufgeschrieben?',
+        options: opts.map(fmt), answer: opts.indexOf(res), explain: steps(ex),
+      };
+    },
+  };
+
+  DRILLS.frei = {
+    title: 'Wer ist frei?', stage: 4, desc: 'Erkenne, wem welche Farbe fehlt.',
+    how: 'Geh die Stiche durch: Die erste Karte bestimmt die Farbe. Wer eine andere Farbe legt, hat die gefragte nicht mehr.',
+    gen() {
+      for (;;) {
+        const st = simTricks(4, 6);
+        const gt = st.game.gt;
+        const led = new Set(), voids = { 1: {}, 2: {} };
+        st.tricks.forEach((t, i) => {
+          const e = effSuit(t.cards[0].c, gt);
+          led.add(e);
+          for (const x of t.cards.slice(1)) if (x.p !== 0 && effSuit(x.c, gt) !== e) (voids[x.p][e] = voids[x.p][e] || []).push(i + 1);
+        });
+        const cands = [...led];
+        const withVoid = cands.filter((e) => voids[1][e] || voids[2][e]);
+        if (!withVoid.length && R() < 0.85) continue;
+        const e = withVoid.length && R() < 0.8 ? pick(withVoid) : pick(cands);
+        const a = !!voids[1][e], b = !!voids[2][e];
+        const answer = a && b ? 2 : a ? 0 : b ? 1 : 3;
+        const nm = need(e);
+        const why = [1, 2].filter((p) => voids[p][e]).map((p) => PN[p] + ' hat im ' + voids[p][e][0] + '. Stich nicht ' + nm + ' gelegt, obwohl ' + nm + ' gefragt war.');
+        return {
+          kind: 'choice', gt, ...shown(st), hand: E.sortHand(st.hands[0], gt),
+          text: gtag(gt) + ' ' + st.tricks.length + ' Stiche sind gespielt, ' + PN[st.declarer] + (st.declarer === 0 ? ' bist' : ' ist') + ' Alleinspieler. Wer kann <b>' + nm + '</b> sicher nicht mehr bedienen?',
+          options: ['Lena', 'Tom', 'Beide', 'Das ist noch nicht zu erkennen'], answer,
+          explain: why.length ? why.join(' ') + ' Wer nicht bedient, ist in der Farbe frei.' : 'Immer wenn ' + nm + ' gefragt war, haben Lena und Tom ' + nm + ' gelegt. Sicher frei ist noch niemand.',
+        };
+      }
+    },
+  };
+
+  DRILLS.hoechste = {
+    title: 'Was steht?', stage: 5, desc: 'Welche Karte einer Farbe ist jetzt die höchste?',
+    how: 'Reihenfolge in den Fehlfarben: ' + SUIT_ORDER + '. Streiche, was schon gefallen ist – die höchste übrige Karte „steht“.',
+    gen() {
+      for (;;) {
+        const st = simTricks(4, 7);
+        const gt = st.game.gt;
+        const gone = new Set(st.tricks.flatMap((t) => t.cards.map((x) => x.c)));
+        const suits = [0, 1, 2, 3].filter((s) => s !== gt);
+        const info = suits.map((s) => {
+          const all = [6, 5, 4, 3, 2, 1, 0].map((r) => E.card(s, r));
+          return { s, all, left: all.filter((c) => !gone.has(c)), played: all.filter((c) => gone.has(c)) };
+        }).filter((x) => x.left.length >= 2 && x.played.length >= 2 && gone.has(x.all[0]));
+        if (!info.length) continue;
+        const x = pick(info);
+        const top = x.left[0];
+        const opts = [top];
+        for (const c of x.played.concat(x.left.slice(1))) { if (opts.length >= 4) break; if (!opts.includes(c)) opts.push(c); }
+        opts.sort((a, b) => x.all.indexOf(a) - x.all.indexOf(b));
+        return {
+          kind: 'choice', gt, ...shown(st), hand: E.sortHand(st.hands[0], gt),
+          text: gtag(gt) + ' ' + st.tricks.length + ' Stiche sind gespielt. Welche ist die höchste <b>' + E.SUIT_NAMES[x.s] + '</b>-Karte, die noch nicht gefallen ist?',
+          options: opts.map(tok), answer: opts.indexOf(top),
+          explain: 'Gefallen sind in ' + E.SUIT_NAMES[x.s] + ': ' + x.played.map(tok).join(' ') + '. Die höchste übrige Karte ist ' + tok(top) + ' – sie steht.',
+        };
+      }
+    },
+  };
+
   // Taktik-Aufgaben aus content.js
   function tacticQuestion(t) {
     const gtMap = { Karo: 0, Herz: 1, Pik: 2, Kreuz: 3, Grand: 4, Null: 5 };
@@ -2462,13 +2878,92 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
     return {
       kind: 'pick', multi: false, gt, hand, legal, trick, title: t.title,
       how: 'Wer liegt im Stich vorn? Kommt noch jemand nach dir? Was bringt deiner Seite die meisten Augen?',
-      text: gtag(gt) + ' ' + t.role + '. Welche Karte spielst du?',
+      text: gtag(gt) + ' ' + t.role.replace(/\.$/, '') + '. Welche Karte spielst du?',
       answer: t.ok.map(parse), explain: t.why,
     };
   }
 
-  const ORDER = ['augen', 'trumpf', 'bedienen', 'stich', 'spitzen', 'spielwert', 'reizwerte', 'reizen', 'druecken', 'schmieren', 'mitzaehlen', 'truempfe'];
+  const ORDER = ['augen', 'trumpf', 'bedienen', 'stich', 'spitzen', 'spielwert', 'reizwerte', 'abrechnen', 'reizen', 'druecken', 'schmieren', 'mitzaehlen', 'truempfe', 'frei', 'hoechste'];
   G.SDRILLS = { DRILLS, ORDER, tacticQuestion, tok, row, parse, discardReason };
+})(typeof globalThis !== 'undefined' ? globalThis : window);
+
+/* 30-Tage-Plan, Serie und Wiederholung (ohne Oberfläche, damit es sich testen lässt)
+ * Aufgaben eines Tages: ['g', n] geführtes Spiel · ['l', id] Lektion · ['d', id] Übung · ['r'] Wiederholung
+ *   ['t', n] n Taktik-Aufgaben · ['x', n] Stufentest · ['p', n, modus?] n Übungsspiele (modus: mindestens 'normal' oder 'profi')
+ */
+(function (G) {
+  'use strict';
+
+  const DAYS = [
+    // Stufe 1 · Grundlagen
+    { stage: 1, title: 'Dein erstes Spiel', tasks: [['g', 1], ['l', 'ueberblick'], ['l', 'karten']] },
+    { stage: 1, title: 'Augen und Trumpf', tasks: [['d', 'augen'], ['l', 'trumpf'], ['d', 'trumpf']] },
+    { stage: 1, title: 'Bedienen und Stechen', tasks: [['l', 'bedienen'], ['d', 'bedienen'], ['r']] },
+    { stage: 1, title: 'Stiche gewinnen', tasks: [['l', 'stich'], ['d', 'stich'], ['g', 2]] },
+    { stage: 1, title: 'Stufentest Grundlagen', tasks: [['r'], ['x', 1]] },
+    // Stufe 2 · Reizen & Werten
+    { stage: 2, title: 'Grand, Null und der Skat', tasks: [['l', 'grandnull'], ['l', 'skat'], ['r']] },
+    { stage: 2, title: 'Spitzen', tasks: [['l', 'spitzen'], ['d', 'spitzen'], ['r']] },
+    { stage: 2, title: 'Der Spielwert', tasks: [['l', 'spielwert'], ['d', 'spielwert']] },
+    { stage: 2, title: 'Reizen', tasks: [['l', 'reizen'], ['d', 'reizwerte'], ['r']] },
+    { stage: 2, title: 'Abrechnen', tasks: [['l', 'abrechnung'], ['d', 'abrechnen'], ['g', 3]] },
+    { stage: 2, title: 'Stufentest Reizen', tasks: [['r'], ['x', 2], ['p', 2]] },
+    // Stufe 3 · Taktik
+    { stage: 3, title: 'Ein Blatt bewerten', tasks: [['l', 'bewerten'], ['d', 'reizen'], ['p', 2]] },
+    { stage: 3, title: 'Reizen mit Köpfchen', tasks: [['l', 'reizpraxis'], ['r'], ['p', 2]] },
+    { stage: 3, title: 'Richtig drücken', tasks: [['l', 'druecken'], ['d', 'druecken'], ['p', 2]] },
+    { stage: 3, title: 'Allein spielen', tasks: [['l', 'alleinspieler'], ['r'], ['p', 2]] },
+    { stage: 3, title: 'Zu zweit dagegen', tasks: [['l', 'gegenspieler'], ['d', 'schmieren'], ['p', 2]] },
+    { stage: 3, title: 'Nullspiele', tasks: [['l', 'nullspiel'], ['t', 6], ['p', 2]] },
+    { stage: 3, title: 'Spielpraxis', tasks: [['r'], ['t', 6], ['p', 3]] },
+    { stage: 3, title: 'Stufentest Taktik', tasks: [['r'], ['x', 3], ['p', 2]] },
+    // Stufe 4 · Mitzählen & Planen
+    { stage: 4, title: 'Augen mitzählen', tasks: [['l', 'mitzaehlen'], ['d', 'mitzaehlen'], ['p', 2, 'normal']] },
+    { stage: 4, title: 'Trümpfe zählen', tasks: [['l', 'zaehlen'], ['d', 'truempfe'], ['p', 2, 'normal']] },
+    { stage: 4, title: 'Karten lesen', tasks: [['l', 'lesen'], ['d', 'frei'], ['p', 2, 'normal']] },
+    { stage: 4, title: 'Grand und Chancen', tasks: [['l', 'grand'], ['l', 'chancen'], ['p', 3, 'normal']] },
+    { stage: 4, title: 'Zusammenspiel', tasks: [['l', 'partner'], ['t', 6], ['p', 2, 'normal']] },
+    { stage: 4, title: 'Stufentest Mitzählen', tasks: [['l', 'risiko'], ['r'], ['x', 4]] },
+    // Stufe 5 · Am Tisch bestehen
+    { stage: 5, title: 'Die letzten Stiche', tasks: [['l', 'endspiel'], ['d', 'hoechste'], ['p', 3, 'profi']] },
+    { stage: 5, title: 'Am echten Tisch', tasks: [['l', 'tisch'], ['t', 6], ['p', 3, 'profi']] },
+    { stage: 5, title: 'Hausregeln', tasks: [['l', 'kneipe'], ['r'], ['p', 3, 'profi']] },
+    { stage: 5, title: 'Generalprobe', tasks: [['r'], ['t', 6], ['p', 4, 'profi']] },
+    { stage: 5, title: 'Abschlussprüfung', tasks: [['x', 5], ['p', 3, 'profi']] },
+  ];
+  DAYS.forEach((d, i) => { d.n = i + 1; });
+
+  // Kalendertag als Zahl (Ortszeit); Wochentag 0 = Montag
+  const dayNum = (date) => { const d = date || new Date(); return Math.floor((d.getTime() - d.getTimezoneOffset() * 60000) / 86400000); };
+  const weekday = (n) => (((n + 3) % 7) + 7) % 7;
+
+  // Serie: zählt Tage in Folge mit mindestens einer abgeschlossenen Einheit. Ein „Joker“ überbrückt einen verpassten Tag.
+  function streakTouch(s, t) {
+    if (s.last === t) return false;
+    if (s.last === t - 1) s.n++;
+    else if (s.last === t - 2 && s.freeze > 0) { s.freeze--; s.n++; s.bridged = t - 1; }
+    else s.n = 1;
+    s.last = t;
+    s.best = Math.max(s.best || 0, s.n);
+    if (s.n % 7 === 0 && s.freeze < 2) s.freeze++;
+    return true;
+  }
+  const streakNow = (s, t) => (s.last != null && (s.last >= t - 1 || (s.last === t - 2 && s.freeze > 0)) ? s.n : 0);
+
+  // Wiederholung in wachsenden Abständen (Karteikasten): richtig → ein Fach weiter, falsch → zurück an den Anfang
+  const GAPS = [0, 1, 2, 4, 7, 14, 30];
+  function srsUpdate(srs, key, ok, t) {
+    const e = srs[key] || { b: 0, d: t };
+    e.b = ok ? Math.min(e.b + 1, GAPS.length - 1) : 0;
+    e.d = t + GAPS[e.b];
+    srs[key] = e;
+    return e;
+  }
+  const srsDue = (srs, keys, t) => keys.filter((k) => srs[k] && srs[k].d <= t).sort((a, b) => srs[a].d - srs[b].d || srs[a].b - srs[b].b);
+
+  const MODE_RANK = { lern: 0, normal: 1, profi: 2 };
+
+  G.SPLAN = { DAYS, dayNum, weekday, streakTouch, streakNow, GAPS, srsUpdate, srsDue, MODE_RANK };
 })(typeof globalThis !== 'undefined' ? globalThis : window);
 
 /* Oberfläche: Lernpfad, Lektionen, Übungen, Übungsspiel, Fortschritt */
@@ -2485,7 +2980,8 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
   const lsGet = (k) => { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : null; } catch (e) { return null; } };
   const lsSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* kein Speicher */ } };
   const lsDel = (k) => { try { localStorage.removeItem(k); } catch (e) { /* */ } };
-  const defaults = () => ({ v: 1, updatedAt: 0, lessons: {}, drills: {}, tactics: {}, games: [], list: [], guides: {}, countChecks: { ok: 0, total: 0 }, settings: { help: 'lern', tempo: 'normal', deck: 'de' }, dealer: null });
+  const defaults = () => ({ v: 1, updatedAt: 0, lessons: {}, drills: {}, tactics: {}, games: [], list: [], guides: {}, countChecks: { ok: 0, total: 0 }, settings: { help: 'lern', tempo: 'normal', deck: 'de', sound: true }, dealer: null,
+    xp: 0, days: {}, perfect: 0, streak: { n: 0, last: null, best: 0, freeze: 1, bridged: null }, plan: { start: null, flags: {}, base: {}, doneOn: {}, skip: {} }, srs: {}, exams: {}, ach: {} });
   let P = normalize(lsGet(LS_P));
   function normalize(x) {
     const d = defaults();
@@ -2494,6 +2990,10 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
     o.settings = Object.assign(defaults().settings, x.settings || {});
     o.countChecks = Object.assign({ ok: 0, total: 0 }, x.countChecks || {});
     o.guides = Object.assign({}, x.guides || {});
+    o.streak = Object.assign(defaults().streak, x.streak || {});
+    o.plan = Object.assign(defaults().plan, x.plan || {});
+    for (const k of ['days', 'srs', 'exams', 'ach']) o[k] = Object.assign({}, x[k] || {});
+    o.xp = Number(x.xp) || 0; o.perfect = Number(x.perfect) || 0;
     return o;
   }
   function save() {
@@ -2642,6 +3142,15 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
     ueben: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/></svg>',
     spielen: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="3" y="5" width="10" height="14" rx="2" transform="rotate(-10 8 12)"/><rect x="11" y="4" width="10" height="14" rx="2" transform="rotate(8 16 11)"/></svg>',
     fortschritt: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>',
+    flame: '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12.6 1.6c.5 3.4-1 5.2-2.7 7C8.2 10.400 6 12.300 6 15.600 6 19.300 8.700 22 12 22s6-2.700 6-6.400c0-2.300-1-4.100-2.200-5.700-.5 1.500-1.300 2.400-2.300 2.900.6-3.700-.2-7.900-.9-11.200z"/><path fill="#fff" opacity=".55" d="M12 20.300c-1.700 0-3-1.300-3-3.100 0-1.700 1.300-2.700 3-4.800 1.700 2.100 3 3.100 3 4.800 0 1.800-1.300 3.100-3 3.100z"/></svg>',
+    bolt: '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M13.5 1.500 4 13.500h6.200L9 22.500l10-12.600h-6.400z"/></svg>',
+    lock: '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2.500"/><path d="M8 11V7.500a4 4 0 0 1 8 0V11"/></svg>',
+    check: '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.500l4.500 4.500L19 7.500"/></svg>',
+    cross: '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M6.500 6.500l11 11M17.500 6.500l-11 11"/></svg>',
+    close: '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.400" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+    repeat: '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.200" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11a8 8 0 0 1 13.700-5.300L20 8M20 3.500V8h-4.500M20 13a8 8 0 0 1-13.700 5.300L4 16M4 20.500V16h4.500"/></svg>',
+    bulb: '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21.500h4M12 2.500a6.500 6.500 0 0 0-3.800 11.800c.5.400.8 1 .8 1.700h6c0-.7.300-1.300.8-1.700A6.500 6.500 0 0 0 12 2.500z"/></svg>',
+    trophy: '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4h10v5a5 5 0 0 1-10 0zM7 6H4v1.500A3.500 3.500 0 0 0 7.500 11M17 6h3v1.500a3.500 3.500 0 0 1-3.500 3.500M12 14v4M8.500 21h7M9.500 18h5"/></svg>',
   };
 
   // ================= Stufen =================
@@ -2655,7 +3164,7 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
     const next = ls.find((l) => !lessonDone(l.id));
     return { t: 'Lektionen der Stufe ' + stage, ok: done === ls.length, pv: done + '/' + ls.length, href: next ? '#lektion-' + next.id : null, label: next ? 'Lektion „' + next.title + '“' : '' };
   }
-  const reqDrill = (id) => ({ t: 'Übung „' + dTitle(id) + '“ mit 80\u00a0%', ok: drillBest(id) >= 80, pv: drillBest(id) ? drillBest(id) + '\u00a0%' : '–', href: '#uebung-' + id, label: 'Übung „' + dTitle(id) + '“' });
+  const reqDrill = (id) => ({ t: 'Übung „' + dTitle(id) + '“ mit 80 %', ok: drillBest(id) >= 80, pv: drillBest(id) ? drillBest(id) + ' %' : '–', href: '#uebung-' + id, label: 'Übung „' + dTitle(id) + '“' });
   function reqTactics(maxStage, need) {
     const ts = C.TACTICS.filter((t) => t.stage <= maxStage);
     const n = ts.filter((t) => P.tactics[t.id]).length;
@@ -2664,32 +3173,34 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
   const GUIDES = [
     { n: 1, stage: 1, t: 'Dein erstes Spiel', d: 'Karten, Stiche, Trumpf – jeder Zug wird erklärt' },
     { n: 2, stage: 1, t: 'Zu zweit gegen einen', d: 'Als Partnerin von Lena: gemeinsam gegen Tom' },
-    { n: 3, stage: 2, after: true, t: 'Reizen und Skat', d: 'Abschluss von Stufe 2: ein ganzes Spiel, vom Reizen bis zur Abrechnung' },
+    { n: 3, stage: 2, after: true, t: 'Reizen und Skat', d: 'Ein ganzes Spiel, vom Reizen bis zur Abrechnung' },
   ];
   const guideDone = (n) => !!(P.guides[n] && P.guides[n].done);
   const reqGuide = (n) => { const g = GUIDES[n - 1]; return { t: 'Geführtes Spiel „' + g.t + '“', ok: guideDone(n), pv: guideDone(n) ? '✓' : '–', href: '#gefuehrt-' + n, label: 'Geführtes Spiel „' + g.t + '“' }; };
   const reqGames = (n) => ({ t: n + ' Übungsspiele gespielt', ok: P.games.length >= n, pv: Math.min(P.games.length, n) + '/' + n, href: '#spielen', label: 'Übungsspiel' });
   function reqProfi(n) {
     const k = P.games.filter((g) => g.mode === 'profi').length;
-    return { t: n + ' Spiele im Profi-Modus (ohne Hilfen)', ok: k >= n, pv: Math.min(k, n) + '/' + n, href: '#spielen', label: 'Spiel im Profi-Modus', profi: true };
+    return { t: n + ' Spiele im Profi-Modus (ohne Hilfen)', ok: k >= n, pv: Math.min(k, n) + '/' + n, href: '#spielen-profi', label: 'Spiel im Profi-Modus', profi: true };
   }
-  const reqCount = (n) => ({ t: n + ' Mitzähl-Proben im Spiel richtig', ok: P.countChecks.ok >= n, pv: Math.min(P.countChecks.ok, n) + '/' + n, href: '#spielen', label: 'Spiel mit Mitzähl-Probe', profi: true });
+  const reqCount = (n) => ({ t: n + ' Mitzähl-Proben im Spiel richtig', ok: P.countChecks.ok >= n, pv: Math.min(P.countChecks.ok, n) + '/' + n, href: '#spielen-normal', label: 'Spiel mit Mitzähl-Probe', profi: true });
   function reqDecl() {
     const g = P.games.slice(-40).filter((x) => x.decl);
     const w = g.filter((x) => x.won).length;
     const rate = g.length ? w / g.length : 0;
-    return { t: 'Als Alleinspieler ≥ 65\u00a0% gewonnen (mind. 8 Spiele, letzte 40)', ok: g.length >= 8 && rate >= 0.65, pv: g.length ? Math.round(rate * 100) + '\u00a0% von ' + g.length : '–', href: '#spielen', label: 'Übungsspiel' };
+    return { t: 'Als Alleinspieler ≥ 65 % gewonnen (mind. 8 Spiele, letzte 40)', ok: g.length >= 8 && rate >= 0.65, pv: g.length ? Math.round(rate * 100) + ' % von ' + g.length : '–', href: '#spielen', label: 'Übungsspiel' };
   }
   function reqCoach() {
     const g = P.games.filter((x) => x.mode === 'profi').slice(-10);
     const avg = g.length ? g.reduce((a, x) => a + x.coach, 0) / g.length : 9;
-    return { t: 'Höchstens 0,5 Patzer pro Spiel (letzte 10 Profi-Spiele)', ok: g.length >= 10 && avg <= 0.5, pv: g.length ? avg.toFixed(1).replace('.', ',') + ' (' + g.length + ')' : '–', href: '#spielen', label: 'Spiel im Profi-Modus', profi: true };
+    return { t: 'Höchstens 0,5 Patzer pro Spiel (letzte 10 Profi-Spiele)', ok: g.length >= 10 && avg <= 0.5, pv: g.length ? avg.toFixed(1).replace('.', ',') + ' (' + g.length + ')' : '–', href: '#spielen-profi', label: 'Spiel im Profi-Modus', profi: true };
   }
+  const examPassed = (n) => !!(P.exams[n] && P.exams[n].passed);
+  const reqExam = (n) => ({ t: n < 5 ? 'Stufentest ' + n + ' bestanden' : 'Abschlussprüfung bestanden', ok: examPassed(n), pv: P.exams[n] ? P.exams[n].best + ' %' : '–', href: '#test-' + n, label: n < 5 ? 'Stufentest ' + n : 'Abschlussprüfung' });
   const REQ = {
-    2: () => [reqGuide(1), reqGuide(2), reqLessons(1), reqDrill('augen'), reqDrill('trumpf'), reqDrill('bedienen'), reqDrill('stich')],
-    3: () => [reqLessons(2), reqGuide(3), reqDrill('spitzen'), reqDrill('spielwert'), reqDrill('reizwerte'), reqGames(3)],
-    4: () => [reqLessons(3), reqDrill('reizen'), reqDrill('druecken'), reqDrill('schmieren'), reqTactics(3, 9), reqGames(10)],
-    5: () => [reqLessons(4), reqDrill('mitzaehlen'), reqDrill('truempfe'), reqTactics(4, 13), reqProfi(15), reqCount(5), reqDecl(), reqCoach()],
+    2: () => [reqGuide(1), reqGuide(2), reqLessons(1), reqDrill('augen'), reqDrill('trumpf'), reqDrill('bedienen'), reqDrill('stich'), reqExam(1)],
+    3: () => [reqLessons(2), reqGuide(3), reqDrill('spitzen'), reqDrill('spielwert'), reqDrill('reizwerte'), reqDrill('abrechnen'), reqExam(2), reqGames(3)],
+    4: () => [reqLessons(3), reqDrill('reizen'), reqDrill('druecken'), reqDrill('schmieren'), reqTactics(3, 9), reqExam(3), reqGames(10)],
+    5: () => [reqLessons(4), reqLessons(5), reqDrill('mitzaehlen'), reqDrill('truempfe'), reqDrill('frei'), reqDrill('hoechste'), reqTactics(4, 18), reqExam(4), reqExam(5), reqProfi(15), reqCount(5), reqDecl(), reqCoach()],
   };
   function levelInfo() {
     let level = 1;
@@ -2703,17 +3214,143 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
     const L = LEVELS[li.level - 1];
     const lad = LEVELS.map((x, i) => '<span class="' + (i < li.level ? 'on' : i === li.level ? 'part' : '') + '" style="--p:' + Math.round(li.part * 100) + '%"></span>').join('');
     const sub = li.next ? 'Nächste Stufe: ' + LEVELS[li.next.n - 1].name + ' · ' + li.next.reqs.filter((r) => r.ok).length + ' von ' + li.next.reqs.length + ' Zielen erreicht' : 'Höchste Stufe erreicht – du spielst Skat auf Vereinsniveau.';
-    return '<a class="levelcard" href="#fortschritt" style="text-decoration:none"><div class="lv"><div class="num">' + li.level + '</div><div><div class="eyebrow" style="color:inherit;opacity:.75">Stufe ' + li.level + ' von 5</div><h2>' + L.name + '</h2></div></div><div class="ladder">' + lad + '</div><div class="sub">' + sub + '</div></a>';
+    return '<div class="levelcard"><div class="lv"><div class="num">' + li.level + '</div><div><div class="eyebrow" style="color:inherit;opacity:.75">Stufe ' + li.level + ' von 5</div><h2>' + L.name + '</h2></div></div><div class="ladder">' + lad + '</div><div class="sub">' + sub + '</div></div>';
   }
-  function nextUp() {
-    const li = levelInfo();
-    if (!li.next) return { href: '#spielen', t: 'Weiterspielen', d: 'Halte dein Niveau im Profi-Modus.' };
-    const r = li.next.reqs.find((x) => !x.ok);
-    return { href: r.href, t: r.label, d: r.t };
+
+  // ================= 30-Tage-Plan, XP, Serie =================
+  const PL = window.SPLAN;
+  const DAYS = PL.DAYS;
+  const today = () => PL.dayNum();
+  const shuffle = (a) => a.map((x) => [Math.random(), x]).sort((p, q) => p[0] - q[0]).map((x) => x[1]);
+  const LESSON = (id) => C.LESSONS.find((l) => l.id === id);
+  const skipped = (stage) => !!P.plan.skip[stage];
+  // Stoff gilt als bekannt, wenn die Lektion gemacht oder die Stufe per Test übersprungen ist
+  const knows = (id) => { const l = LESSON(id); return lessonDone(id) || !!(l && skipped(l.stage)); };
+  const modeOk = (g, mode) => !mode || PL.MODE_RANK[g.mode || 'lern'] >= PL.MODE_RANK[mode];
+  function gamesFor(d, t) {
+    const b = P.plan.base[d.n];
+    return b ? P.games.filter((g) => g.t >= b.t && modeOk(g, t[2])).length : 0;
+  }
+  function taskDone(d, i) {
+    const t = d.tasks[i];
+    if (t[0] === 'g') return guideDone(t[1]);
+    if (t[0] === 'l') return lessonDone(t[1]);
+    if (t[0] === 'd') return drillBest(t[1]) >= 80 || drillEnough(t[1]);
+    if (t[0] === 'x') return examPassed(t[1]);
+    if (t[0] === 'p') return gamesFor(d, t) >= t[1];
+    return !!P.plan.flags[d.n + ':' + i];
+  }
+  // Wer nach vier Runden bei 60 % steht, kommt im Plan weiter; die Übung bleibt in der Wiederholung
+  const drillEnough = (id) => !!(P.drills[id] && P.drills[id].sessions >= 4 && P.drills[id].best >= 60);
+  const dayDone = (d) => skipped(d.stage) || d.tasks.every((_, i) => taskDone(d, i));
+  const curDay = () => DAYS.find((d) => !dayDone(d)) || null;
+  function taskInfo(d, i) {
+    const t = d.tasks[i], done = taskDone(d, i);
+    const o = { done, k: t[0] };
+    if (t[0] === 'g') { const g = GUIDES[t[1] - 1]; Object.assign(o, { icon: ICON.spielen, label: 'Geführtes Spiel', short: g.t, sub: g.t + ' – ' + g.d, href: '#gefuehrt-' + g.n }); }
+    else if (t[0] === 'l') { const l = LESSON(t[1]); Object.assign(o, { icon: ICON.lernen, label: 'Lektion: ' + T(l.title), short: T(l.title), sub: 'ca. ' + l.min + ' Minuten', href: '#lektion-' + l.id }); }
+    else if (t[0] === 'd') { const b = drillBest(t[1]); Object.assign(o, { icon: ICON.ueben, label: 'Übung: ' + dTitle(t[1]), short: dTitle(t[1]), sub: b && !done ? 'Bestwert ' + b + ' % – 80 % brauchst du' : '10 Aufgaben · bestanden ab 80 %', href: '#uebung-' + t[1], pv: b ? b + ' %' : '' }); }
+    else if (t[0] === 'r') Object.assign(o, { icon: ICON.repeat, label: 'Wiederholung', short: 'Wiederholung', sub: 'Gemischte Aufgaben – deine Fehler zuerst', href: '#wiederholen' });
+    else if (t[0] === 't') Object.assign(o, { icon: ICON.bulb, label: t[1] + ' Taktik-Aufgaben', short: 'Taktik-Aufgaben', sub: 'Welche Karte ist jetzt richtig?', href: '#taktik' });
+    else if (t[0] === 'x') Object.assign(o, { icon: ICON.trophy, label: t[1] < 5 ? 'Stufentest ' + t[1] : 'Abschlussprüfung', short: t[1] < 5 ? 'Stufentest' : 'Abschlussprüfung', sub: 'Gemischte Aufgaben · bestanden ab 80 %', href: '#test-' + t[1], pv: P.exams[t[1]] ? P.exams[t[1]].best + ' %' : '' });
+    else { const n = Math.min(gamesFor(d, t), t[1]); Object.assign(o, { icon: ICON.spielen, label: t[1] + ' Übungsspiele' + (t[2] === 'profi' ? ' im Profi-Modus' : ''), short: 'Übungsspiel', sub: t[2] === 'profi' ? 'Ohne Hilfen – wie am echten Tisch' : t[2] === 'normal' ? 'Modus „Normal“: mit Mitzähl-Probe, ohne Augenanzeige' : 'Gegen Lena und Tom, mit Tipps und Coach', href: '#spielen' + (t[2] ? '-' + t[2] : ''), pv: n + '/' + t[1] }); }
+    return o;
+  }
+  // Hält fest, welche Tage fertig sind, und startet die Zählung für den aktuellen Tag
+  function syncPlan() {
+    const t = today(), fresh = [];
+    let changed = false;
+    for (const d of DAYS) {
+      if (dayDone(d)) {
+        if (P.plan.doneOn[d.n] == null) { P.plan.doneOn[d.n] = t; changed = true; if (!skipped(d.stage)) fresh.push(d); }
+        continue;
+      }
+      if (!P.plan.base[d.n]) { P.plan.base[d.n] = { t: Date.now() }; changed = true; }
+      break;
+    }
+    if (changed) save();
+    return fresh;
+  }
+  function planFlag(kind) {
+    const d = curDay();
+    if (!d) return;
+    const i = d.tasks.findIndex((t, k) => t[0] === kind && !P.plan.flags[d.n + ':' + k]);
+    if (i >= 0) P.plan.flags[d.n + ':' + i] = true;
+  }
+  const goalToday = () => Object.keys(P.plan.doneOn).some((k) => P.plan.doneOn[k] === today() && !skipped(DAYS[k - 1].stage));
+  function paceText() {
+    const cur = curDay();
+    if (!cur) return 'Alle 30 Tage geschafft';
+    if (P.plan.start == null) return '15–25 Minuten am Tag';
+    const cal = today() - P.plan.start + 1;
+    const diff = cur.n - cal;
+    if (diff >= 2) return (diff - 1) + (diff === 2 ? ' Tag' : ' Tage') + ' voraus';
+    if (diff === 1) return 'Tagesziel erreicht – du liegst im Plan';
+    if (diff === 0) return 'Du liegst im Plan';
+    return -diff + (diff === -1 ? ' Tag' : ' Tage') + ' zurück – eine zweite Einheit holt auf';
+  }
+  function award(xp) {
+    const t = today();
+    P.xp += xp;
+    P.days[t] = (P.days[t] || 0) + xp;
+    if (P.plan.start == null) P.plan.start = t;
+    const inc = PL.streakTouch(P.streak, t);
+    save();
+    return inc;
+  }
+  const streakNow = () => PL.streakNow(P.streak, today());
+  const ACH = [
+    { id: 'start', t: 'Erster Stich', d: 'Das erste geführte Spiel beendet', ok: () => guideDone(1) },
+    { id: 'perfekt', t: 'Fehlerfrei', d: 'Eine Runde ohne einen Fehler', ok: () => P.perfect > 0 },
+    { id: 's3', t: 'Dranbleiben', d: '3 Tage in Folge gelernt', ok: () => P.streak.best >= 3 },
+    { id: 's7', t: 'Eine Woche', d: '7 Tage in Folge gelernt', ok: () => P.streak.best >= 7 },
+    { id: 's14', t: 'Zwei Wochen', d: '14 Tage in Folge gelernt', ok: () => P.streak.best >= 14 },
+    { id: 's30', t: 'Ein Monat', d: '30 Tage in Folge gelernt', ok: () => P.streak.best >= 30 },
+    { id: 'x1', t: 'Regelfest', d: 'Stufentest 1 bestanden', ok: () => examPassed(1) },
+    { id: 'x2', t: 'Reizkundig', d: 'Stufentest 2 bestanden', ok: () => examPassed(2) },
+    { id: 'x3', t: 'Taktiker', d: 'Stufentest 3 bestanden', ok: () => examPassed(3) },
+    { id: 'x4', t: 'Mitzähler', d: 'Stufentest 4 bestanden', ok: () => examPassed(4) },
+    { id: 'g10', t: 'Stammgast', d: '10 Übungsspiele gespielt', ok: () => P.games.length >= 10 },
+    { id: 'g50', t: 'Dauerbrenner', d: '50 Übungsspiele gespielt', ok: () => P.games.length >= 50 },
+    { id: 'grand', t: 'Großes Spiel', d: 'Einen Grand als Alleinspieler gewonnen', ok: () => P.games.some((g) => g.decl && g.won && g.gt === 4) },
+    { id: 'null', t: 'Kein Stich', d: 'Ein Nullspiel als Alleinspieler gewonnen', ok: () => P.games.some((g) => g.decl && g.won && g.gt === 5) },
+    { id: 'profi', t: 'Ohne Netz', d: 'Im Profi-Modus als Alleinspieler gewonnen', ok: () => P.games.some((g) => g.decl && g.won && g.mode === 'profi') },
+    { id: 'zaehler', t: 'Im Kopf', d: '5 Mitzähl-Proben richtig', ok: () => P.countChecks.ok >= 5 },
+    { id: 'x5', t: 'Skat-Diplom', d: 'Abschlussprüfung bestanden', ok: () => examPassed(5) },
+    { id: 'plan', t: '30 Tage', d: 'Den ganzen Plan geschafft', ok: () => !curDay() },
+  ];
+  function checkAch() {
+    const fresh = [];
+    for (const a of ACH) if (!P.ach[a.id] && a.ok()) { P.ach[a.id] = today(); fresh.push(a); }
+    if (fresh.length) save();
+    return fresh;
+  }
+  // kurze Töne für richtig, falsch, geschafft
+  let AC = null;
+  function beep(kind) {
+    if (!P.settings.sound) return;
+    try {
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      if (!Ctx) return;
+      AC = AC || new Ctx();
+      const seq = { ok: [[660, 0], [880, 0.09]], no: [[233, 0], [185, 0.13]], win: [[523, 0], [659, 0.1], [784, 0.2], [1047, 0.32]] }[kind];
+      for (const [f, at] of seq) {
+        const o = AC.createOscillator(), g = AC.createGain(), t0 = AC.currentTime + at;
+        o.type = kind === 'no' ? 'triangle' : 'sine';
+        o.frequency.value = f;
+        g.gain.setValueAtTime(0.0001, t0);
+        g.gain.exponentialRampToValueAtTime(0.1, t0 + 0.02);
+        g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.2);
+        o.connect(g); g.connect(AC.destination);
+        o.start(t0); o.stop(t0 + 0.22);
+      }
+    } catch (e) { /* kein Ton */ }
   }
 
   // ================= Router =================
   let view = '';
+  let lastMain = '#lernen';
+  const SESSION_VIEWS = { lektion: 1, uebung: 1, taktik: 1, wiederholen: 1, test: 1 };
   function route() {
     const h = (location.hash || '#lernen').slice(1);
     const i = h.indexOf('-');
@@ -2722,196 +3359,298 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
     clearTimeout(gameTimer);
     closeSheet();
     view = name;
-    const tabOf = { lernen: 'lernen', lektion: 'lernen', gefuehrt: 'lernen', ueben: 'ueben', uebung: 'ueben', taktik: 'ueben', spielen: 'spielen', liste: 'spielen', fortschritt: 'fortschritt' };
+    syncPlan();
+    const tabOf = { lernen: 'lernen', lektion: 'lernen', gefuehrt: 'lernen', test: 'lernen', ueben: 'ueben', uebung: 'ueben', taktik: 'ueben', wiederholen: 'ueben', spielen: 'spielen', liste: 'spielen', fortschritt: 'fortschritt' };
     document.querySelectorAll('.tabbar a').forEach((a) => a.classList.toggle('on', a.dataset.tab === tabOf[name]));
     const table = name === 'spielen' || name === 'gefuehrt';
-    $('#app').classList.toggle('fullscreen', table);
+    $('#app').classList.toggle('fullscreen', table || !!SESSION_VIEWS[name]);
     document.body.classList.toggle('felt', table);
     const scr = $('#screen');
     scr.scrollTop = 0;
-    if (name === 'lektion' && C.LESSONS.some((l) => l.id === arg)) return viewLesson(arg);
+    if (name === 'lektion' && LESSON(arg)) return viewLesson(arg);
     if (name === 'uebung' && D.DRILLS[arg]) return viewDrill(arg);
     if (name === 'taktik') return viewDrill('taktik');
-    if (name === 'ueben') return viewDrills();
-    if (name === 'spielen') return viewGame();
+    if (name === 'wiederholen') return viewReview();
+    if (name === 'test' && arg >= 1 && arg <= 5) return viewExam(Number(arg));
+    $('#app').classList.toggle('fullscreen', table);
+    if (name === 'ueben') { lastMain = '#ueben'; return viewDrills(); }
+    if (name === 'spielen') return viewGame(arg);
     if (name === 'gefuehrt' && GUIDES[Number(arg) - 1]) return viewGuide(Number(arg));
     if (name === 'liste') return viewList();
     if (name === 'fortschritt') return viewProgress();
     view = 'lernen';
+    lastMain = '#lernen';
     return viewLearn();
   }
   const screen = (html) => { $('#screen').innerHTML = html; };
 
   // ================= Lernpfad =================
+  const OFFS = [0, 46, 72, 46, 0, -46, -72, -46];
+  function hud() {
+    const s = streakNow(), lit = P.streak.last === today();
+    return '<div class="hud"><a class="hud-i fire' + (lit ? ' lit' : '') + '" href="#fortschritt" aria-label="Serie: ' + s + ' Tage in Folge">' + ICON.flame + '<b>' + s + '</b></a>'
+      + '<a class="hud-i bolt" href="#fortschritt" aria-label="' + P.xp + ' Erfahrungspunkte">' + ICON.bolt + '<b>' + P.xp + '</b><small>XP</small></a></div>';
+  }
+  function weekStrip() {
+    const t = today(), mon = t - PL.weekday(t);
+    return '<div class="week" aria-label="Diese Woche">' + ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'].map((n, i) => {
+      const d = mon + i;
+      const cls = P.days[d] ? 'on' : P.streak.bridged === d ? 'joker' : '';
+      return '<span class="' + cls + (d === t ? ' now' : '') + (d > t ? ' future' : '') + '"><i>' + (P.days[d] ? ICON.check : '') + '</i>' + n + '</span>';
+    }).join('') + '</div>';
+  }
+  const ring = (done, total) => {
+    const c = 2 * Math.PI * 20, p = total ? done / total : 0;
+    return '<svg class="ring" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="20" class="rt"/><circle cx="24" cy="24" r="20" class="rv" stroke-dasharray="' + (c * p).toFixed(1) + ' ' + c.toFixed(1) + '" transform="rotate(-90 24 24)"/><text x="24" y="29" text-anchor="middle">' + done + '/' + total + '</text></svg>';
+  };
+  const taskRow = (x, cls, link) => {
+    const inner = '<span class="tk">' + (x.done ? ICON.check : x.icon) + '</span><span class="tx"><span class="t">' + esc(x.label) + '</span><span class="d">' + esc(x.sub) + '</span></span>' + (x.pv ? '<span class="pv">' + x.pv + '</span>' : '');
+    return '<li class="' + (x.done ? 'done ' : '') + cls + '">' + (link ? '<a href="' + x.href + '">' + inner + '</a>' : '<span class="a">' + inner + '</span>') + '</li>';
+  };
+  function todayCard() {
+    const cur = curDay();
+    if (!cur) {
+      const due = dueKeys().length;
+      return '<section class="today fin"><div class="eyebrow">30 von 30 Tagen</div><h2>Du hast den Plan geschafft!</h2><p>Jetzt zählt Spielpraxis. Halte dein Niveau mit einer kurzen Wiederholung und ein paar Spielen im Profi-Modus am Tag.</p><div class="btns"><a class="btn brass" href="#spielen-profi">Profi-Spiel</a><a class="btn ghostw" href="#wiederholen">Wiederholen' + (due ? ' (' + due + ')' : '') + '</a></div></section>';
+    }
+    const infos = cur.tasks.map((_, i) => taskInfo(cur, i));
+    const nd = infos.filter((x) => x.done).length;
+    const nx = infos.find((x) => !x.done);
+    const rest = goalToday() && nd === 0;
+    let h = '';
+    if (rest) h += '<div class="goalhit">' + ICON.check + '<div><b>Tagesziel erreicht!</b><br>Morgen geht es mit Tag ' + cur.n + ' weiter. Wenn du magst, arbeite schon vor.</div></div>';
+    h += '<section class="today' + (rest ? ' rest' : '') + '"><div class="today-h"><div><div class="eyebrow">' + (rest ? 'Als Nächstes' : 'Heute') + ' · Tag ' + cur.n + ' von 30</div><h2>' + esc(cur.title) + '</h2><div class="pace">' + paceText() + '</div></div>' + ring(nd, infos.length) + '</div>';
+    h += '<ol class="tasks">' + infos.map((x) => taskRow(x, x === nx ? 'next' : '', true)).join('') + '</ol>';
+    h += '<a class="btn big ' + (rest ? 'ghostw' : 'brass') + '" id="go" href="' + nx.href + '">' + (rest ? 'Schon vorarbeiten' : (nd || P.xp ? 'Weiter: ' : 'Start: ') + esc(nx.short)) + '</a></section>';
+    return h;
+  }
+  function pathHTML() {
+    const cur = curDay(), cn = cur ? cur.n : 31, cs = cur ? cur.stage : 6;
+    let h = '<div class="path">';
+    for (const L of LEVELS) {
+      const ds = DAYS.filter((d) => d.stage === L.n);
+      const last = ds[ds.length - 1].n;
+      const done = ds.filter((d) => d.n < cn).length;
+      h += '<div class="unit u' + L.n + '"><div><div class="eyebrow">Stufe ' + L.n + ' · Tag ' + ds[0].n + '–' + last + '</div><h3>' + L.short + '</h3><p>' + L.desc + '</p></div><span class="ucount">' + done + '/' + ds.length + '</span></div>';
+      if (L.n < 5 && !examPassed(L.n) && cn < last && (L.n === cs || L.n === cs + 1)) h += '<a class="jump" href="#test-' + L.n + '">' + ICON.trophy + '<span>Kannst du das schon? Mit dem Stufentest überspringen</span></a>';
+      h += '<div class="nodes u' + L.n + '">' + ds.map((d) => {
+        const state = d.n < cn ? 'done' : d.n === cn ? 'cur' : 'locked';
+        return '<button class="node ' + state + '" data-day="' + d.n + '" style="--x:' + OFFS[(d.n - 1) % OFFS.length] + 'px" aria-label="Tag ' + d.n + ': ' + esc(d.title) + (state === 'locked' ? ' (gesperrt)' : state === 'done' ? ' (erledigt)' : '') + '">'
+          + (state === 'cur' ? '<span class="startb">' + (P.xp ? 'Weiter' : 'Start') + '</span>' : '')
+          + '<span class="disc">' + (state === 'done' ? ICON.check : state === 'locked' ? ICON.lock : d.n) + '</span><span class="nl"><b>Tag ' + d.n + '</b> ' + esc(d.title) + '</span></button>';
+      }).join('') + '</div>';
+    }
+    return h + '</div>';
+  }
+  function daySheet(n) {
+    const d = DAYS[n - 1], cur = curDay(), cn = cur ? cur.n : 31;
+    const locked = n > cn;
+    let h = '<div class="eyebrow">Tag ' + n + ' von 30 · Stufe ' + d.stage + '</div><h2>' + esc(d.title) + '</h2>';
+    if (locked) h += '<p class="note">Noch gesperrt. Schließe zuerst Tag ' + cn + ' ab – oder überspringe die Stufe mit dem Stufentest.</p>';
+    else if (n < cn) h += '<p class="note">Erledigt. Du kannst jede Einheit wiederholen.</p>';
+    h += '<ol class="tasks plain">' + d.tasks.map((_, i) => { const x = taskInfo(d, i); if (n < cn) { x.done = true; if (x.k === 'p') x.pv = ''; } return taskRow(x, '', !locked); }).join('') + '</ol>';
+    h += '<button class="btn soft" data-x="1">Schließen</button>';
+    openSheet(h, (ev) => { if (ev.target.closest('a') || ev.target.closest('[data-x]') || ev.target.id === 'sheet') closeSheet(); });
+  }
   function viewLearn() {
-    const nu = nextUp();
-    let h = '<div class="page"><div class="brand"><h1>Skat lernen</h1><span class="eyebrow">Regeln nach ISkO</span></div>';
-    if (!guideDone(1)) {
-      h += '<a class="startcard" href="#gefuehrt-1"><div class="eyebrow">Neu beim Skat?</div><div class="t">Spiel dein erstes Spiel</div><p>Du brauchst kein Vorwissen. Die App spielt mit dir und erklärt bei jedem Zug, was du darfst und warum.</p><span class="btn brass">Erstes Spiel starten</span></a>';
-    }
-    h += levelCard();
-    if (guideDone(1)) h += '<a class="nextup" href="' + nu.href + '"><div><div class="eyebrow">Als Nächstes</div><div class="t">' + esc(nu.t) + '</div><div class="d">' + esc(nu.d) + '</div></div><span class="btn small">Los</span></a>';
-    const lv = levelInfo().level;
-    for (const L of LEVELS.slice(0, 4)) {
-      const ls = C.LESSONS.filter((l) => l.stage === L.n);
-      const done = ls.filter((l) => lessonDone(l.id)).length;
-      h += '<section class="block' + (L.n > lv ? ' later' : '') + '"><div class="block-h"><h3>Stufe ' + L.n + ' · ' + L.short + '</h3><span class="eyebrow">' + done + '/' + ls.length + '</span></div>' + (L.n > lv ? '<p class="later-note">Kommt später – baut auf Stufe ' + (L.n - 1) + ' auf.</p>' : '');
-      const guideRow = (g) => '<a class="row" href="#gefuehrt-' + g.n + '"><span class="mark' + (guideDone(g.n) ? ' done' : '') + '">' + (guideDone(g.n) ? '✓' : '') + '</span><span><span class="t">Geführtes Spiel: ' + g.t + '</span><br><span class="d">' + g.d + '</span></span><span class="score">' + ICON.spielen + '</span></a>';
-      for (const g of GUIDES.filter((x) => x.stage === L.n && !x.after)) h += guideRow(g);
-      ls.forEach((l, k) => {
-        const st = P.lessons[l.id];
-        const dr = l.drill ? drillBest(l.drill) : null;
-        h += '<a class="row" href="#lektion-' + l.id + '"><span class="mark' + (st && st.done ? ' done' : '') + '">' + (st && st.done ? '✓' : '') + '</span><span><span class="t">' + esc(T(l.title)) + '</span><br><span class="d">' + l.min + ' Min.' + (l.drill ? ' · Übung: ' + dTitle(l.drill) : '') + '</span></span><span class="score' + (dr >= 80 ? ' good' : '') + '">' + (l.drill ? (dr ? dr + '\u00a0%' : '–') : (st && st.done ? st.quiz + '/' + l.quiz.length : '')) + '</span></a>';
-      });
-      for (const g of GUIDES.filter((x) => x.stage === L.n && x.after)) h += guideRow(g);
-      h += '</section>';
-    }
-    const r5 = REQ[5]();
-    h += '<section class="block"><div class="block-h"><h3>Stufe 5 · ' + LEVELS[4].short + '</h3><span class="eyebrow">' + r5.filter((r) => r.ok).length + '/' + r5.length + '</span></div><div class="row" style="cursor:default"><span class="mark"></span><span><span class="t">Prüfung am Tisch</span><br><span class="d">Spiele ohne Hilfen, zähle mit, mach kaum Fehler. Die Ziele stehen unter Fortschritt.</span></span><span></span></div>';
-    h += '<a class="row" href="#spielen"><span class="mark"></span><span><span class="t">Übungsspiel</span><br><span class="d">Gegen Lena und Tom, mit Tipps und Coach</span></span><span class="score">' + P.games.length + '</span></a></section>';
-    h += '<p class="note" style="text-align:center">Dein Fortschritt wird auf diesem Gerät gespeichert.</p></div>';
+    let h = '<div class="page home"><div class="brand"><h1>Skat lernen</h1>' + hud() + '</div>';
+    if (!P.xp && !guideDone(1)) h += '<div class="intro"><b>In 30 Tagen an den Skattisch.</b> Jeden Tag eine Einheit von 15 bis 25 Minuten: erst verstehen, dann üben, dann spielen. Was du falsch machst, kommt automatisch wieder dran.</div>';
+    h += weekStrip() + todayCard() + pathHTML();
+    h += '<p class="note" style="text-align:center">Regeln nach der Internationalen Skatordnung. Dein Fortschritt wird auf diesem Gerät gespeichert.</p></div>';
     screen(h);
+    document.querySelectorAll('.node').forEach((b) => (b.onclick = () => daySheet(Number(b.dataset.day))));
   }
 
-  // ================= Lektion =================
-  let LS = null;
+  // ================= Einheit: Lektion, Übung, Wiederholung, Test =================
+  let S = null;
+  const quizQ = (l, i) => { const q = l.quiz[i]; return { kind: 'choice', text: q.q, options: q.o, answer: q.a, explain: q.why }; };
+  const stepGen = (id, i) => ({ t: 'q', gen: id, gi: i, key: 'd:' + id });
+  const stepQuiz = (l, i) => ({ t: 'q', q: quizQ(l, i), key: 'q:' + l.id + ':' + i, quiz: true });
+  const stepTactic = (t) => ({ t: 'q', q: D.tacticQuestion(t), key: 't:' + t.id, tactic: t.id });
+  function stepsForKey(k) {
+    const [a, b, c] = k.split(':');
+    if (a === 'd') return D.DRILLS[b] ? [stepGen(b, 9), stepGen(b, 9)] : [];
+    if (a === 'q') { const l = LESSON(b); return l && l.quiz[c] ? [stepQuiz(l, Number(c))] : []; }
+    const t = C.TACTICS.find((x) => x.id === b);
+    return t ? [stepTactic(t)] : [];
+  }
+  const tacticAfter = (t) => (t.game === 'Null' ? 'nullspiel' : t.stage >= 4 ? 'zaehlen' : /^Alleinspieler/.test(t.role) ? 'alleinspieler' : 'gegenspieler');
+  function tacticPool(n) {
+    let pool = C.TACTICS.filter((t) => knows(tacticAfter(t)));
+    if (pool.length < 4) pool = C.TACTICS.filter((t) => t.stage === 3);
+    const box = (t) => (P.srs['t:' + t.id] ? P.srs['t:' + t.id].b : -1);
+    return shuffle(pool.filter((t) => !P.tactics[t.id])).concat(shuffle(pool.filter((t) => P.tactics[t.id])).sort((a, b) => box(a) - box(b))).slice(0, n);
+  }
+  function unlockedKeys() {
+    const ks = new Set();
+    for (const l of C.LESSONS) if (knows(l.id)) { l.quiz.forEach((_, i) => ks.add('q:' + l.id + ':' + i)); if (l.drill) ks.add('d:' + l.drill); }
+    for (const id of D.ORDER) if (P.drills[id]) ks.add('d:' + id);
+    for (const t of C.TACTICS) if (knows(tacticAfter(t))) ks.add('t:' + t.id);
+    return [...ks];
+  }
+  const dueKeys = () => PL.srsDue(P.srs, unlockedKeys(), today());
+  function reviewSteps(n) {
+    const all = unlockedKeys(), due = dueKeys();
+    const steps = [], used = new Set();
+    const add = (k) => { if (used.has(k) || steps.length >= n) return; used.add(k); for (const s of stepsForKey(k)) if (steps.length < n) steps.push(s); };
+    const hard = due.filter((k) => k[0] !== 'q'), facts = due.filter((k) => k[0] === 'q');
+    hard.slice(0, 3).forEach(add);
+    facts.slice(0, 3).forEach(add);
+    hard.forEach(add);
+    shuffle(all.filter((k) => k[0] === 't' && !P.srs[k])).slice(0, 2).forEach(add);
+    facts.forEach(add);
+    const box = (k) => (P.srs[k] ? P.srs[k].b : 0);
+    shuffle(all.filter((k) => k[0] !== 'q')).sort((a, b) => box(a) - box(b)).forEach(add);
+    shuffle(all).forEach(add);
+    return shuffle(steps);
+  }
+  function examSteps(n) {
+    const steps = [], qs = [];
+    const some = (a, k) => shuffle(a).slice(0, k);
+    const drills = n < 5 ? D.ORDER.filter((id) => D.DRILLS[id].stage === n) : some(D.ORDER.filter((id) => D.DRILLS[id].stage >= 2), 6);
+    for (const id of drills) steps.push(stepGen(id, 9), stepGen(id, 9));
+    for (const l of C.LESSONS.filter((x) => (n < 5 ? x.stage === n : x.stage >= 4))) l.quiz.forEach((_, i) => qs.push(stepQuiz(l, i)));
+    steps.push(...some(qs, 4), ...some(C.TACTICS.filter((t) => (n < 5 ? t.stage === n : true)), 4).map(stepTactic));
+    return shuffle(steps);
+  }
+  function startSession(o) {
+    S = Object.assign({ i: 0, ans: null, sel: [], seqAt: 0, res: {}, sum: 0, n: 0, combo: 0, quizOk: 0, t0: Date.now(), done: false, out: null, back: lastMain }, o);
+    renderSession();
+  }
   function viewLesson(id) {
-    const l = C.LESSONS.find((x) => x.id === id);
-    if (!LS || LS.id !== id) LS = { id, page: 0, q: -1, answers: [] };
-    renderLesson(l);
+    const l = LESSON(id);
+    const steps = l.pages.map((p, i) => ({ t: 'info', html: p, at: i + 1, of: l.pages.length }));
+    l.quiz.forEach((_, i) => steps.push(stepQuiz(l, i)));
+    if (l.drill) for (let i = 0; i < 3; i++) steps.push(stepGen(l.drill, i));
+    startSession({ kind: 'lesson', id, title: T(l.title), eyebrow: 'Stufe ' + l.stage + ' · Lektion', steps });
   }
-  function renderLesson(l) {
-    const idx = C.LESSONS.indexOf(l);
-    let h = '<div class="page lesson"><a class="back" href="#lernen">← Lernpfad</a><div><div class="eyebrow">Stufe ' + l.stage + ' · Lektion ' + (C.LESSONS.filter((x) => x.stage === l.stage).indexOf(l) + 1) + '</div><h1>' + esc(T(l.title)) + '</h1></div>';
-    const total = l.pages.length + l.quiz.length;
-    const at = LS.q < 0 ? LS.page + 1 : l.pages.length + LS.q + 1;
-    h += '<div class="steps">' + Array.from({ length: total }, (_, i) => '<span class="' + (i < at ? 'on' : '') + '"></span>').join('') + '</div>';
-    for (let i = 0; i <= Math.min(LS.page, l.pages.length - 1); i++) h += '<div class="lpage' + (i === LS.page && LS.q < 0 && i > 0 ? ' new' : '') + '">' + rich(l.pages[i]) + '</div>';
-    if (LS.q < 0) {
-      h += LS.page < l.pages.length - 1 ? '<button class="btn" id="lnext">Weiter</button>' : '<button class="btn brass" id="lquiz">Kurzes Quiz (' + l.quiz.length + ' Fragen)</button>';
-    } else if (LS.q < l.quiz.length) {
-      const q = l.quiz[LS.q];
-      const ans = LS.answers[LS.q];
-      h += '<div class="qcard" id="qcard"><div class="eyebrow">Frage ' + (LS.q + 1) + ' von ' + l.quiz.length + '</div><div class="qtext">' + rich(q.q) + '</div><div class="opts">';
-      q.o.forEach((o, i) => {
-        let cls = 'opt';
-        if (ans != null) { if (i === q.a) cls += ' right'; else if (i === ans) cls += ' wrong'; }
-        h += '<button class="' + cls + '" data-i="' + i + '"' + (ans != null ? ' disabled' : '') + '>' + rich(o, { terms: false }) + '</button>';
-      });
-      h += '</div>';
-      if (ans != null) h += '<div class="feedback ' + (ans === q.a ? 'ok' : 'no') + '"><b class="h">' + (ans === q.a ? 'Richtig.' : 'Nicht ganz.') + '</b>' + rich(q.why) + '</div><button class="btn" id="qnext">' + (LS.q < l.quiz.length - 1 ? 'Nächste Frage' : 'Auswerten') + '</button>';
-      h += '</div>';
-    } else {
-      const ok = LS.answers.filter((a, i) => a === l.quiz[i].a).length;
-      const next = C.LESSONS[idx + 1];
-      h += '<div class="qcard"><div class="eyebrow">Lektion abgeschlossen</div><div class="result-big">' + ok + ' / ' + l.quiz.length + '</div><p>' + (ok === l.quiz.length ? 'Alles richtig.' : 'Lies die markierten Stellen bei Gelegenheit noch einmal.') + '</p><div class="btns">';
-      if (l.drill) h += '<a class="btn brass" href="#uebung-' + l.drill + '">Üben: ' + dTitle(l.drill) + '</a>';
-      if (next) h += '<a class="btn' + (l.drill ? ' ghost' : '') + '" href="#lektion-' + next.id + '">Nächste Lektion</a>';
-      h += '<a class="btn soft" href="#lernen">Zum Lernpfad</a></div></div>';
-    }
-    h += '</div>';
-    screen(h);
-    const scr = $('#screen');
-    const b1 = $('#lnext'); if (b1) b1.onclick = () => { LS.page++; renderLesson(l); scr.scrollTop = scr.scrollHeight; };
-    const b2 = $('#lquiz'); if (b2) b2.onclick = () => { LS.q = 0; renderLesson(l); scr.scrollTop = scr.scrollHeight; };
-    const qc = $('#qcard');
-    if (qc) qc.querySelectorAll('.opt').forEach((b) => (b.onclick = () => { LS.answers[LS.q] = Number(b.dataset.i); renderLesson(l); scr.scrollTop = scr.scrollHeight; }));
-    const b3 = $('#qnext'); if (b3) b3.onclick = () => {
-      LS.q++;
-      if (LS.q >= l.quiz.length) {
-        const ok = LS.answers.filter((a, i) => a === l.quiz[i].a).length;
-        const prev = P.lessons[l.id];
-        P.lessons[l.id] = { done: true, quiz: Math.max(ok, prev ? prev.quiz || 0 : 0) };
-        save();
-      }
-      renderLesson(l);
-      scr.scrollTop = scr.scrollHeight;
-    };
-  }
-
-  // ================= Übungen =================
-  function viewDrills() {
-    const lv = levelInfo().level;
-    let h = '<div class="page"><div class="brand"><h1>Üben</h1><span class="eyebrow">je 10 Aufgaben</span></div>';
-    h += '<p class="note">Jede Übung erzeugt neue Aufgaben. Ab 80 % gilt sie als gemeistert.</p>';
-    for (const L of LEVELS.slice(0, 4)) {
-      const ids = D.ORDER.filter((id) => D.DRILLS[id].stage === L.n);
-      if (!ids.length) continue;
-      h += '<section class="block' + (L.n > lv ? ' later' : '') + '"><div class="block-h"><h3>Stufe ' + L.n + ' · ' + L.short + '</h3></div>' + (L.n > lv ? '<p class="later-note">Kommt später – passt, wenn du Stufe ' + L.n + ' erreicht hast.</p>' : '');
-      for (const id of ids) {
-        const d = D.DRILLS[id], b = drillBest(id);
-        h += '<a class="row" href="#uebung-' + id + '"><span class="mark' + (b >= 80 ? ' done' : b ? ' part' : '') + '">' + (b >= 80 ? '✓' : '') + '</span><span><span class="t">' + d.title + '</span><br><span class="d">' + d.desc + '</span></span><span class="score' + (b >= 80 ? ' good' : '') + '">' + (b ? b + '\u00a0%' : '–') + '</span></a>';
-      }
-      if (L.n === 3) {
-        const n = C.TACTICS.filter((t) => P.tactics[t.id]).length;
-        h += '<a class="row" href="#taktik"><span class="mark' + (n >= 13 ? ' done' : n ? ' part' : '') + '">' + (n >= 13 ? '✓' : '') + '</span><span><span class="t">Taktik-Aufgaben</span><br><span class="d">' + C.TACTICS.length + ' typische Spielsituationen mit Erklärung</span></span><span class="score">' + n + '/' + C.TACTICS.length + '</span></a>';
-      }
-      h += '</section>';
-    }
-    h += '</div>';
-    screen(h);
-  }
-
-  let DS = null;
   function viewDrill(id) {
-    const tactic = id === 'taktik';
-    let queue = null;
-    if (tactic) {
-      const unsolved = C.TACTICS.filter((t) => !P.tactics[t.id]);
-      const rest = C.TACTICS.filter((t) => P.tactics[t.id]);
-      queue = unsolved.concat(rest.sort(() => Math.random() - 0.5)).slice(0, 10);
+    if (id === 'taktik') {
+      const d = curDay(), t = d && d.tasks.find((x, i) => x[0] === 't' && !taskDone(d, i));
+      return startSession({ kind: 'tactics', title: 'Taktik-Aufgaben', steps: tacticPool(t ? t[1] : 6).map(stepTactic) });
     }
-    DS = { id, tactic, queue, n: tactic ? queue.length : 10, i: 0, res: [], q: null, done: false, sel: [], seqAt: 0 };
-    nextQuestion();
+    startSession({ kind: 'drill', id, title: dTitle(id), steps: Array.from({ length: 10 }, (_, i) => stepGen(id, i)) });
   }
-  function nextQuestion() {
-    if (DS.i >= DS.n) { DS.done = true; return renderDrill(); }
-    DS.q = DS.tactic ? D.tacticQuestion(DS.queue[DS.i]) : D.DRILLS[DS.id].gen({ i: DS.i, adv: lessonDone('grandnull') });
-    DS.answered = null; DS.sel = []; DS.seqAt = 0;
-    renderDrill();
+  function viewReview() {
+    const steps = reviewSteps(10);
+    if (!steps.length) {
+      screen('<div class="page"><a class="back" href="' + lastMain + '">← Zurück</a><div class="qcard"><h2>Noch nichts zu wiederholen</h2><p>Sobald du die erste Lektion abgeschlossen hast, sammelt die App hier deine Aufgaben – Fehler zuerst.</p><a class="btn" href="#lernen">Zum Lernpfad</a></div></div>');
+      $('#app').classList.remove('fullscreen');
+      return;
+    }
+    startSession({ kind: 'review', title: 'Wiederholung', steps });
   }
-  function finishDrill() {
-    const score = Math.round(DS.res.reduce((a, b) => a + b, 0) / DS.n * 100);
-    if (!DS.tactic) {
-      const d = P.drills[DS.id] || { best: 0, sessions: 0 };
+  function viewExam(n) {
+    const cur = curDay();
+    const inPlan = !cur || cur.tasks.some((t) => t[0] === 'x' && t[1] === n) || cur.stage > n;
+    startSession({ kind: 'exam', id: n, title: n < 5 ? 'Stufentest ' + n : 'Abschlussprüfung', steps: examSteps(n), skip: !inPlan });
+  }
+  function curStep() {
+    const st = S.steps[S.i];
+    if (st.t === 'q' && !st.q) st.q = D.DRILLS[st.gen].gen({ i: st.gi, adv: knows('grandnull') });
+    return st;
+  }
+  function settle(score, extra) {
+    const st = S.steps[S.i];
+    S.ans = Object.assign({ score }, extra || {});
+    if (!st.again) {
+      S.n++; S.sum += score;
+      (S.res[st.key] = S.res[st.key] || []).push(score);
+      if (st.quiz && score >= 1) S.quizOk++;
+    }
+    if (score >= 1) { S.combo++; if (st.tactic && !P.tactics[st.tactic]) { P.tactics[st.tactic] = true; save(); } }
+    else { S.combo = 0; if (score < 0.5 && (st.rep || 0) < 2) S.steps.push(Object.assign({}, st, { again: true, rep: (st.rep || 0) + 1 })); }
+    beep(score > 0 ? 'ok' : 'no');
+    renderSession();
+  }
+  function sessNext() {
+    S.i++; S.ans = null; S.sel = []; S.seqAt = 0;
+    if (S.i >= S.steps.length) { S.done = true; finishSession(); }
+    renderSession();
+  }
+  function finishSession() {
+    const t = today();
+    const score = S.n ? Math.round(S.sum / S.n * 100) : 100;
+    const o = { score, pass: true, secs: Math.round((Date.now() - S.t0) / 1000) };
+    for (const k in S.res) {
+      const r = S.res[k], avg = r.reduce((a, b) => a + b, 0) / r.length;
+      PL.srsUpdate(P.srs, k, k[0] === 'd' ? avg >= 0.8 : avg >= 1, t);
+    }
+    let xp = 10 + Math.round(S.sum);
+    if (S.kind === 'lesson') { const prev = P.lessons[S.id]; P.lessons[S.id] = { done: true, quiz: Math.max(S.quizOk, prev ? prev.quiz || 0 : 0) }; }
+    if (S.kind === 'drill') {
+      const d = P.drills[S.id] || { best: 0, sessions: 0 };
+      o.record = score > d.best && d.sessions > 0;
       d.best = Math.max(d.best, score); d.last = score; d.sessions++;
-      P.drills[DS.id] = d;
+      P.drills[S.id] = d;
+      o.pass = score >= 80;
+      o.enough = !o.pass && drillBest(S.id) < 80 && drillEnough(S.id);
     }
-    save();
-    return score;
+    if (S.kind === 'exam') {
+      const e = P.exams[S.id] || { best: 0, passed: false };
+      e.best = Math.max(e.best, score);
+      o.pass = score >= 80;
+      if (o.pass) { if (!e.passed) xp += 20; e.passed = true; if (S.skip) { for (let s = 1; s <= S.id; s++) P.plan.skip[s] = true; o.skipped = true; } }
+      P.exams[S.id] = e;
+    }
+    if (S.kind === 'review') planFlag('r');
+    if (S.kind === 'tactics') planFlag('t');
+    if (S.n >= 3 && S.sum === S.n) { xp += 5; P.perfect++; o.perfect = true; }
+    o.xp = xp;
+    o.streakInc = award(xp);
+    o.days = syncPlan();
+    o.ach = checkAch();
+    S.out = o;
+    beep(o.pass ? 'win' : 'no');
   }
-  function renderDrill() {
-    const title = DS.tactic ? 'Taktik-Aufgaben' : D.DRILLS[DS.id].title;
-    let h = '<div class="page"><a class="back" href="#ueben">← Üben</a><div class="brand"><h1 style="font-size:26px">' + title + '</h1></div>';
-    h += '<div class="dots">' + Array.from({ length: DS.n }, (_, i) => '<span class="' + (i < DS.res.length ? (DS.res[i] >= 1 ? 'ok' : 'no') : i === DS.i ? 'cur' : '') + '"></span>').join('') + '</div>';
-    if (DS.done) {
-      const score = finishDrill();
-      const ok = DS.res.filter((x) => x >= 1).length;
-      h += '<div class="qcard"><div class="eyebrow">Ergebnis</div><div class="result-big">' + score + ' %</div><p>' + ok + ' von ' + DS.n + ' richtig. ' + (score >= 80 ? 'Gemeistert!' : 'Ab 80 % gilt die Übung als gemeistert.') + '</p>';
-      if (!DS.tactic) h += '<p class="note">Bestwert: ' + drillBest(DS.id) + ' %</p>';
-      h += '<div class="btns"><button class="btn" id="again">Noch eine Runde</button><a class="btn soft" href="#ueben">Zur Übersicht</a></div></div></div>';
-      screen(h);
-      $('#again').onclick = () => viewDrill(DS.id);
-      return;
+  function renderSummary() {
+    const o = S.out;
+    const head = {
+      lesson: 'Lektion geschafft!', review: 'Wiederholung geschafft!', tactics: 'Taktik trainiert!',
+      drill: o.pass ? 'Übung bestanden!' : 'Fast – noch eine Runde',
+      exam: o.pass ? (S.id === 5 ? 'Prüfung bestanden!' : 'Stufentest bestanden!') : 'Noch nicht bestanden',
+    }[S.kind];
+    let sub = o.perfect ? 'Ohne einen einzigen Fehler.' : '';
+    if (S.kind === 'drill' && !o.pass) sub = 'Du hattest ' + o.score + ' % beim ersten Versuch, 80 % brauchst du. Die nächste Runde bringt neue Aufgaben.';
+    if (S.kind === 'drill' && o.pass && o.record) sub = 'Neuer Bestwert!';
+    if (o.enough) sub = 'Du hattest ' + o.score + '\u00a0%. Für den Plan reicht dein Bestwert von ' + drillBest(S.id) + '\u00a0% – die Übung kommt in der Wiederholung wieder, bis sie sitzt.';
+    if (S.kind === 'exam' && !o.pass) sub = 'Du hattest ' + o.score + ' %, 80 % brauchst du. Wiederhole die Übungen dieser Stufe und versuch es noch einmal.';
+    if (o.skipped) sub = 'Du überspringst alles bis einschließlich Stufe ' + S.id + '.';
+    if (S.kind === 'lesson' && !sub) sub = 'Das Gelernte kommt in den nächsten Tagen in der Wiederholung wieder.';
+    const mm = Math.floor(o.secs / 60) + ':' + String(o.secs % 60).padStart(2, '0');
+    let h = '<div class="sess sum' + (o.pass ? '' : ' fail') + '"><div class="sbody"><div class="sin sumin"><div class="burst">' + (o.pass ? ICON.check : ICON.repeat) + '</div><div class="eyebrow">' + esc(S.title) + '</div><h1>' + head + '</h1>' + (sub ? '<p class="sumsub">' + sub + '</p>' : '');
+    h += '<div class="tiles"><div class="tile xp"><span>Erfahrung</span><b>+' + o.xp + ' XP</b></div><div class="tile acc"><span>Genauigkeit</span><b>' + o.score + ' %</b></div><div class="tile time"><span>Zeit</span><b>' + mm + '</b></div></div>';
+    const lines = [];
+    if (o.streakInc) lines.push('<div class="sline fire">' + ICON.flame + '<span><b>' + P.streak.n + (P.streak.n === 1 ? ' Tag' : ' Tage') + ' in Folge</b>' + (P.streak.n === 1 ? 'Deine Serie beginnt. Komm morgen wieder!' : 'Deine Serie wächst.') + '</span></div>');
+    for (const d of o.days) lines.push('<div class="sline day">' + ICON.check + '<span><b>Tag ' + d.n + ' geschafft</b>' + esc(d.title) + ' – Tagesziel erreicht.</span></div>');
+    for (const a of o.ach) lines.push('<div class="sline ach">' + ICON.trophy + '<span><b>Erfolg: ' + a.t + '</b>' + a.d + '</span></div>');
+    h += lines.join('') + '</div></div><footer class="sfoot">';
+    const cur = curDay();
+    const nx = cur && !o.days.length ? cur.tasks.map((_, i) => taskInfo(cur, i)).find((x) => !x.done) : null;
+    if (!o.pass && !o.enough) h += '<button class="btn big" id="again">Noch eine Runde</button><a class="btn soft" href="' + S.back + '">Später</a>';
+    else if (nx) h += '<a class="btn big" id="snextask" href="' + nx.href + '">Weiter: ' + esc(nx.short) + '</a><a class="btn soft" href="#lernen">Zum Lernpfad</a>';
+    else h += '<a class="btn big" id="snextask" href="#lernen">' + (o.days.length ? 'Fertig für heute' : 'Zum Lernpfad') + '</a>' + (S.kind === 'drill' || S.kind === 'tactics' || S.kind === 'review' ? '<button class="btn soft" id="again">Noch eine Runde</button>' : '');
+    h += '</footer></div>';
+    screen(h);
+    const ag = $('#again');
+    if (ag) ag.onclick = () => route();
+    const na = $('#snextask');
+    // gleiche Adresse (z. B. zwei Spiele-Aufgaben hintereinander) lädt sonst nicht neu
+    if (na) na.onclick = (ev) => { if (na.getAttribute('href') === location.hash) { ev.preventDefault(); route(); } };
+  }
+  function questionHTML(st, q, ans) {
+    let h = '<div class="qhead">' + (st.again ? '<span class="again">' + ICON.repeat + 'Noch einmal</span>' : '<span class="eyebrow">' + esc(q.title ? T(q.title) : st.gen ? dTitle(st.gen) : 'Kurze Frage') + '</span>') + '</div>';
+    if (q.kind === 'seq' && S.seqAt < q.steps.length) {
+      const s = q.steps[S.seqAt];
+      return h + '<div class="qtext">Merke dir die Augen. Stich ' + (S.seqAt + 1) + ' von ' + q.steps.length + ':</div><div class="minitrick">' + s.cards.map((c) => '<figure>' + cardHTML(c) + '</figure>').join('') + '</div><p style="text-align:center"><b>→ ' + s.won + '</b></p>';
     }
-    const q = DS.q;
-    h += '<div class="qcard" id="qcard">' + (q.title ? '<div class="eyebrow">' + esc(T(q.title)) + '</div>' : '');
-    if (q.kind === 'seq' && DS.seqAt < q.steps.length) {
-      const s = q.steps[DS.seqAt];
-      h += '<div class="qtext">Merke dir die Augen. Stich ' + (DS.seqAt + 1) + ' von ' + q.steps.length + ':</div>';
-      h += '<div class="minitrick">' + s.cards.map((c) => '<figure>' + cardHTML(c) + '</figure>').join('') + '</div><p style="text-align:center"><b>→ ' + s.won + '</b></p><button class="btn" id="seqnext">Weiter</button></div></div>';
-      screen(h);
-      $('#seqnext').onclick = () => { DS.seqAt++; renderDrill(); };
-      return;
-    }
-    if (q.tricksShown) h += '<div class="tricklist">' + q.tricksShown.map((t, i) => '<div class="tl"><span style="width:18px">' + (i + 1) + '.</span>' + t.map((c) => cardHTML(c)).join('') + '</div>').join('') + '</div>';
-    const ans = DS.answered;
-    const how = q.how || (!DS.tactic && D.DRILLS[DS.id].how);
-    if (how && !ans) h += '<div class="how"><b>So gehst du vor:</b> ' + rich(how, { terms: false }) + '</div>';
+    const how = S.kind !== 'exam' && (q.how || (st.gen && D.DRILLS[st.gen].how));
+    if (how && !ans) h += '<details class="how"' + (st.gen && st.gi < 2 && !st.again && S.kind !== 'review' ? ' open' : '') + '><summary>So gehst du vor</summary>' + rich(how, { terms: false }) + '</details>';
+    if (q.tricksShown) h += '<div class="tricklist' + (q.tricksBy ? ' named' : '') + '">' + q.tricksShown.map((t, i) => '<div class="tl"><span class="tn">' + (i + 1) + '.</span>' + t.map((c, k) => (q.tricksBy ? '<span class="tc">' + cardHTML(c) + '<small>' + q.tricksBy[i][k] + '</small></span>' : cardHTML(c))).join('') + '</div>').join('') + '</div>';
     h += '<div class="qtext">' + rich(q.text) + '</div>';
-    if (q.trick) h += '<div class="minitrick">' + q.trick.map((x) => '<figure>' + cardHTML(x.c) + '<figcaption>' + esc(x.who) + '</figcaption></figure>').join('') + '<figure><div class="card" style="opacity:.25;background:transparent;border:2px dashed currentColor;box-shadow:none"></div><figcaption>Du</figcaption></figure></div>';
+    if (q.trick) h += '<div class="minitrick">' + q.trick.map((x) => '<figure>' + cardHTML(x.c) + '<figcaption>' + esc(x.who) + '</figcaption></figure>').join('') + '<figure><div class="card ghostcard"></div><figcaption>Du</figcaption></figure></div>';
     if (q.kind === 'choice' || q.kind === 'seq') {
-      if (q.hand && q.kind === 'choice') h += '<div class="pickhand" style="--cw:44px">' + q.hand.map((c) => cardHTML(c)).join('') + '</div>';
+      if (q.hand && q.kind === 'choice') h += '<div class="eyebrow">Deine Karten</div><div class="pickhand" style="--cw:40px">' + q.hand.map((c) => cardHTML(c)).join('') + '</div>';
       h += '<div class="opts">' + q.options.map((o, i) => {
         let cls = 'opt';
         if (ans) { if (i === q.answer) cls += ' right'; else if (i === ans.i) cls += ' wrong'; }
@@ -2926,51 +3665,89 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
     } else if (q.kind === 'pick') {
       h += '<div class="pickhand">' + q.hand.map((c) => {
         let cls = '';
-        if (!ans && DS.sel.includes(c)) cls = 'sel';
+        if (!ans && S.sel.includes(c)) cls = 'sel';
         if (q.legal && !q.legal.includes(c) && !ans) cls += ' dim';
         if (q.mark && E.isTrump(c, q.gt)) cls += ' trumpmark';
-        if (ans) { if (q.answer.includes(c)) cls = 'good'; else if (DS.sel.includes(c)) cls = 'badpick'; }
+        if (ans) { if (q.answer.includes(c)) cls = 'good'; else if (S.sel.includes(c)) cls = 'badpick'; }
         return cardHTML(c, { button: !ans, cls });
       }).join('') + '</div>';
-      if (q.multi && !ans) {
-        const need = q.count || 0;
-        h += '<button class="btn" id="check"' + ((need ? DS.sel.length !== need : !DS.sel.length) ? ' disabled' : '') + '>' + (need ? 'Diese ' + need + ' drücken' : 'Prüfen') + '</button>';
-      }
     }
-    if (ans) {
-      h += '<div class="feedback ' + (ans.score >= 1 ? 'ok' : ans.score > 0 ? 'mid' : 'no') + '"><b class="h">' + (ans.score >= 1 ? 'Richtig.' : ans.score > 0 ? 'Fast.' : 'Leider falsch.') + '</b>' + rich(ans.msg || q.explain) + '</div><button class="btn" id="dnext">' + (DS.i < DS.n - 1 ? 'Nächste Aufgabe' : 'Auswerten') + '</button>';
-    }
+    return h;
+  }
+  function renderSession() {
+    if (S.done) return renderSummary();
+    const st = curStep(), q = st.q, ans = S.ans;
+    const seqMid = q && q.kind === 'seq' && S.seqAt < q.steps.length;
+    let h = '<div class="sess"><header class="sbar"><a class="sx" href="' + S.back + '" aria-label="Einheit beenden">' + ICON.close + '</a><div class="sprog" role="progressbar" aria-valuemin="0" aria-valuemax="' + S.steps.length + '" aria-valuenow="' + S.i + '"><i style="width:' + Math.max(4, Math.round(S.i / S.steps.length * 100)) + '%"></i></div>' + (S.combo >= 3 ? '<span class="scombo">' + ICON.flame + S.combo + '</span>' : '') + '</header>';
+    h += '<div class="sbody" id="sbody"><div class="sin" id="qcard">';
+    if (st.t === 'info') h += '<div class="qhead"><span class="eyebrow">' + esc(S.eyebrow) + ' · ' + st.at + '/' + st.of + '</span></div>' + (st.at === 1 ? '<h1 class="ltitle">' + esc(S.title) + '</h1>' : '') + '<div class="lpage new">' + rich(st.html) + '</div>';
+    else h += questionHTML(st, q, ans);
     h += '</div></div>';
-    screen(h);
-    const qc = $('#qcard');
-    const settle = (score, extra) => { DS.answered = Object.assign({ score }, extra || {}); DS.res.push(score); renderDrill(); const s = $('#screen'); s.scrollTop = s.scrollHeight; };
-    if (!ans) {
-      if (q.kind === 'choice' || q.kind === 'seq') qc.querySelectorAll('.opt').forEach((b) => (b.onclick = () => {
-        const i = Number(b.dataset.i);
-        settle(i === q.answer ? 1 : q.near && q.near(i) ? 0.5 : 0, { i });
-      }));
-      if (q.kind === 'trick') qc.querySelectorAll('.minitrick .card').forEach((b, i) => (b.onclick = () => settle(i === q.answer ? 1 : 0, { i })));
-      if (q.kind === 'pick') qc.querySelectorAll('.pickhand .card').forEach((b) => (b.onclick = () => {
-        const c = Number(b.dataset.c);
-        if (q.legal && !q.legal.includes(c)) return toast('Diese Karte darfst du nicht legen – du musst bedienen.');
-        if (!q.multi) { DS.sel = [c]; return settle(q.answer.includes(c) ? 1 : 0); }
-        if (DS.sel.includes(c)) DS.sel = DS.sel.filter((x) => x !== c);
-        else if (!q.count || DS.sel.length < q.count) DS.sel.push(c);
-        renderDrill();
-      }));
-      const ck = $('#check');
-      if (ck) ck.onclick = () => {
-        if (q.check) { const r = q.check(DS.sel); settle(r.ok ? 1 : r.near ? 0.5 : 0, { msg: r.msg }); return; }
-        const a = new Set(q.answer), s = new Set(DS.sel);
-        const ok = a.size === s.size && [...a].every((x) => s.has(x));
-        settle(ok ? 1 : 0);
-      };
-    } else {
-      $('#dnext').onclick = () => {
-        if (DS.tactic && DS.answered.score >= 1) { P.tactics[DS.queue[DS.i].id] = true; save(); }
-        DS.i++; nextQuestion();
-      };
+    if (st.t === 'info' || seqMid) h += '<footer class="sfoot"><button class="btn big" id="snext">Weiter</button></footer>';
+    else if (ans) {
+      const cls = ans.score >= 1 ? 'ok' : ans.score > 0 ? 'mid' : 'no';
+      const praise = ['Richtig!', 'Genau!', 'Stimmt!', 'Sauber!'][S.n % 4];
+      h += '<footer class="sfoot fb ' + cls + '"><div class="fbh">' + (cls === 'no' ? ICON.cross : ICON.check) + '<b>' + (cls === 'ok' ? (S.combo >= 3 ? S.combo + ' in Folge!' : praise) : cls === 'mid' ? 'Fast.' : 'Nicht ganz.') + '</b></div><div class="fbt">' + rich(ans.msg || q.explain) + (cls === 'no' && !st.again && (st.rep || 0) < 2 ? '<p class="note">Die Aufgabe kommt am Ende noch einmal.</p>' : '') + '</div><button class="btn big" id="snext">Weiter</button></footer>';
+    } else if (q.kind === 'pick' && q.multi) {
+      const need = q.count || 0;
+      h += '<footer class="sfoot"><button class="btn big" id="check"' + ((need ? S.sel.length !== need : !S.sel.length) ? ' disabled' : '') + '>' + (need ? 'Diese ' + need + ' drücken' : 'Prüfen') + '</button></footer>';
     }
+    h += '</div>';
+    const keep = $('#sbody') && S.keepScroll ? $('#sbody').scrollTop : 0;
+    screen(h);
+    if (S.keepScroll) { $('#sbody').scrollTop = keep; S.keepScroll = false; }
+    const nb = $('#snext');
+    if (nb) nb.onclick = () => { if (seqMid) { S.seqAt++; renderSession(); } else sessNext(); };
+    if (st.t === 'info' || ans || seqMid) return;
+    const qc = $('#qcard');
+    const answer = (score, extra) => { S.keepScroll = true; settle(score, extra); };
+    if (q.kind === 'choice' || q.kind === 'seq') qc.querySelectorAll('.opt').forEach((b) => (b.onclick = () => {
+      const i = Number(b.dataset.i);
+      answer(i === q.answer ? 1 : q.near && q.near(i) ? 0.5 : 0, { i });
+    }));
+    if (q.kind === 'trick') qc.querySelectorAll('.minitrick .card').forEach((b, i) => (b.onclick = () => answer(i === q.answer ? 1 : 0, { i })));
+    if (q.kind === 'pick') qc.querySelectorAll('.pickhand .card').forEach((b) => (b.onclick = () => {
+      const c = Number(b.dataset.c);
+      if (q.legal && !q.legal.includes(c)) return toast('Diese Karte darfst du nicht legen – du musst bedienen.');
+      if (!q.multi) { S.sel = [c]; return answer(q.answer.includes(c) ? 1 : 0); }
+      if (S.sel.includes(c)) S.sel = S.sel.filter((x) => x !== c);
+      else if (!q.count || S.sel.length < q.count) S.sel.push(c);
+      S.keepScroll = true;
+      renderSession();
+    }));
+    const ck = $('#check');
+    if (ck) ck.onclick = () => {
+      if (q.check) { const r = q.check(S.sel); return answer(r.ok ? 1 : r.near ? 0.5 : 0, { msg: r.msg }); }
+      const a = new Set(q.answer), s = new Set(S.sel);
+      answer(a.size === s.size && [...a].every((x) => s.has(x)) ? 1 : 0);
+    };
+  }
+
+  // ================= Üben =================
+  function viewDrills() {
+    const cur = curDay(), cs = cur ? cur.stage : 5;
+    const due = dueKeys().length, any = unlockedKeys().length;
+    let h = '<div class="page"><div class="brand"><h1>Üben</h1>' + hud() + '</div>';
+    h += '<a class="reviewcard' + (any ? '' : ' off') + '" href="#wiederholen"><span class="rc-i">' + ICON.repeat + '</span><span><span class="t">Wiederholen</span><span class="d">' + (!any ? 'Füllt sich nach deiner ersten Lektion.' : due ? due + (due === 1 ? ' Thema ist' : ' Themen sind') + ' heute fällig – Fehler kommen zuerst.' : 'Heute ist nichts fällig. Eine Extrarunde schadet nie.') + '</span></span>' + (due ? '<span class="badge-n">' + due + '</span>' : '') + '</a>';
+    h += '<p class="note">Jede Übung erzeugt neue Aufgaben. Bestanden ist sie ab 80 % beim ersten Versuch.</p>';
+    for (const L of LEVELS) {
+      const ids = D.ORDER.filter((id) => D.DRILLS[id].stage === L.n);
+      if (!ids.length) continue;
+      h += '<section class="block' + (L.n > cs ? ' later' : '') + '"><div class="block-h"><h3>Stufe ' + L.n + ' · ' + L.short + '</h3></div>' + (L.n > cs ? '<p class="later-note">Kommt später – passt, wenn du Stufe ' + L.n + ' erreicht hast.</p>' : '');
+      for (const id of ids) {
+        const d = D.DRILLS[id], b = drillBest(id), e = P.srs['d:' + id];
+        const isDue = e && e.d <= today() && P.drills[id];
+        h += '<a class="row" href="#uebung-' + id + '"><span class="mark' + (b >= 80 ? ' done' : b ? ' part' : '') + '">' + (b >= 80 ? '✓' : '') + '</span><span><span class="t">' + d.title + '</span>' + (isDue ? ' <span class="duetag">fällig</span>' : '') + '<br><span class="d">' + d.desc + '</span></span><span class="score' + (b >= 80 ? ' good' : '') + '">' + (b ? b + ' %' : '–') + '</span></a>';
+      }
+      if (L.n === 3) {
+        const n = C.TACTICS.filter((t) => P.tactics[t.id]).length;
+        h += '<a class="row" href="#taktik"><span class="mark' + (n >= C.TACTICS.length ? ' done' : n ? ' part' : '') + '">' + (n >= C.TACTICS.length ? '✓' : '') + '</span><span><span class="t">Taktik-Aufgaben</span><br><span class="d">' + C.TACTICS.length + ' typische Spielsituationen mit Erklärung</span></span><span class="score">' + n + '/' + C.TACTICS.length + '</span></a>';
+      }
+      h += '</section>';
+    }
+    h += '<section class="block"><div class="block-h"><h3>Stufentests</h3></div>' + [1, 2, 3, 4, 5].map((n) => '<a class="row" href="#test-' + n + '"><span class="mark' + (examPassed(n) ? ' done' : '') + '">' + (examPassed(n) ? '✓' : '') + '</span><span><span class="t">' + (n < 5 ? 'Stufentest ' + n + ' · ' + LEVELS[n - 1].short : 'Abschlussprüfung') + '</span><br><span class="d">Gemischte Aufgaben, bestanden ab 80 %</span></span><span class="score' + (examPassed(n) ? ' good' : '') + '">' + (P.exams[n] ? P.exams[n].best + ' %' : '–') + '</span></a>').join('') + '</section>';
+    h += '</div>';
+    screen(h);
   }
 
   // ================= Übungsspiel =================
@@ -2999,8 +3776,15 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
     if (guided()) { const n = GM.m.guide.n; GM = { st: guideDeal(n), m: newM({ guide: { n, i: 0 } }) }; saveGame(); }
     else newDeal();
   }
-  function viewGame() {
+  function viewGame(want) {
     GM = GMN;
+    // Aufgabe aus dem Plan verlangt einen Modus mit weniger Hilfen
+    if (PL.MODE_RANK[want] && PL.MODE_RANK[P.settings.help] < PL.MODE_RANK[want]) {
+      P.settings.help = want; save();
+      toast(want === 'profi' ? 'Profi-Modus eingeschaltet: keine Tipps, keine Markierungen.' : 'Modus „Normal“ eingeschaltet: Tipps nur auf Knopfdruck, mit Mitzähl-Probe.', 3600);
+      if (GM && GM.st && GM.m && !GM.m.recorded && !GM.st.tricks.length && GM.st.phase === 'bidding' && !GM.st.bidding.log.length) GM = null;
+    }
+    if (GM && GM.m && GM.m.recorded && PL.MODE_RANK[want] && PL.MODE_RANK[GM.m.mode] < PL.MODE_RANK[want]) GM = null;
     if (!GM || !GM.st || !GM.m) newDeal();
     if (GM.m.hold && GM.m.hold.trick) GM.m.hold = null;
     if (GM.m.hold && GM.m.hold.count) GM.m.hold = null;
@@ -3120,8 +3904,9 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
     const r = st.result;
     if (m.guide) {
       const won = st.declarer === 0 ? r.won : !r.won;
+      const first = !guideDone(m.guide.n);
       P.guides[m.guide.n] = { done: true, won: won || (P.guides[m.guide.n] && P.guides[m.guide.n].won) || false };
-      save();
+      m.gain = gain(first ? 20 : 8);
       saveGame();
       return;
     }
@@ -3132,8 +3917,28 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
     if (!r.won) for (let p = 0; p < 3; p++) if (p !== st.declarer) sf[p] = r.sfOpp;
     P.games.push({ t: Date.now(), decl: humanDecl, won, mode: m.mode, hints: m.hints, coach: m.coach.length, gt: st.game.gt, sf: sf[0] });
     P.list.push({ decl: st.declarer, label: E.gameLabel(st.game), value: r.value, score: r.score, won: r.won, sf });
-    save();
+    m.gain = gain(8 + (won ? 4 : 0) + (m.mode === 'profi' ? 3 : 0));
     saveGame();
+  }
+  // XP gutschreiben und festhalten, was sich dadurch im Plan getan hat
+  function gain(xp) {
+    const before = curDay();
+    const streakInc = award(xp);
+    const days = syncPlan();
+    const ach = checkAch();
+    let task = '';
+    if (before && !days.length) { const i = before.tasks.findIndex((t, k) => t[0] === 'p' && !taskDone(before, k)); if (i >= 0) task = 'Tagesaufgabe: ' + taskInfo(before, i).pv + ' Spiele'; }
+    if (streakInc || days.length) beep('win');
+    return { xp, streak: streakInc ? P.streak.n : 0, days: days.map((d) => ({ n: d.n, title: d.title })), ach: ach.map((a) => a.t), task };
+  }
+  function gainHTML(g) {
+    if (!g) return '';
+    let h = '<div class="gain"><span class="g-xp">' + ICON.bolt + '+' + g.xp + ' XP</span>';
+    if (g.streak) h += '<span class="g-fire">' + ICON.flame + g.streak + (g.streak === 1 ? ' Tag' : ' Tage') + ' in Folge</span>';
+    if (g.task) h += '<span>' + g.task + '</span>';
+    for (const d of g.days) h += '<span class="g-day">' + ICON.check + 'Tag ' + d.n + ' geschafft – Tagesziel erreicht</span>';
+    for (const a of g.ach) h += '<span class="g-ach">' + ICON.trophy + 'Erfolg: ' + a + '</span>';
+    return h + '</div>';
   }
 
   function valueLine(r) {
@@ -3159,7 +3964,10 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
     h += '<div><span>Seeger-Fabian für dich</span><span>' + (myS > 0 ? '+' : '') + myS + '</span></div></div>';
     h += '<div><div class="eyebrow">Skat</div><span class="crow">' + st.origSkat.map((c) => cardHTML(c)).join('') + '</span>' + (st.skatTaken ? '<div class="eyebrow" style="margin-top:6px">Gedrückt</div><span class="crow">' + st.discard.map((c) => cardHTML(c)).join('') + '</span>' : '') + '</div>';
     if (m.coach.length) h += '<div><div class="eyebrow">Hinweise vom Coach</div><ul class="coachlist">' + m.coach.map((x) => '<li>' + rich(x) + '</li>').join('') + '</ul></div>';
-    h += '<div class="btns"><button class="btn soft" data-a="hist">Spielverlauf</button><button class="btn" data-a="next">Nächstes Spiel</button></div>';
+    else if (m.mode !== 'lern') h += '<p class="note">Kein Hinweis vom Coach – sauber gespielt.</p>';
+    h += gainHTML(m.gain);
+    const dayHit = m.gain && m.gain.days.length;
+    h += '<div class="btns"><button class="btn soft" data-a="hist">Spielverlauf</button>' + (dayHit ? '<a class="btn brass" href="#lernen">Zum Lernpfad</a><button class="btn soft" data-a="next">Nächstes Spiel</button>' : '<button class="btn" data-a="next">Nächstes Spiel</button>') + '</div>';
     openSheet(h, (ev) => {
       const b = ev.target.closest('button');
       if (!b) return;
@@ -3405,11 +4213,13 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
     h += '<p>' + rich(p) + '</p>';
     if (n === 3 && me && r.gt !== E.GT_NULL) h += '<p>' + rich('Spielwert: ' + valueLine(r) + '. Gereizt hattest du ' + st.bid + (r.overbid ? ' – das war zu viel (überreizt).' : ' – das passt.')) + '</p>';
     h += '<div><div class="eyebrow">Das hast du geübt</div><ul class="coachlist">' + LEARNED[n].map((x) => '<li>' + rich(x) + '</li>').join('') + '</ul></div>';
-    h += '<div class="btns">' + (n === 1 ? '<button class="btn" data-a="gnextguide">Weiter: ' + GUIDES[1].t + '</button>' : '<a class="btn" href="#lernen">Weiter im Lernpfad</a>') + '<button class="btn soft" data-a="gagain">Noch einmal</button>' + (n === 1 ? '<a class="btn soft" href="#lernen">Zum Lernpfad</a>' : '') + '</div>';
+    h += gainHTML(m.gain);
+    const cur = curDay();
+    const nx = cur && !(m.gain && m.gain.days.length) ? cur.tasks.map((_, i) => taskInfo(cur, i)).find((x) => !x.done) : null;
+    h += '<div class="btns">' + (nx ? '<a class="btn" href="' + nx.href + '">Weiter: ' + esc(nx.short) + '</a>' : '<a class="btn" href="#lernen">Zum Lernpfad</a>') + '<button class="btn soft" data-a="gagain">Noch einmal</button>' + (nx ? '<a class="btn soft" href="#lernen">Zum Lernpfad</a>' : '') + '</div>';
     openSheet(h, (ev) => {
       const b = ev.target.closest('button');
       if (!b) return;
-      if (b.dataset.a === 'gnextguide') { closeSheet(); location.hash = '#gefuehrt-' + (n + 1); }
       if (b.dataset.a === 'gagain') { closeSheet(); nextGame(); gameStep(); }
     });
   }
@@ -3794,9 +4604,32 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
   }
 
   // ================= Fortschritt =================
+  // Kalenderdatei mit täglichem Termin für die restlichen Plantage (Ortszeit, mit Hinweis zum Termin)
+  function icsHref(hhmm) {
+    const [hh, mm] = hhmm.split(':').map(Number);
+    const d = new Date(), p2 = (n) => String(n).padStart(2, '0');
+    const stamp = d.getFullYear() + p2(d.getMonth() + 1) + p2(d.getDate()) + 'T' + p2(hh) + p2(mm) + '00';
+    const cur = curDay();
+    const ics = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Skat lernen//DE', 'BEGIN:VEVENT', 'UID:skat-lernen-' + stamp + '@skat-lernen', 'DTSTAMP:' + stamp, 'DTSTART:' + stamp, 'DURATION:PT20M',
+      'RRULE:FREQ=DAILY;COUNT=' + (cur ? 31 - cur.n : 30), 'SUMMARY:Skat lernen – Tageseinheit', 'DESCRIPTION:15 bis 25 Minuten. Deine Serie wartet.',
+      'BEGIN:VALARM', 'ACTION:DISPLAY', 'DESCRIPTION:Skat lernen', 'TRIGGER:PT0M', 'END:VALARM', 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
+    return 'data:text/calendar;charset=utf-8,' + encodeURIComponent(ics);
+  }
   function viewProgress() {
     const li = levelInfo();
-    let h = '<div class="page"><div class="brand"><h1>Fortschritt</h1></div>' + levelCard();
+    let h = '<div class="page"><div class="brand"><h1>Fortschritt</h1>' + hud() + '</div>';
+    // Serie und Kalender der letzten fünf Wochen
+    const t = today(), s = streakNow(), mon = t - PL.weekday(t);
+    h += '<section class="streakcard"><div class="sc-top"><div class="sc-n' + (P.streak.last === t ? ' lit' : '') + '">' + ICON.flame + '<b>' + s + '</b></div><div><h2>' + (s === 1 ? '1 Tag' : s + ' Tage') + ' in Folge</h2><p>' + (P.streak.last === t ? 'Heute schon gelernt.' : s ? 'Lerne heute, damit deine Serie hält.' : 'Eine Einheit heute startet deine Serie.') + ' Längste Serie: ' + P.streak.best + '. Joker: ' + P.streak.freeze + ' – er rettet die Serie, wenn du einen Tag verpasst.</p></div></div>';
+    h += '<div class="cal"><span class="ch">Mo</span><span class="ch">Di</span><span class="ch">Mi</span><span class="ch">Do</span><span class="ch">Fr</span><span class="ch">Sa</span><span class="ch">So</span>';
+    for (let d = mon - 28; d < mon + 7; d++) h += '<span class="cd' + (P.days[d] ? ' on' : P.streak.bridged === d ? ' joker' : '') + (d === t ? ' now' : '') + (d > t ? ' future' : '') + '" title="' + (P.days[d] ? P.days[d] + ' XP' : '') + '"></span>';
+    h += '</div>';
+    const wk = [0, 1, 2, 3, 4, 5, 6].map((i) => P.days[t - 6 + i] || 0), mx = Math.max(30, ...wk);
+    h += '<div class="xpbars" aria-label="XP der letzten 7 Tage">' + wk.map((v, i) => '<span><em>' + (v || '') + '</em><i style="height:' + Math.round(v / mx * 100) + '%"></i><small>' + ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'][PL.weekday(t - 6 + i)] + '</small></span>').join('') + '</div><p class="note">XP der letzten 7 Tage · insgesamt ' + P.xp + ' XP</p></section>';
+    const cur = curDay();
+    h += '<section class="block"><div class="block-h"><h3>30-Tage-Plan</h3><span class="eyebrow">' + (cur ? 'Tag ' + cur.n + ' von 30' : 'geschafft') + '</span></div><div class="planbar"><div class="pb"><i style="width:' + Math.round(((cur ? cur.n - 1 : 30) / 30) * 100) + '%"></i></div><span>' + paceText() + '</span></div></section>';
+    h += '<section class="block"><div class="block-h"><h3>Erfolge</h3><span class="eyebrow">' + ACH.filter((a) => P.ach[a.id]).length + '/' + ACH.length + '</span></div><div class="achs">' + ACH.map((a) => '<div class="ach' + (P.ach[a.id] ? ' on' : '') + '"><span class="ai">' + (P.ach[a.id] ? ICON.trophy : ICON.lock) + '</span><b>' + a.t + '</b><small>' + a.d + '</small></div>').join('') + '</div></section>';
+    h += levelCard();
     for (let n = 2; n <= 5; n++) {
       const reqs = REQ[n]();
       const done = n <= li.level;
@@ -3811,15 +4644,19 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
     h += '<section class="block"><div class="block-h"><h3>Einstellungen</h3></div>';
     h += '<div class="setting"><b>Hilfen im Spiel</b><div class="seg" id="seg-help">' + [['lern', 'Lernen'], ['normal', 'Normal'], ['profi', 'Profi']].map(([k, l]) => '<button data-k="' + k + '" class="' + (P.settings.help === k ? 'on' : '') + '">' + l + '</button>').join('') + '</div><div class="d">' + ({ lern: 'Erlaubte Karten markiert, Augen und Trümpfe werden angezeigt, Empfehlungen beim Reizen, Coach.', normal: 'Tipps auf Knopfdruck, Coach, Mitzähl-Probe im Spiel. Keine Augenanzeige.', profi: 'Keine Tipps, keine Markierungen. Der Coach meldet sich erst in der Abrechnung. Zählt für Stufe 5.' }[P.settings.help]) + ' Gilt ab dem nächsten Spiel.</div></div>';
     h += '<div class="setting"><b>Kartenblatt</b><div class="seg" id="seg-deck" style="grid-template-columns:1fr 1fr">' + [['de', 'Deutsch'], ['fr', 'Französisch']].map(([k, l]) => '<button data-k="' + k + '" class="' + (P.settings.deck === k ? 'on' : '') + '">' + l + '</button>').join('') + '</div><div class="d">' + (P.settings.deck === 'de' ? 'Eichel, Grün, Rot, Schellen · Ober und Unter' : 'Kreuz, Pik, Herz, Karo · Dame und Bube (Turnierbild)') + '</div><div class="crow" style="--cw:40px">' + [31, 23, 15, 7, 30].map((c) => cardHTML(c)).join('') + '</div></div>';
+    h += '<div class="setting"><b>Tägliche Erinnerung</b><div class="d">Trägt für die restlichen Tage des Plans einen täglichen Termin mit Hinweis in deinen Kalender ein.</div><div class="remind"><input type="time" id="rtime" value="' + esc(P.settings.remind || '19:00') + '" aria-label="Uhrzeit der Erinnerung"><a class="btn small" id="rlink" download="skat-lernen.ics" href="' + icsHref(P.settings.remind || '19:00') + '">In den Kalender eintragen</a></div></div>';
+    h += '<div class="setting"><b>Töne</b><div class="seg" id="seg-sound" style="grid-template-columns:1fr 1fr">' + [['1', 'An'], ['', 'Aus']].map(([k, l]) => '<button data-k="' + k + '" class="' + (!!P.settings.sound === !!k ? 'on' : '') + '">' + l + '</button>').join('') + '</div><div class="d">Kurze Töne bei richtigen und falschen Antworten.</div></div>';
     h += '<div class="setting"><b>Spieltempo</b><div class="seg" id="seg-tempo">' + [['langsam', 'Langsam'], ['normal', 'Normal'], ['schnell', 'Schnell']].map(([k, l]) => '<button data-k="' + k + '" class="' + (P.settings.tempo === k ? 'on' : '') + '">' + l + '</button>').join('') + '</div></div>';
     h += '<div class="setting"><b>Daten</b><div class="d">Mitzähl-Proben: ' + P.countChecks.ok + ' von ' + P.countChecks.total + ' richtig · Lektionen: ' + C.LESSONS.filter((l) => lessonDone(l.id)).length + '/' + C.LESSONS.length + '</div><button class="btn soft small" id="reset" style="align-self:flex-start">Fortschritt zurücksetzen</button></div></section>';
     h += '<p class="note" style="text-align:center">Skat-Regeln nach der Internationalen Skatordnung (ISkO). Gegner und Gewinnchancen beruhen auf einer regelbasierten Strategie und simulierten Spielen.</p></div>';
     screen(h);
     document.querySelectorAll('#seg-help button').forEach((b) => (b.onclick = () => { P.settings.help = b.dataset.k; save(); viewProgress(); }));
+    $('#rtime').onchange = (ev) => { if (!/^\d\d:\d\d$/.test(ev.target.value)) return; P.settings.remind = ev.target.value; save(); $('#rlink').href = icsHref(P.settings.remind); };
+    document.querySelectorAll('#seg-sound button').forEach((b) => (b.onclick = () => { P.settings.sound = !!b.dataset.k; save(); if (P.settings.sound) beep('ok'); viewProgress(); }));
     document.querySelectorAll('#seg-tempo button').forEach((b) => (b.onclick = () => { P.settings.tempo = b.dataset.k; save(); viewProgress(); }));
     document.querySelectorAll('#seg-deck button').forEach((b) => (b.onclick = () => { P.settings.deck = b.dataset.k; save(); applyDeck(); viewProgress(); }));
     $('#reset').onclick = () => {
-      openSheet('<h2>Alles zurücksetzen?</h2><p>Lektionen, Übungen, Spiele und die Liste werden gelöscht. Das lässt sich nicht rückgängig machen.</p><div class="btns"><button class="btn soft" data-x="no">Abbrechen</button><button class="btn" data-x="yes" style="background:var(--bad)">Zurücksetzen</button></div>', (ev) => {
+      openSheet('<h2>Alles zurücksetzen?</h2><p>Lektionen, Übungen, Spiele, Serie, XP und der 30-Tage-Plan werden gelöscht. Das lässt sich nicht rückgängig machen.</p><div class="btns"><button class="btn soft" data-x="no">Abbrechen</button><button class="btn" data-x="yes" style="background:var(--bad)">Zurücksetzen</button></div>', (ev) => {
         const b = ev.target.closest('button'); if (!b) return;
         if (b.dataset.x === 'yes') { const s = P.settings; P = defaults(); P.settings = s; save(); GM = GMN = GMG = null; lsDel(LS_G); lsDel(LS_GG); }
         closeSheet(); viewProgress();
@@ -3837,6 +4674,7 @@ ol.think li::marker { font-weight: 700; color: var(--accent); }
     document.addEventListener('keydown', (ev) => { if ((ev.key === 'Enter' || ev.key === ' ') && ev.target.classList && ev.target.classList.contains('term')) { ev.preventDefault(); showTerm(ev.target.dataset.term); } });
     let rt;
     window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { if (onTable() && GM) renderGame(); }, 150); });
+    checkAch();
     route();
     Cloud.init();
   }

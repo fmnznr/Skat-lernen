@@ -177,7 +177,7 @@
       ],
     },
     {
-      id: 'abrechnung', stage: 2, title: 'Gewinnen, Verlieren, Überreizen', min: 5,
+      id: 'abrechnung', stage: 2, title: 'Gewinnen, Verlieren, Überreizen', min: 5, drill: 'abrechnen',
       pages: [
         'Gewinnt der Alleinspieler, bekommt er den Spielwert gutgeschrieben. Verliert er, werden ihm <b>doppelt</b> so viele Punkte abgezogen.',
         '<b>Überreizt</b>: Ist das Spiel weniger wert als gereizt, ist es verloren – auch mit 61 Augen. Abgezogen wird das nächste Vielfache des Grundwerts, das den Reizwert erreicht. Beispiel: gereizt 33, Herz ohne 2 (Wert 30) → verloren mit 40, also −80.',
@@ -203,6 +203,23 @@
       quiz: [
         { q: 'Was ist am gefährlichsten für ein Farbspiel?', o: ['Eine Fehlfarbe, die man nicht hat', 'Eine blanke Zehn', 'Ein Ass mit Zehn'], a: 1, why: 'Die blanke Zehn fällt meist unter das Ass der Gegner.' },
         { q: 'Du hast [[kB hB dB pA p10 p9 p7 h9 dK d8]] Welches Spiel passt am besten?', o: ['Pik', 'Grand', 'Null'], a: 0, why: '7 Trümpfe in Pik (3 Buben, Ass, Zehn, 9, 7). Für einen Grand fehlen die Asse, für Null die niedrigen Karten.' },
+      ],
+    },
+    {
+      id: 'reizpraxis', stage: 3, title: 'Reizen mit Köpfchen', min: 6,
+      pages: [
+        'Dein <b>Reizlimit</b> legst du fest, bevor die erste Zahl fällt: Welches Spiel will ich spielen, und was ist es wert? Im Eifer weiterzubieten ist der teuerste Anfängerfehler.',
+        '<b>Rechne nicht mit dem Skat.</b> Eine bestimmte Karte, die dir fehlt, liegt nur in <b>etwa einem von elf Fällen</b> im Skat – 2 von 22 Karten, die du nicht kennst. Der Skat hilft im Schnitt ein wenig, aber selten genau so, wie du es brauchst.',
+        'Vorsicht bei Spielen <b>„ohne“</b>: Du reizt Herz ohne 2 bis 30 und findest im Skat den Kreuz-Buben. Jetzt spielst du „mit 1“ – dein Herzspiel ist nur noch 2 × 10 = <b>20</b> wert. Du bist überreizt, obwohl du eine starke Karte gefunden hast.',
+        'Auswege, wenn das passiert: ein Spiel mit höherem Grundwert ansagen (ein Grand mit 1 ist 48 wert) oder Schneider schaffen – jede Stufe zählt. Besser ist es, bei „ohne“-Spielen von vornherein eine Stufe Reserve zu lassen.',
+        'Die <b>Position</b> zählt: In Vorhand spielst du selbst aus und kannst sofort deine Trümpfe spielen – dasselbe Blatt ist dort stärker. In Mittelhand und Hinterhand spielt zuerst ein Gegner aus. Reize dort etwas vorsichtiger.',
+        '<b>Hör beim Reizen zu.</b> Wer bei 18 sofort passt, hat selten zwei Buben. Wer bis 23 mitgeht und dann aussteigt, wollte oft Null spielen. Wer hoch reizt, hat Buben oder eine lange Farbe. Dieses Wissen brauchst du später im Spiel.',
+      ],
+      quiz: [
+        { q: 'Du hast Herz ohne 2 bis 30 gereizt. Im Skat liegen {kB} und {d7}. Was ist dein Herzspiel jetzt wert?', o: ['30', '20', '40'], a: 1, why: 'Mit dem Kreuz-Buben spielst du „mit 1“: 2 × 10 = 20. Gereizt sind 30 – du bist überreizt, wenn du nicht Schneider schaffst oder ein höheres Spiel ansagst.' },
+        { q: 'Dir fehlt genau eine Karte zum sicheren Spiel. Wie oft liegt sie im Skat?', o: ['Etwa jedes zweite Mal', 'Etwa jedes elfte Mal', 'So gut wie nie'], a: 1, why: '2 von 22 unbekannten Karten liegen im Skat: rund 9 %.' },
+        { q: 'In welcher Position ist dasselbe Blatt am stärksten?', o: ['Vorhand', 'Mittelhand', 'Hinterhand'], a: 0, why: 'Vorhand spielt aus und bestimmt, wie das Spiel beginnt.' },
+        { q: 'Lena hat bei 18 sofort gepasst. Was ist wahrscheinlich?', o: ['Sie hat mehrere Buben', 'Sie hat ein schwaches Blatt mit wenigen Buben', 'Sie will Grand spielen'], a: 1, why: 'Mit zwei Buben und einer Farbe dazu hätte sie wenigstens 18 gehalten.' },
       ],
     },
     {
@@ -289,6 +306,22 @@
       ],
     },
     {
+      id: 'lesen', stage: 4, title: 'Karten lesen', min: 6, drill: 'frei',
+      pages: [
+        'Gute Spieler <b>raten nicht, sie schließen</b>. Jede gelegte Karte und jedes Gebot verrät etwas. Sammle diese Hinweise – nach ein paar Stichen weißt du oft, wo die wichtigen Karten sitzen.',
+        '<b>Wer nicht bedient, ist frei.</b> Das ist dein sicherstes Wissen. Wirft Tom auf Pik eine Herz-Karte ab, hat er kein Pik mehr. Merk dir für jeden Mitspieler, welche Farbe ihm fehlt.',
+        '<b>Das Reizen verrät das Blatt.</b> Wer bis 24 oder höher reizt, hat meist mindestens zwei Buben oder sehr viele Trümpfe. Wer sofort passt, hat wenig. Der Alleinspieler hat fast immer die meisten Trümpfe – rechne bei ihm mit fünf oder sechs.',
+        '<b>Was hat der Alleinspieler gedrückt?</b> Meist volle Karten aus einer kurzen Farbe. Fehlen am Ende Augen in deiner Rechnung, liegen sie im Skat. Und bedient der Alleinspieler eine Farbe schon beim ersten Mal nicht, hat er sie vermutlich blank gedrückt.',
+        '<b>Was spielt er nicht?</b> Zieht der Alleinspieler keinen Trumpf, obwohl er am Zug ist, sind seine Trümpfe oft schwach oder lückenhaft. Spielt er ein Ass nicht aus, hat er es vielleicht gar nicht.',
+        '<b>Die Karte deines Partners spricht.</b> Spielt er eine Farbe aus, hat er einen Grund: Entweder ist er dort stark, oder er hat dort nur eine Karte und will bald stechen. Merk dir die Farbe und spiel sie ihm bei Gelegenheit zurück.',
+      ],
+      quiz: [
+        { q: 'Kreuzspiel. Auf {hA} legt der Alleinspieler {d8}. Was weißt du sicher?', o: ['Er hat kein Herz mehr', 'Er hat keine Trümpfe mehr', 'Er hat kein Karo mehr'], a: 0, why: 'Wer nicht bedient, hat die Farbe nicht. Dass er nicht gestochen hat, war seine Entscheidung – Trümpfe kann er trotzdem haben.' },
+        { q: 'Der Alleinspieler hat bis 36 gereizt und spielt Kreuz. Womit rechnest du?', o: ['Mit den zwei höchsten Buben – oder mit sehr vielen Trümpfen ohne sie', 'Mit einem schwachen Blatt', 'Mit einem Nullspiel'], a: 0, why: '36 = 3 × 12, also Kreuz mit 2 oder ohne 2. Entweder hat er Kreuz- und Pik-Bube, oder ihm fehlen beide und er hat dafür viele Trümpfe.' },
+        { q: 'Am Ende zählst du 52 Augen bei euch und 58 in den Stichen des Alleinspielers. Wo sind die restlichen 10?', o: ['Du hast dich verzählt', 'Im Skat – sie zählen für den Alleinspieler', 'Sie verfallen'], a: 1, why: 'Es gibt immer 120 Augen. Was in den Stichen fehlt, liegt im Skat und gehört dem Alleinspieler: Er hat 68.' },
+      ],
+    },
+    {
       id: 'grand', stage: 4, title: 'Grand spielen', min: 5,
       pages: [
         'Im Grand gibt es nur 4 Trümpfe. Die Stiche werden vor allem über <b>Asse, Zehnen und lange Farben</b> gewonnen.',
@@ -301,6 +334,38 @@
       ],
     },
     {
+      id: 'chancen', stage: 4, title: 'Wie die Karten sitzen', min: 6,
+      pages: [
+        'Als Alleinspieler kennst du 12 Karten: deine zehn und die zwei gedrückten. Die anderen 20 sind auf die beiden Gegner verteilt, zehn und zehn. Wie genau, weißt du nicht – aber du kannst mit <b>Wahrscheinlichkeiten</b> rechnen.',
+        'Du hast <b>6 Trümpfe</b>, die Gegner also 5. So sind sie verteilt:<table class="pts"><tr><td>3 und 2</td><td>70 %</td></tr><tr><td>4 und 1</td><td>27 %</td></tr><tr><td>5 und 0</td><td>3 %</td></tr></table>Meistens reichen also drei Trumpfrunden.',
+        'Du hast <b>5 Trümpfe</b>, die Gegner 6:<table class="pts"><tr><td>3 und 3</td><td>37 %</td></tr><tr><td>4 und 2</td><td>49 %</td></tr><tr><td>5 und 1</td><td>13 %</td></tr><tr><td>6 und 0</td><td>1 %</td></tr></table>In sechs von zehn Spielen hat ein Gegner vier Trümpfe oder mehr – fast so viele wie du. Darum ist ein Farbspiel mit fünf Trümpfen ohne Asse wacklig.',
+        'Du hast <b>7 Trümpfe</b>, die Gegner 4:<table class="pts"><tr><td>2 und 2</td><td>42 %</td></tr><tr><td>3 und 1</td><td>49 %</td></tr><tr><td>4 und 0</td><td>9 %</td></tr></table>Zwei Trumpfrunden räumen nur in vier von zehn Spielen alles ab.',
+        '<b>Geht mein Ass durch?</b> Je länger eine Fehlfarbe bei dir ist, desto eher ist ein Gegner dort frei und sticht. Mit Ass und Zehn zu zweit läuft das Ass in 97 % der Fälle, die Zehn danach noch in 70 %. Hast du vier Karten der Farbe, wird schon das Ass in jedem fünften Spiel gestochen.',
+        'Sitzt eine bestimmte Karte – etwa das Ass über deiner Zehn – bei einem bestimmten Gegner? Das ist immer <b>50 zu 50</b>. Ein Plan, der nur bei einem bestimmten Sitz der Karten klappt, ist ein Münzwurf. Wähle den Plan, der bei den meisten Verteilungen gewinnt.',
+      ],
+      quiz: [
+        { q: 'Du hast 6 Trümpfe. Wie sind die 5 Trümpfe der Gegner am häufigsten verteilt?', o: ['3 und 2', '4 und 1', '5 und 0'], a: 0, why: 'In 70 % der Spiele. 4 und 1 kommt in 27 % vor.' },
+        { q: 'Du hast 5 Trümpfe. Wie oft hat ein Gegner vier oder mehr?', o: ['Fast nie', 'In etwa 6 von 10 Spielen', 'Immer'], a: 1, why: '4 und 2 in 49 %, 5 und 1 in 13 %, 6 und 0 in 1 % – zusammen 63 %.' },
+        { q: 'In welcher Farbe geht dein Ass am sichersten durch?', o: ['Ass und Zehn zu zweit', 'Ass mit drei weiteren Karten der Farbe', 'Das ist egal'], a: 0, why: 'Je kürzer die Farbe bei dir, desto mehr Karten haben die Gegner davon – und desto seltener ist einer frei.' },
+      ],
+    },
+    {
+      id: 'partner', stage: 4, title: 'Zusammenspiel zu zweit', min: 6,
+      pages: [
+        'Als Gegenspieler gewinnt ihr nur, wenn ihr <b>wie ein Spieler</b> denkt. Reden dürft ihr nicht – also redet ihr mit Karten.',
+        '<b>Der Alleinspieler gehört in die Mitte.</b> Am schwersten hat er es in Mittelhand: Dann kommt einer von euch nach ihm und kann auf seine Karte reagieren – übernehmen, schmieren oder klein bleiben. Sitzt du vor dem Alleinspieler, ist es deshalb gut, wenn du ausspielst.',
+        '<b>Hoch vor dem Alleinspieler.</b> Kommt er nach dir und du willst den Stich, nimm eine hohe Karte – sonst übernimmt er billig. Kommt er nicht mehr, reicht die kleinste Karte, die gewinnt.',
+        '<b>Volle Karten retten.</b> Hat dein Partner das Ass einer Farbe, gehört deine Zehn in seinen Stich. Eine Zehn, die du bis zum Schluss festhältst, landet oft beim Alleinspieler.',
+        '<b>Nicht den Partner stechen.</b> Liegt dein Partner vorn und der Alleinspieler hat schon gelegt, brauchst du keinen Trumpf: Schmier lieber. Dein Trumpf holt später einen eigenen Stich.',
+        '<b>Zähle für zwei.</b> Ihr braucht zusammen 60. Fehlen euch noch 11 Augen und dein Partner bekommt den Stich, dann schmier das Ass jetzt – nicht erst im nächsten Stich, den es vielleicht nicht mehr gibt.',
+      ],
+      quiz: [
+        { q: 'Kreuzspiel. Der Alleinspieler hat {h9} ausgespielt, dein Partner {hA} gelegt. Du bist Letzter und hast kein Herz: [[k7 p10 d8]] Was legst du?', o: ['{k7} – stechen', '{p10} – schmieren', '{d8} – abwerfen'], a: 1, why: 'Dein Partner gewinnt schon. Stichst du, nimmst du ihm nur den Stich weg. Die Zehn bringt 10 Augen mehr.' },
+        { q: 'Wo sitzt der Alleinspieler für euch am günstigsten?', o: ['In Vorhand', 'In Mittelhand – zwischen euch', 'In Hinterhand'], a: 1, why: 'Dann kommt einer von euch nach ihm und kann auf seine Karte reagieren.' },
+        { q: 'Euch fehlen noch 11 Augen zum Sieg. Dein Partner gewinnt den Stich sicher. Du darfst abwerfen und hast {dA} und {d7}. Was legst du?', o: ['{dA}', '{d7}'], a: 0, why: 'Mit dem Ass habt ihr die 60 Augen – gewonnen. Wer wartet, verschenkt den Sieg.' },
+      ],
+    },
+    {
       id: 'risiko', stage: 4, title: 'Risiko und Ansagen', min: 5,
       pages: [
         'Ein verlorenes Spiel kostet doppelt – nach Seeger-Fabian noch 50 Punkte mehr, und die Gegner bekommen je 40. Ein sicheres Spiel ist deshalb oft besser als ein riskantes hohes.',
@@ -310,6 +375,59 @@
       ],
       quiz: [
         { q: 'Was bedeutet Seeger-Fabian für deine Entscheidungen?', o: ['Verlieren ist noch teurer – lieber sicher spielen', 'Hohe Spiele lohnen sich immer', 'Hand spielen ist Pflicht'], a: 0, why: 'Ein Verlust kostet doppelt plus 50, die Gegner bekommen zusätzlich Punkte.' },
+      ],
+    },
+    // ---------------- Stufe 5 ----------------
+    {
+      id: 'endspiel', stage: 5, title: 'Die letzten Stiche', min: 6, drill: 'hoechste',
+      pages: [
+        'Knappe Spiele entscheiden sich in den <b>letzten drei Stichen</b>. Wer bis dahin mitgezählt hat, spielt sie fast mit offenen Karten – wer nicht, rät.',
+        '<b>Rechne rückwärts.</b> Vor jedem der letzten Stiche: Wie viele Augen habe ich? Wie viele brauche ich noch? Welche vollen Karten sind noch im Spiel? Als Alleinspieler mit 55 Augen brauchst du nur noch einen Stich mit 6 Augen – nicht alle.',
+        '<b>Behalte einen Trumpf für den Schluss.</b> Mit ihm kommst du wieder ans Spiel, wenn die Gegner ihre Farbe spielen. Wer seinen letzten Trumpf zu früh hergibt, schaut am Ende zu.',
+        '<b>Lass die Gegner ausspielen.</b> Du hast am Ende eine Zehn mit einer kleinen Karte, das Ass ist noch draußen? Dann spiel diese Farbe nicht selbst an. Gib vorher lieber einen wertlosen Stich ab: Müssen die Gegner die Farbe anspielen, macht deine Zehn oft noch ihren Stich.',
+        '<b>Als Gegenspieler:</b> Steht der Alleinspieler bei 50, zählt nur noch eines – ihm keine 11 Augen mehr zu geben. Volle Karten kommen jetzt nur noch in Stiche, die euch sicher gehören.',
+        '<b>Schneider im Blick.</b> Steht der Sieger fest, geht es um die nächste Stufe: als Alleinspieler um die 90, als Gegenspieler um eure 31. Wer sich aus dem Schneider rettet, nimmt dem Alleinspieler eine ganze Stufe.',
+      ],
+      quiz: [
+        { q: 'Du bist Alleinspieler und hast 54 Augen. Wie viele brauchst du noch?', o: ['7', '6', '11'], a: 0, why: '61 − 54 = 7. Ein Stich mit einer Zehn oder einem Ass reicht.' },
+        { q: 'Du hast am Ende {p10} und {p8}. Das Pik-Ass ist noch bei einem Gegner. Was ist meist besser?', o: ['Pik selbst ausspielen', 'Warten, bis ein Gegner Pik ausspielen muss'], a: 1, why: 'Spielst du die Zehn selbst aus, fällt sie unter das Ass. Spielen die Gegner Pik an, kannst du auf das Ass die 8 geben – danach ist deine Zehn die höchste Pik-Karte.' },
+        { q: 'Ihr Gegenspieler habt 28 Augen, der Alleinspieler hat schon 70. Worum geht es jetzt noch?', o: ['Um nichts mehr', 'Um 3 Augen – dann seid ihr aus dem Schneider', 'Um 61 Augen'], a: 1, why: 'Mit 31 Augen seid ihr aus dem Schneider. Das Spiel des Alleinspielers ist dann eine Stufe weniger wert.' },
+      ],
+    },
+    {
+      id: 'tisch', stage: 5, title: 'Am echten Tisch', min: 7,
+      pages: [
+        'Mit erfahrenen Spielern zählt neben den Karten auch der <b>Ablauf</b>. Wer ihn kennt, wirkt sicher – und macht keine teuren Formfehler.',
+        '<b>Geben:</b> Der Geber mischt, der Spieler rechts von ihm hebt ab. Gegeben wird im Uhrzeigersinn, beginnend links vom Geber: <b>3 Karten</b> an jeden, dann <b>2 in den Skat</b>, dann <b>4</b> an jeden, dann <b>3</b>. Merke: 3 – Skat – 4 – 3. Das nächste Spiel gibt der linke Nachbar.',
+        '<b>Reizen in echt</b> geht schnell und knapp: „18?“ – „Ja.“ – „20?“ – „Ja.“ – „Zwo?“ – „Weg.“ Viele sagen nur Kurzformen: „Zwo“ für 22, „Null“ für 23, „Vier“ für 24, „Sieben“ für 27. „Weg“ oder „Passe“ heißt: Ich steige aus.',
+        '<b>Ansagen:</b> Der Alleinspieler nimmt den Skat auf oder sagt „Hand“. Dann drückt er und sagt sein Spiel an: „Herz“, „Grand“, „Null ouvert“. Erst danach spielt Vorhand aus. Die Ansage gilt – ändern geht nicht mehr.',
+        '<b>Gelegt ist gelegt.</b> Eine Karte, die sichtbar auf dem Tisch liegt, ist gespielt. Die Stiche liegen verdeckt vor dir. Ansehen darfst du nur den letzten – und nur, solange zum nächsten Stich noch nicht ausgespielt ist. Darum zählt man im Kopf mit.',
+        '<b>Regelverstöße kosten das Spiel.</b> Wer nicht bedient, obwohl er kann, wer falsch ausspielt oder Karten zeigt, verliert das Spiel in der Regel sofort – für seine ganze Seite. Lieber eine Sekunde länger hinschauen. Über das laufende Spiel wird nicht gesprochen, auch nicht mit Gesten.',
+        '<b>Aufgeschrieben</b> wird nach jedem Spiel: Nur der Alleinspieler bekommt Punkte gutgeschrieben oder doppelt abgezogen. Eine Runde hat drei Spiele – jeder gibt einmal. Wie viele Runden gespielt werden, verabredet man vorher.',
+      ],
+      quiz: [
+        { q: 'In welcher Folge wird gegeben?', o: ['3 – Skat – 4 – 3', '5 – 5 – Skat', '4 – 3 – 3 – Skat'], a: 0, why: 'Drei Karten an jeden, zwei in den Skat, dann vier, dann drei.' },
+        { q: 'Am Tisch sagt jemand „Vier?“. Was meint er?', o: ['24', 'Vier Buben', '40'], a: 0, why: 'Kurzformen beim Reizen: Zwo = 22, Null = 23, Vier = 24, Sieben = 27.' },
+        { q: 'Dir fällt auf, dass du zwei Stiche vorher nicht bedient hast, obwohl du konntest. Was gilt?', o: ['Der Stich wird wiederholt', 'Das Spiel ist für deine Seite verloren', 'Du gibst zur Strafe eine Karte ab'], a: 1, why: 'Falsches Bedienen beendet das Spiel – zugunsten der anderen Seite.' },
+        { q: 'Welche Stiche darfst du dir noch einmal ansehen?', o: ['Alle eigenen', 'Nur den letzten, solange nicht neu ausgespielt ist', 'Gar keine'], a: 1, why: 'Ältere Stiche bleiben verdeckt. Wer nachzählen will, muss mitzählen.' },
+      ],
+    },
+    {
+      id: 'kneipe', stage: 5, title: 'Kontra, Ramsch und Bock', min: 7,
+      pages: [
+        'In privaten Runden wird selten streng nach Turnierregeln gespielt. Drei Zusätze triffst du fast überall: <b>Kontra</b>, <b>Ramsch</b> und <b>Bockrunden</b>. Frag vor dem ersten Spiel, was gilt – jede Runde hat ihre eigenen Sitten.',
+        '<b>Kontra:</b> Glaubt ein Gegenspieler, dass der Alleinspieler verliert, sagt er „Kontra“. Das Spiel zählt dann <b>doppelt</b>. Der Alleinspieler kann mit „Re“ antworten – dann zählt es <b>vierfach</b>. Üblich ist: Kontra darf nur sagen, wer beim Reizen nicht sofort gepasst hat, und nur vor der ersten ausgespielten Karte.',
+        '<b>Wann Kontra?</b> Wenn du als Gegenspieler selbst viele Trümpfe hast – vier oder mehr, darunter Buben – oder mehrere Asse neben einem sicheren Trumpfstich. Ein Kontra auf Verdacht ist teuer: Gewinnt der Alleinspieler, bekommt er das Doppelte.',
+        '<b>Ramsch:</b> Passen alle drei, wird nicht neu gegeben, sondern Ramsch gespielt. Jeder spielt <b>für sich</b>. Trumpf sind nur die vier Buben, wie im Grand. Es <b>verliert, wer die meisten Augen</b> hat – sie werden ihm als Minus aufgeschrieben.',
+        'Im Ramsch drehst du alles um: Stiche vermeiden, volle Karten in fremde Stiche geben, hohe Karten früh spielen, solange noch jemand drüber muss. Der Skat geht meist an den, der den letzten Stich macht. Wer <b>keinen Stich</b> bekommt, bleibt „Jungfrau“ – das verdoppelt das Minus des Verlierers. Wer <b>alle Stiche</b> holt, schafft einen „Durchmarsch“ und gewinnt.',
+        '<b>Bockrunde:</b> Nach besonderen Ereignissen – etwa einem verlorenen Kontra-Spiel, einem Spiel mit 60 zu 60 Augen oder einem Grand Hand – zählt eine ganze Runde lang jedes Spiel doppelt. Oft folgt darauf eine Runde Ramsch.',
+        'Dein Vorteil: Wer die Turnierregeln sicher beherrscht, lernt diese Zusätze in fünf Minuten. In dieser App spielst du nach Turnierregeln, ohne Kontra und Ramsch.',
+      ],
+      quiz: [
+        { q: 'Ein Spiel mit Wert 24 wird mit Kontra gespielt und vom Alleinspieler gewonnen. Wie viel bekommt er?', o: ['24', '48', '96'], a: 1, why: 'Kontra verdoppelt. Mit Re wären es 96.' },
+        { q: 'Wer verliert im Ramsch?', o: ['Wer die meisten Augen hat', 'Wer die wenigsten Augen hat', 'Wer den letzten Stich macht'], a: 0, why: 'Im Ramsch will niemand Augen haben.' },
+        { q: 'Welche Karten sind im Ramsch Trumpf?', o: ['Keine', 'Nur die vier Buben', 'Kreuz und die Buben'], a: 1, why: 'Wie im Grand.' },
+        { q: 'Was tust du vor dem ersten Spiel in einer neuen Runde?', o: ['Nichts – die Regeln sind überall gleich', 'Fragen, ob mit Kontra, Ramsch und Bock gespielt wird'], a: 1, why: 'Hausregeln unterscheiden sich von Runde zu Runde.' },
       ],
     },
   ];
@@ -349,6 +467,20 @@
       why: 'Mit drei Buben ziehst du zuerst Trumpf. Danach laufen Kreuz- und Herz-Ass mit den Zehnen.' },
     { id: 't16', stage: 4, title: 'Übernehmen', game: 'Kreuz', role: 'Gegenspieler. Dein Partner spielt aus, der Alleinspieler kommt nach dir und hat noch Herz.', trick: [['Partner', 'hK']], hand: ['hA', 'h7', 'p9', 'd8'], ok: ['hA'],
       why: 'Der Alleinspieler muss Herz bedienen und kann das Ass nicht schlagen. Mit dem Ass sicherst du 15 Augen – sonst könnte er den König mit der Zehn holen.' },
+    { id: 't17', stage: 4, title: 'Letzten Trumpf ziehen', game: 'Kreuz', role: 'Alleinspieler, du spielst aus. Die Gegner haben noch genau einen Trumpf: die Kreuz-9', trick: [], hand: ['kB', 'hA', 'h10', 'd7'], ok: ['kB'],
+      why: 'Erst der Bube: Er holt den letzten Trumpf. Danach kann niemand mehr dein Herz-Ass und deine Zehn stechen.' },
+    { id: 't18', stage: 4, title: 'Ass nehmen', game: 'Kreuz', role: 'Gegenspieler in Mittelhand. Der Alleinspieler hat ausgespielt, dein Partner kommt nach dir', trick: [['Alleinspieler', 'h8']], hand: ['hA', 'h9', 'p8', 'd9'], ok: ['hA'],
+      why: 'Dein Ass gewinnt sicher: Der Alleinspieler hat schon gelegt, und dein Partner nimmt dir den Stich nicht weg. Er kann sogar noch eine volle Karte dazugeben.' },
+    { id: 't19', stage: 4, title: 'Null: Stich überlassen', game: 'Null', role: 'Gegenspieler, du spielst als Letzter', trick: [['Partner', 'h8'], ['Alleinspieler', 'h9']], hand: ['h7', 'hK', 'p9', 'kD'], ok: ['h7'],
+      why: 'Der Alleinspieler liegt mit der 9 vorn. Bleibst du mit der 7 drunter, muss er den Stich nehmen – und hat sein Nullspiel verloren.' },
+    { id: 't20', stage: 4, title: 'Fehlkarte abwerfen', game: 'Herz', role: 'Alleinspieler, du spielst als Letzter. Du hast kein Pik', trick: [['Gegner', 'p8'], ['Gegner', 'p9']], hand: ['kB', 'hA', 'kA', 'd8'], ok: ['d8'],
+      why: 'Im Stich liegen keine Augen. Statt einen wertvollen Trumpf zu opfern, wirfst du die Karo-8 ab – sie ginge sowieso verloren. Danach bist du in Karo frei und kannst dort stechen.' },
+    { id: 't21', stage: 4, title: 'Nicht den Partner stechen', game: 'Kreuz', role: 'Gegenspieler, du spielst als Letzter. Du hast kein Herz', trick: [['Alleinspieler', 'h9'], ['Partner', 'hA']], hand: ['k7', 'p10', 'pK', 'd8'], ok: ['p10'],
+      why: 'Dein Partner gewinnt den Stich schon mit dem Ass. Ein Trumpf wäre verschwendet. Schmier die Pik-Zehn: 10 Augen mehr für euch.' },
+    { id: 't22', stage: 4, title: 'Schneiden', game: 'Kreuz', role: 'Alleinspieler, du spielst als Letzter. Die Herz-Zehn ist noch nicht gefallen', trick: [['Gegner', 'h7'], ['Gegner', 'h8']], hand: ['hA', 'hK', 'k9', 'd7'], ok: ['hK'],
+      why: 'Der König reicht für diesen Stich. Dein Ass bleibt über der Zehn: Kommt Herz noch einmal, fängst du sie.' },
+    { id: 't23', stage: 4, title: 'Gegen Grand: Ass zuerst', game: 'Grand', role: 'Gegenspieler in Vorhand, erster Stich', trick: [], hand: ['hA', 'h9', 'h8', 'p10', 'pD', 'p8', 'd9', 'd7', 'kK', 'k8'], ok: ['hA'],
+      why: 'Im Grand entscheiden Asse und Zehnen. Hol dein Ass, solange der Alleinspieler Herz noch bedienen muss – dein Partner kann eine Zehn dazugeben.' },
   ];
 
   /* Begriffe zum Antippen. re: Wortformen, wie sie im (übersetzten) Text stehen */
@@ -383,6 +515,10 @@
     farbspiel: { t: 'Farbspiel', re: 'Farbspiel|Farbspiele|Farbspielen', d: 'Ein Spiel mit einer Trumpffarbe (Kreuz, Pik, Herz oder Karo). Dazu sind die vier Buben Trumpf.' },
     grand: { t: 'Grand', re: 'Grand', d: 'Ein Spiel, in dem nur die vier Buben Trumpf sind. Es ist das wertvollste Spiel.' },
     null: { t: 'Null', re: 'Null|Nullspiel|Nullspiele', d: 'Ein Spiel ohne Trumpf. Der Alleinspieler gewinnt nur, wenn er keinen einzigen Stich bekommt.' },
+    frei: { t: 'Frei', re: 'frei ist|ist frei|in Karo frei|in Pik frei|in Herz frei|in Kreuz frei|in Schellen frei|in Grün frei|in Rot frei|in Eichel frei', d: 'Wer von einer Farbe keine Karte (mehr) hat, ist in dieser Farbe frei. Er muss nicht bedienen und darf stechen oder abwerfen.' },
+    blank: { t: 'Blank', re: 'blank|blanke|blanken', d: 'Eine Karte ist blank, wenn sie die einzige ihrer Farbe in deinem Blatt ist. „Blank drücken“ heißt: alle Karten einer Farbe in den Skat legen.' },
+    kontra: { t: 'Kontra und Re', re: 'Kontra', d: 'Hausregel: Ein Gegenspieler verdoppelt mit „Kontra“ den Spielwert. Der Alleinspieler kann mit „Re“ noch einmal verdoppeln.' },
+    ramsch: { t: 'Ramsch', re: 'Ramsch', d: 'Hausregel: Passen alle, spielt jeder für sich. Nur die Buben sind Trumpf, und es verliert, wer die meisten Augen bekommt.' },
     ueberreizt: { t: 'Überreizt', re: 'überreizt|Überreizt|überreizen', d: 'Das Spiel ist am Ende weniger wert als der Reizwert. Dann ist es verloren – auch mit 61 Augen.' },
   };
 
